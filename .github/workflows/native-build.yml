@@ -47,9 +47,21 @@ jobs:
       - name: Test
         run: pnpm run test -F cerebral-native
 
+      - name: Read package version
+        id: version
+        run: echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+
       - name: Build Docker image and push to registry
         uses: baerautotech/cerebral-deployment/.github/actions/build-with-kaniko@main
         with:
-          image-name: 'cerebral/native'
+          image-name: 'cerebral/native:${{ steps.version.outputs.version }}'
+          dockerfile: 'apps/native/Dockerfile'
+          context: '.'
+
+      - name: Also tag as latest on main branch
+        if: github.ref == 'refs/heads/main'
+        uses: baerautotech/cerebral-deployment/.github/actions/build-with-kaniko@main
+        with:
+          image-name: 'cerebral/native:latest'
           dockerfile: 'apps/native/Dockerfile'
           context: '.'

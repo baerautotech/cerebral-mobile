@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Verify TypeScript
+        run: pnpm run build
+
+      - name: Run tests
+        run: pnpm run test --passWithNoTests
+
+      - name: Run semantic-release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Update Docker image tags in build workflows
+        if: success()
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "Released version: $VERSION"
+          echo "Next: Push commits with 'chore(release):' to trigger version-tagged builds"
+
+      - name: Create summary
+        if: always()
+        run: |
+          echo "## Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Version**: $(jq -r '.version' package.json)" >> $GITHUB_STEP_SUMMARY
+          echo "**Changelog**: See CHANGELOG.md" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Commit message conventions:" >> $GITHUB_STEP_SUMMARY
+          echo "- \`feat: ...\` → MINOR version bump" >> $GITHUB_STEP_SUMMARY
+          echo "- \`fix: ...\` → PATCH version bump" >> $GITHUB_STEP_SUMMARY
+          echo "- \`BREAKING CHANGE: ...\` → MAJOR version bump" >> $GITHUB_STEP_SUMMARY

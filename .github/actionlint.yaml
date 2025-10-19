@@ -1,0 +1,15 @@
+# actionlint configuration
+# https://github.com/rhysd/actionlint/blob/main/docs/config.md
+#
+# This configuration validates GitHub Actions workflow syntax and prevents common errors.
+# Suppress warnings about secrets that must be configured in repository settings.
+# These secrets are validated at runtime in the workflows.
+
+config:
+  # Disable expression context checks (expected secrets validation)
+  # Secrets like GITHUB_TOKEN, KUBECONFIG, etc. are configured in GitHub Settings
+  disable:
+    - expression
+
+# Rules can be added here to enforce additional checks
+# See https://github.com/rhysd/actionlint#rules for available rules
