@@ -1,0 +1,12 @@
+{
+  "all": true,
+  "exclude": ["node_modules", "build", "dist", "coverage"],
+  "reporter": ["html", "text", "lcov"],
+  "report-dir": "./coverage",
+  "temp-dir": "./.nyc_output",
+  "check-coverage": true,
+  "lines": 75,
+  "statements": 75,
+  "functions": 75,
+  "branches": 70
+}
