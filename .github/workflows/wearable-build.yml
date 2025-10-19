@@ -92,7 +92,7 @@ jobs:
 
       - name: Generate SLSA provenance
         id: slsa
-        uses: slsa-framework/slsa-github-generator/.github/actions/generator/generic/create-payload@v2.0.0
+        uses: slsa-framework/slsa-github-generator/.github/actions/generator/generic/create-payload@v1.9.0
         with:
           command: create-payload
           digest: ${{ steps.build.outputs.digest }}
