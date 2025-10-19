@@ -1,0 +1,55 @@
+name: Native App Build
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'apps/native/**'
+      - 'packages/**'
+      - '.github/workflows/native-build.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'apps/native/**'
+      - 'packages/**'
+
+jobs:
+  build:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.0.0
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Lint
+        run: pnpm run lint -F cerebral-native
+
+      - name: Build
+        run: pnpm run build -F cerebral-native
+
+      - name: Test
+        run: pnpm run test -F cerebral-native
+
+      - name: Build Docker image and push to registry
+        uses: baerautotech/cerebral-deployment/.github/actions/build-with-kaniko@main
+        with:
+          image-name: 'cerebral/native'
+          dockerfile: 'apps/native/Dockerfile'
+          context: '.'
