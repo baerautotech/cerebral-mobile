@@ -14,15 +14,52 @@ on:
       - 'packages/**'
 
 jobs:
-  build:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run linting checks
+        uses: baerautotech/cerebral-deployment/.github/actions/run-linting@main
+        with:
+          language: javascript
+          fix: false
+
+  test:
     runs-on: macos-latest
     strategy:
       matrix:
         node-version: [20.x]
     
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.0.0
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Run tests
+        uses: baerautotech/cerebral-deployment/.github/actions/run-tests@main
+        with:
+          language: javascript
+          coverage-threshold: 80
+
+  build:
+    needs: [lint, test]
+    runs-on: cerebral-k8s-runners
+    strategy:
+      matrix:
+        node-version: [20.x]
+    
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -38,14 +75,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Lint
-        run: pnpm run lint -F cerebral-wearable
-
       - name: Build
         run: pnpm run build -F cerebral-wearable
-
-      - name: Test
-        run: pnpm run test -F cerebral-wearable
 
       - name: Read package version
         id: version
@@ -53,11 +84,12 @@ jobs:
 
       - name: Build Docker image and push to registry
         id: build
-        uses: baerautotech/cerebral-deployment/.github/actions/build-with-kaniko@main
+        uses: baerautotech/cerebral-deployment/.github/actions/build-image@main
         with:
-          image-name: 'cerebral/wearable:${{ steps.version.outputs.version }}'
+          image-name: 'cerebral/wearable'
           dockerfile: 'apps/wearable/Dockerfile'
           context: '.'
+          tags: '${{ steps.version.outputs.version }},latest'
 
       - name: Generate SLSA provenance
         id: slsa
@@ -66,11 +98,3 @@ jobs:
           command: create-payload
           digest: ${{ steps.build.outputs.image-digest }}
           name: cerebral/wearable
-
-      - name: Also tag as latest on main branch
-        if: github.ref == 'refs/heads/main'
-        uses: baerautotech/cerebral-deployment/.github/actions/build-with-kaniko@main
-        with:
-          image-name: 'cerebral/wearable:latest'
-          dockerfile: 'apps/wearable/Dockerfile'
-          context: '.'
