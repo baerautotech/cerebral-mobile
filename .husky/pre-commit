@@ -1,2 +1,355 @@
-#!/usr/bin/env sh
-bash git-hooks/enhanced-pre-commit
+#!/bin/bash
+# 🛡️ UNIVERSAL PRE-COMMIT HOOK v5.0
+# Language-aware validation for: Python, JavaScript, React, TypeScript, Rust, Java, Swift, Kotlin
+# Runs only the tools appropriate for detected languages
+
+set -euo pipefail
+
+echo "🛡️ Running universal pre-commit validation..."
+
+PROJECT_ROOT="$(git rev-parse --show-toplevel)"
+cd "$PROJECT_ROOT"
+
+# Load detection results if available
+if [ -f ".phase-1-5-detection.json" ]; then
+    HAS_PACKAGE_JSON=$(grep -o '"has_package_json": true' .phase-1-5-detection.json > /dev/null && echo true || echo false)
+    HAS_PYPROJECT_TOML=$(grep -o '"has_pyproject_toml": true' .phase-1-5-detection.json > /dev/null && echo true || echo false)
+    HAS_CARGO_TOML=$(grep -o '"has_cargo_toml": true' .phase-1-5-detection.json > /dev/null && echo true || echo false)
+    HAS_POM_XML=$(grep -o '"has_pom_xml": true' .phase-1-5-detection.json > /dev/null && echo true || echo false)
+    HAS_BUILD_GRADLE=$(grep -o '"has_build_gradle": true' .phase-1-5-detection.json > /dev/null && echo true || echo false)
+    HAS_SWIFT_FILES=$(grep -o '"has_swift_files": true' .phase-1-5-detection.json > /dev/null && echo true || echo false)
+    HAS_KOTLIN_FILES=$(grep -o '"has_kotlin_files": true' .phase-1-5-detection.json > /dev/null && echo true || echo false)
+    NEEDS_JEST=$(grep -o '"jest": true' .phase-1-5-detection.json > /dev/null && echo true || echo false)
+    NEEDS_ESLINT=$(grep -o '"eslint": true' .phase-1-5-detection.json > /dev/null && echo true || echo false)
+    NEEDS_PYTEST=$(grep -o '"pytest": true' .phase-1-5-detection.json > /dev/null && echo true || echo false)
+    NEEDS_CARGO=$(grep -o '"cargo": true' .phase-1-5-detection.json > /dev/null && echo true || echo false)
+    NEEDS_CHECKSTYLE=$(grep -o '"checkstyle": true' .phase-1-5-detection.json > /dev/null && echo true || echo false)
+    NEEDS_SWIFTLINT=$(grep -o '"swiftlint": true' .phase-1-5-detection.json > /dev/null && echo true || echo false)
+    NEEDS_KTLINT=$(grep -o '"ktlint": true' .phase-1-5-detection.json > /dev/null && echo true || echo false)
+else
+    # Fallback: detect on the fly
+    HAS_PACKAGE_JSON=false
+    HAS_PYPROJECT_TOML=false
+    HAS_CARGO_TOML=false
+    HAS_POM_XML=false
+    HAS_BUILD_GRADLE=false
+    HAS_SWIFT_FILES=false
+    HAS_KOTLIN_FILES=false
+    NEEDS_JEST=false
+    NEEDS_ESLINT=false
+    NEEDS_PYTEST=false
+    NEEDS_CARGO=false
+    NEEDS_CHECKSTYLE=false
+    NEEDS_SWIFTLINT=false
+    NEEDS_KTLINT=false
+    
+    [ -f "package.json" ] && HAS_PACKAGE_JSON=true
+    [ -f "pyproject.toml" ] || [ -f "setup.py" ] || [ -d "backend-python" ] && HAS_PYPROJECT_TOML=true
+    [ -f "Cargo.toml" ] && HAS_CARGO_TOML=true
+    [ -f "pom.xml" ] && HAS_POM_XML=true
+    [ -f "build.gradle" ] || [ -f "build.gradle.kts" ] && HAS_BUILD_GRADLE=true
+    find . -maxdepth 3 -name "*.swift" -type f 2>/dev/null | grep -q . && HAS_SWIFT_FILES=true
+    find . -maxdepth 3 -name "*.kt" -type f 2>/dev/null | grep -q . && HAS_KOTLIN_FILES=true
+    [ "$HAS_PACKAGE_JSON" = true ] && NEEDS_JEST=true
+    [ "$HAS_PACKAGE_JSON" = true ] && NEEDS_ESLINT=true
+    [ "$HAS_PYPROJECT_TOML" = true ] && NEEDS_PYTEST=true
+    [ "$HAS_CARGO_TOML" = true ] && NEEDS_CARGO=true
+    [ "$HAS_POM_XML" = true ] || [ "$HAS_BUILD_GRADLE" = true ] && NEEDS_CHECKSTYLE=true
+    [ "$HAS_SWIFT_FILES" = true ] && NEEDS_SWIFTLINT=true
+    [ "$HAS_KOTLIN_FILES" = true ] && NEEDS_KTLINT=true
+fi
+
+EXIT_CODE=0
+
+# ════════════════════════════════════════════════════════════
+# JAVASCRIPT/NODE.JS VALIDATIONS
+# ════════════════════════════════════════════════════════════
+
+if [ "$HAS_PACKAGE_JSON" = true ]; then
+    echo ""
+    echo "📦 Running JavaScript/Node.js validations..."
+    
+    # ESLint
+    if [ "$NEEDS_ESLINT" = true ] && command -v eslint &> /dev/null; then
+        echo "  🔍 Running ESLint..."
+        if ! pnpm exec eslint --fix . 2>/dev/null; then
+            echo "  ⚠️  ESLint issues detected (auto-fixed where possible)"
+        else
+            echo "  ✅ ESLint passed"
+        fi
+    fi
+    
+    # Prettier
+    if command -v prettier &> /dev/null; then
+        echo "  ✨ Checking Prettier formatting..."
+        if ! pnpm exec prettier --check . 2>/dev/null; then
+            echo "  ⚠️  Prettier formatting issues detected"
+            EXIT_CODE=1
+        else
+            echo "  ✅ Prettier check passed"
+        fi
+    fi
+    
+    # Jest
+    if [ "$NEEDS_JEST" = true ] && command -v jest &> /dev/null; then
+        echo "  🧪 Running Jest tests..."
+        if ! pnpm run test -- --bail --onlyChanged 2>/dev/null; then
+            echo "  ❌ Jest tests failed"
+            EXIT_CODE=1
+        else
+            echo "  ✅ Jest tests passed"
+        fi
+    fi
+fi
+
+# ════════════════════════════════════════════════════════════
+# PYTHON VALIDATIONS
+# ════════════════════════════════════════════════════════════
+
+if [ "$HAS_PYPROJECT_TOML" = true ]; then
+    echo ""
+    echo "🐍 Running Python validations..."
+    
+    # Pylint
+    if command -v pylint &> /dev/null; then
+        echo "  🔍 Running pylint..."
+        STAGED_PYTHON_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.py$' || true)
+        if [ -n "$STAGED_PYTHON_FILES" ]; then
+            if ! pylint $STAGED_PYTHON_FILES 2>/dev/null; then
+                echo "  ⚠️  Pylint issues detected (non-blocking)"
+            else
+                echo "  ✅ Pylint passed"
+            fi
+        fi
+    fi
+    
+    # Black
+    if command -v black &> /dev/null; then
+        echo "  ⬛ Checking Black formatting..."
+        STAGED_PYTHON_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.py$' || true)
+        if [ -n "$STAGED_PYTHON_FILES" ]; then
+            if ! black --check $STAGED_PYTHON_FILES 2>/dev/null; then
+                echo "  ⚠️  Black formatting issues detected"
+            else
+                echo "  ✅ Black check passed"
+            fi
+        fi
+    fi
+    
+    # Pytest
+    if [ "$NEEDS_PYTEST" = true ] && command -v pytest &> /dev/null; then
+        echo "  🧪 Running pytest..."
+        if pytest --co -q 2>/dev/null | head -1 | grep -q "test session"; then
+            if pytest --tb=short 2>/dev/null; then
+                echo "  ✅ Pytest passed"
+            else
+                echo "  ❌ Pytest failed"
+                EXIT_CODE=1
+            fi
+        else
+            echo "  ⚠️  No pytest tests found (expected for some projects)"
+        fi
+    fi
+fi
+
+# ════════════════════════════════════════════════════════════
+# RUST VALIDATIONS
+# ════════════════════════════════════════════════════════════
+
+if [ "$HAS_CARGO_TOML" = true ]; then
+    echo ""
+    echo "🦀 Running Rust validations..."
+    
+    # Cargo check
+    if [ "$NEEDS_CARGO" = true ] && command -v cargo &> /dev/null; then
+        echo "  🔍 Running cargo check..."
+        if ! cargo check 2>/dev/null; then
+            echo "  ❌ Cargo check failed"
+            EXIT_CODE=1
+        else
+            echo "  ✅ Cargo check passed"
+        fi
+    fi
+    
+    # Clippy
+    if command -v cargo &> /dev/null && cargo clippy --version &> /dev/null 2>&1; then
+        echo "  🔗 Running clippy (Rust linter)..."
+        if ! cargo clippy --all-targets --all-features 2>/dev/null; then
+            echo "  ⚠️  Clippy warnings detected (non-blocking)"
+        else
+            echo "  ✅ Clippy passed"
+        fi
+    fi
+    
+    # Rustfmt
+    if command -v rustfmt &> /dev/null; then
+        echo "  📝 Checking rustfmt (Rust formatter)..."
+        STAGED_RUST_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.rs$' || true)
+        if [ -n "$STAGED_RUST_FILES" ]; then
+            if ! rustfmt --check $STAGED_RUST_FILES 2>/dev/null; then
+                echo "  ⚠️  Rustfmt formatting issues detected"
+            else
+                echo "  ✅ Rustfmt check passed"
+            fi
+        fi
+    fi
+fi
+
+# ════════════════════════════════════════════════════════════
+# JAVA VALIDATIONS
+# ════════════════════════════════════════════════════════════
+
+if [ "$HAS_POM_XML" = true ]; then
+    echo ""
+    echo "☕ Running Java/Maven validations..."
+    
+    # Maven compile
+    if command -v mvn &> /dev/null; then
+        echo "  🔍 Running maven compile..."
+        if ! mvn clean compile 2>/dev/null; then
+            echo "  ❌ Maven compile failed"
+            EXIT_CODE=1
+        else
+            echo "  ✅ Maven compile passed"
+        fi
+    fi
+    
+    # Checkstyle
+    if command -v mvn &> /dev/null; then
+        echo "  ✔️  Running checkstyle (Java style checker)..."
+        if ! mvn checkstyle:check 2>/dev/null; then
+            echo "  ⚠️  Checkstyle violations detected"
+        else
+            echo "  ✅ Checkstyle passed"
+        fi
+    fi
+fi
+
+if [ "$HAS_BUILD_GRADLE" = true ]; then
+    echo ""
+    echo "☕ Running Java/Gradle validations..."
+    
+    # Gradle build
+    if command -v gradle &> /dev/null || [ -f "gradlew" ]; then
+        echo "  🔍 Running gradle build..."
+        GRADLE_CMD="gradle"
+        [ -f "gradlew" ] && GRADLE_CMD="./gradlew"
+        if ! $GRADLE_CMD build 2>/dev/null; then
+            echo "  ❌ Gradle build failed"
+            EXIT_CODE=1
+        else
+            echo "  ✅ Gradle build passed"
+        fi
+    fi
+    
+    # Checkstyle
+    if command -v gradle &> /dev/null || [ -f "gradlew" ]; then
+        echo "  ✔️  Running checkstyle (Java style checker)..."
+        GRADLE_CMD="gradle"
+        [ -f "gradlew" ] && GRADLE_CMD="./gradlew"
+        if ! $GRADLE_CMD checkstyleMain 2>/dev/null; then
+            echo "  ⚠️  Checkstyle violations detected"
+        else
+            echo "  ✅ Checkstyle passed"
+        fi
+    fi
+fi
+
+# ════════════════════════════════════════════════════════════
+# SWIFT VALIDATIONS (iOS/macOS/watchOS)
+# ════════════════════════════════════════════════════════════
+
+if [ "$HAS_SWIFT_FILES" = true ]; then
+    echo ""
+    echo "🍎 Running Swift validations (iOS/macOS/watchOS)..."
+    
+    # SwiftLint
+    if [ "$NEEDS_SWIFTLINT" = true ] && command -v swiftlint &> /dev/null; then
+        echo "  🔍 Running swiftlint..."
+        STAGED_SWIFT_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.swift$' || true)
+        if [ -n "$STAGED_SWIFT_FILES" ]; then
+            if ! swiftlint lint $STAGED_SWIFT_FILES 2>/dev/null; then
+                echo "  ⚠️  SwiftLint issues detected (non-blocking)"
+            else
+                echo "  ✅ SwiftLint passed"
+            fi
+        fi
+    fi
+    
+    # SwiftFormat
+    if command -v swiftformat &> /dev/null; then
+        echo "  ✨ Checking swiftformat..."
+        STAGED_SWIFT_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.swift$' || true)
+        if [ -n "$STAGED_SWIFT_FILES" ]; then
+            if ! swiftformat --lint $STAGED_SWIFT_FILES 2>/dev/null; then
+                echo "  ⚠️  SwiftFormat issues detected"
+            else
+                echo "  ✅ SwiftFormat check passed"
+            fi
+        fi
+    fi
+fi
+
+# ════════════════════════════════════════════════════════════
+# KOTLIN VALIDATIONS (Android/Kotlin Multiplatform)
+# ════════════════════════════════════════════════════════════
+
+if [ "$HAS_KOTLIN_FILES" = true ]; then
+    echo ""
+    echo "🤖 Running Kotlin validations (Android/Kotlin Multiplatform)..."
+    
+    # Ktlint
+    if [ "$NEEDS_KTLINT" = true ] && command -v ktlint &> /dev/null; then
+        echo "  🔍 Running ktlint..."
+        STAGED_KOTLIN_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.kt$' || true)
+        if [ -n "$STAGED_KOTLIN_FILES" ]; then
+            if ! ktlint $STAGED_KOTLIN_FILES 2>/dev/null; then
+                echo "  ⚠️  Ktlint issues detected (non-blocking)"
+            else
+                echo "  ✅ Ktlint passed"
+            fi
+        fi
+    fi
+fi
+
+# ════════════════════════════════════════════════════════════
+# UNIVERSAL VALIDATIONS (All Repos)
+# ════════════════════════════════════════════════════════════
+
+echo ""
+echo "🔍 Running universal validations..."
+
+# TypeScript check (if applicable)
+if [ -f "tsconfig.json" ] && command -v tsc &> /dev/null; then
+    echo "  📘 Checking TypeScript..."
+    if ! tsc --noEmit 2>/dev/null; then
+        echo "  ❌ TypeScript validation failed"
+        EXIT_CODE=1
+    else
+        echo "  ✅ TypeScript check passed"
+    fi
+fi
+
+# Workspace integrity
+if [ -f "pnpm-workspace.yaml" ] || [ -f "lerna.json" ]; then
+    echo "  🏗️  Validating workspace structure..."
+    if ! pnpm install --dry-run 2>/dev/null; then
+        echo "  ❌ Workspace integrity check failed"
+        EXIT_CODE=1
+    else
+        echo "  ✅ Workspace structure valid"
+    fi
+fi
+
+# ════════════════════════════════════════════════════════════
+# FINAL RESULT
+# ════════════════════════════════════════════════════════════
+
+echo ""
+if [ $EXIT_CODE -eq 0 ]; then
+    echo "✅ All pre-commit validations passed!"
+    exit 0
+else
+    echo "❌ Pre-commit validation failed. Please fix issues before committing."
+    exit 1
+fi
