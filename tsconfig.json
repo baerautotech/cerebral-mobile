@@ -4,6 +4,7 @@
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
+    "moduleResolution": "node",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -22,12 +23,12 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@cerebral/core": ["packages/core/src"],
-      "@cerebral/core/*": ["packages/core/src/*"],
-      "@cerebral/design-system": ["packages/design-system/src"],
-      "@cerebral/design-system/*": ["packages/design-system/src/*"]
+      "@cerebral/core": ["packages/core"],
+      "@cerebral/core/*": ["packages/core/*"],
+      "@cerebral/design-system": ["packages/design-system"],
+      "@cerebral/design-system/*": ["packages/design-system/*"]
     }
   },
-  "include": ["packages/*/src", "apps/*/src"],
+  "include": ["packages/*/", "apps/*/"],
   "exclude": ["node_modules", "dist"]
 }

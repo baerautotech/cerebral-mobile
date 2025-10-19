@@ -81,12 +81,11 @@ jobs:
 
       - name: Build Docker image and push to registry
         id: build
-        uses: baerautotech/cerebral-deployment/.github/actions/build-image@main
+        uses: baerautotech/cerebral-deployment/.github/actions/build-with-kaniko@main
         with:
           image-name: 'cerebral/native'
           dockerfile: 'apps/native/Dockerfile'
           context: '.'
-          tags: '${{ steps.version.outputs.version }},latest'
 
       - name: Verify Docker image
         run: |

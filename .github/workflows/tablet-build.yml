@@ -84,12 +84,11 @@ jobs:
 
       - name: Build Docker image and push to registry
         id: build
-        uses: baerautotech/cerebral-deployment/.github/actions/build-image@main
+        uses: baerautotech/cerebral-deployment/.github/actions/build-with-kaniko@main
         with:
           image-name: 'cerebral/tablet'
           dockerfile: 'apps/tablet/Dockerfile'
           context: '.'
-          tags: '${{ steps.version.outputs.version }},latest'
 
       - name: Generate SLSA provenance
         id: slsa
