@@ -90,10 +90,3 @@ jobs:
           dockerfile: 'apps/wearable/Dockerfile'
           context: '.'
 
-      - name: Generate SLSA provenance
-        id: slsa
-        uses: slsa-framework/slsa-github-generator/.github/actions/generator/generic/create-payload@v1.9.0
-        with:
-          command: create-payload
-          digest: ${{ steps.build.outputs.digest }}
-          name: cerebral/wearable
