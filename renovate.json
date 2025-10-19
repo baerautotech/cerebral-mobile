@@ -1,0 +1,91 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Cerebral Mobile - React Native Monorepo Dependency Management",
+  "extends": [
+    "config:base",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":enableVulnerabilityAlerts",
+    "schedule:weekly"
+  ],
+  "semanticCommits": "enabled",
+  "semanticCommitType": "chore",
+  "semanticCommitScope": "deps",
+  "node": {
+    "supportPolicy": ["lts"],
+    "rangeStrategy": "bump"
+  },
+  "pnpm": {
+    "enabled": true,
+    "lockFileMaintenance": {
+      "enabled": true,
+      "schedule": ["before 3am on Monday"]
+    }
+  },
+  "npm": {
+    "rangeStrategy": "bump"
+  },
+  "docker": {
+    "enabled": true,
+    "versioning": "semver",
+    "minor": {
+      "enabled": true
+    }
+  },
+  "dockerfile": {
+    "enabled": true
+  },
+  "preCommit": {
+    "enabled": true,
+    "allowedConfigs": [".pre-commit-config.yaml"]
+  },
+  "schedule": [
+    "before 3am on Monday"
+  ],
+  "timezone": "UTC",
+  "automerge": false,
+  "labels": ["dependencies", "renovate"],
+  "packageRules": [
+    {
+      "description": "Security patches - require manual review",
+      "matchUpdateTypes": ["patch"],
+      "groupName": "Security patches",
+      "labels": ["security", "critical"],
+      "automerge": false
+    },
+    {
+      "description": "Patch updates - auto-merge after 3 days (monorepo stability)",
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "automergeType": "pr",
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "description": "Minor updates - require manual review (React Native compatibility)",
+      "matchUpdateTypes": ["minor"],
+      "automerge": false,
+      "labels": ["minor-update", "requires-review", "react-native"]
+    },
+    {
+      "description": "Major updates - require manual review",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["major-update", "requires-review"]
+    },
+    {
+      "description": "GitHub Actions - auto-merge after 3 days",
+      "matchDatasources": ["github-actions"],
+      "automerge": true,
+      "automergeType": "pr",
+      "minimumReleaseAge": "3 days"
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"],
+    "severity": "high",
+    "schedule": ["at any time"]
+  },
+  "prCreation": "not-pending",
+  "prConcurrentLimit": 5
+}
