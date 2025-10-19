@@ -1,0 +1,27 @@
+{
+  "detected_languages": ["React/TypeScript"],
+  "tools": {
+    "jest": true,
+    "eslint": true,
+    "prettier": true,
+    "pytest": false,
+    "black": false,
+    "pylint": false,
+    "cargo": false,
+    "clippy": false,
+    "rustfmt": false,
+    "maven": false,
+    "gradle": false,
+    "checkstyle": false,
+    "swiftlint": false,
+    "swiftformat": false,
+    "ktlint": false
+  },
+  "has_package_json": true,
+  "has_pyproject_toml": false,
+  "has_cargo_toml": false,
+  "has_pom_xml": false,
+  "has_build_gradle": false,
+  "has_swift_files": false,
+  "has_kotlin_files": false
+}

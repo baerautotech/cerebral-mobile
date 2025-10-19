@@ -6,8 +6,6 @@
 # These secrets are validated at runtime in the workflows.
 
 config:
-  # Disable expression context checks (expected secrets validation)
-  # Secrets like GITHUB_TOKEN, KUBECONFIG, etc. are configured in GitHub Settings
   disable:
     - expression
 
