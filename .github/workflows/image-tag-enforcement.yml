@@ -1,0 +1,17 @@
+name: Image Tag Enforcement
+on:
+  pull_request:
+    paths:
+      - '**/*.yaml'
+      - '**/*.yml'
+jobs:
+  enforce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - name: Fail on :latest image tags
+        run: |
+          if grep -R "image: .*:latest" -n .; then
+            echo 'Found :latest image tags. Use immutable SHAs.'
+            exit 1
+          fi
