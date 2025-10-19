@@ -52,11 +52,20 @@ jobs:
         run: echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
 
       - name: Build Docker image and push to registry
+        id: build
         uses: baerautotech/cerebral-deployment/.github/actions/build-with-kaniko@main
         with:
           image-name: 'cerebral/tablet:${{ steps.version.outputs.version }}'
           dockerfile: 'apps/tablet/Dockerfile'
           context: '.'
+
+      - name: Generate SLSA provenance
+        id: slsa
+        uses: slsa-framework/slsa-github-generator/.github/actions/generator/generic/create-payload@v2.0.0
+        with:
+          command: create-payload
+          digest: ${{ steps.build.outputs.image-digest }}
+          name: cerebral/tablet
 
       - name: Also tag as latest on main branch
         if: github.ref == 'refs/heads/main'
