@@ -1,0 +1,18 @@
+{
+  "extends": "nx/presets/react-native.json",
+  "targetDefaults": {
+    "build": {
+      "cache": true,
+      "inputs": ["src/**/*", "package.json"],
+      "outputs": ["dist/**/*", "build/**/*"]
+    },
+    "test": {
+      "cache": true,
+      "inputs": ["src/**/*", "jest.config.js"]
+    },
+    "lint": {
+      "cache": true,
+      "inputs": ["src/**/*", ".eslintrc.json"]
+    }
+  }
+}
