@@ -90,4 +90,4 @@ jobs:
       - name: Verify Docker image
         run: |
           echo "✅ Native app Docker image built successfully!"
-          echo "Image: ${{ steps.build.outputs.image-uri }}"
+          echo "Image: ${{ steps.build.outputs.image }}"
