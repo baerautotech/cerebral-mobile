@@ -1,0 +1,75 @@
+# Cursor Rules - Supabase Database Access
+
+## Database Connection: Use /root/supabase_connect.sh
+
+Supabase database access is through a simple shell script at:
+```
+/root/supabase_connect.sh
+```
+
+### Quick Commands
+
+```bash
+# List tables
+/root/supabase_connect.sh list-tables
+
+# Show table schema
+/root/supabase_connect.sh schema <table_name>
+
+# Count records
+/root/supabase_connect.sh count <table_name>
+
+# Run SQL query
+/root/supabase_connect.sh query "SELECT * FROM table_name LIMIT 10;"
+
+# Open psql
+/root/supabase_connect.sh psql
+```
+
+### Connection Details
+
+Session Pooler (Production):
+```
+host: aws-0-us-east-2.pooler.supabase.com
+user: postgres.txlzlhcrfippujcmnief
+password: rC@UUh9Z%*WQ
+port: 5432
+dbname: postgres
+```
+
+### For Python Code
+
+```python
+import subprocess
+
+def query_supabase(sql):
+    result = subprocess.run(
+        ['/root/supabase_connect.sh', 'query', sql],
+        capture_output=True,
+        text=True
+    )
+    return result.stdout
+```
+
+### For Schema Changes
+
+```bash
+# Create table
+/root/supabase_connect.sh query "CREATE TABLE ..."
+
+# Add column
+/root/supabase_connect.sh query "ALTER TABLE ... ADD COLUMN ..."
+
+# View structure
+/root/supabase_connect.sh schema table_name
+```
+
+### No External Dependencies
+
+- No MCP
+- No CLI tools
+- No Python packages
+- Just psql (comes with PostgreSQL)
+- Simple bash script
+
+Reference: SUPABASE_CONNECTION_GUIDE.md
