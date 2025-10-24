@@ -1,0 +1,19 @@
+name: AutoDoc Ingestion
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**/*.md'
+
+jobs:
+  ingest:
+    uses: baerautotech/.github/.github/workflows/autodoc-ingest-reusable.yml@main
+    with:
+      docs-path: 'docs/**/*.md'
+      source-identifier: 'cerebral-mobile/docs'
+    secrets:
+      AUTODOC_WEBHOOK_URL: ${{ secrets.AUTODOC_WEBHOOK_URL }}
+      AUTODOC_HMAC_SECRET: ${{ secrets.AUTODOC_HMAC_SECRET }}
+      AUTODOC_TENANT_ID: ${{ secrets.AUTODOC_TENANT_ID }}
