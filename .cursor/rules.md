@@ -79,6 +79,41 @@ curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
 - `Dockerfile.ai-base.cpu` - CPU version
 - `requirements-unified.txt` - All ML/AI dependencies
 
+### ⚠️ CRITICAL: Multi-Architecture (Mac → AMD64 Cluster)
+
+**Cluster = AMD64 (x86_64). Mac = ARM64 (Apple Silicon). MUST USE BOTH!**
+
+✅ **Current Status**: Both base images are multi-architecture
+```bash
+cerebral/ai-base:cuda
+  ├─ amd64 (linux/amd64) → Kubernetes cluster ✅
+  └─ arm64 (linux/arm64) → Mac development ✅
+
+cerebral/ai-base:cpu
+  ├─ amd64 (linux/amd64) → Kubernetes cluster ✅
+  └─ arm64 (linux/arm64) → Mac development ✅
+```
+
+**If rebuilding, MUST use multi-platform build:**
+```bash
+# ✅ CORRECT - Both architectures
+docker buildx build --platform linux/amd64,linux/arm64 \
+  -f docker/Dockerfile.ai-base.cuda \
+  -t 10.34.0.202:5000/cerebral/ai-base:cuda --push .
+
+# ❌ WRONG - Mac only (will break cluster)
+docker build -f docker/Dockerfile.ai-base.cuda \
+  -t 10.34.0.202:5000/cerebral/ai-base:cuda .
+```
+
+**Why?** 
+- Mac builds ARM64-only images by default
+- Kubernetes cluster (AMD64) cannot run ARM64 images
+- Kaniko fails: "no matching manifest for linux/amd64"
+- ALL BUILDS BLOCKED 🔴
+
+**See**: `BASE_IMAGES_DOCUMENTATION.md` → "Multi-Platform Architecture Support"
+
 ### How Microservices Use Them
 
 Every microservice Dockerfile starts with a base image:
@@ -104,6 +139,80 @@ Kaniko automatically pulls the base → adds code → builds → done!
 ❌ **DON'T update** for:
 - Single-service dependencies (add to service's `requirements.txt`)
 - Experimental packages
+
+### How to Update (7-Step Process - Multi-Architecture)
+
+**1. Edit shared dependencies:**
+```bash
+vim ~/Development/cerebral/docker/requirements-unified.txt
+```
+
+**2. Test locally:**
+```bash
+cd ~/Development/cerebral
+docker build -f docker/Dockerfile.ai-base.cuda -t test-cuda .
+docker run --rm test-cuda python -c "import torch; print(torch.__version__)"
+```
+
+**3. Update Dockerfile (if build deps needed):**
+```bash
+# Add to RUN apt-get install:
+# gcc, g++, python3-dev (for C extensions)
+vim ~/Development/cerebral/docker/Dockerfile.ai-base.cuda
+vim ~/Development/cerebral/docker/Dockerfile.ai-base.cpu
+```
+
+**4. Build both images (MULTI-ARCHITECTURE - CRITICAL!):**
+```bash
+# Build for BOTH amd64 (cluster) and arm64 (Mac)
+docker buildx build --platform linux/amd64,linux/arm64 \
+  -f docker/Dockerfile.ai-base.cuda \
+  -t 10.34.0.202:5000/cerebral/ai-base:cuda --push .
+
+docker buildx build --platform linux/amd64,linux/arm64 \
+  -f docker/Dockerfile.ai-base.cpu \
+  -t 10.34.0.202:5000/cerebral/ai-base:cpu --push .
+```
+
+**5. Verify both architectures in registry:**
+```bash
+curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cuda \
+  -H "Accept: application/vnd.oci.image.index.v1+json" | \
+  jq '.manifests[] | select(.platform.architecture != "unknown") | .platform.architecture'
+
+# Should output:
+# "amd64"
+# "arm64"
+```
+
+**6. Commit to git:**
+```bash
+git add docker/requirements-unified.txt docker/Dockerfile.ai-base.*
+git commit -m "chore: Update base images - torch 2.5.0, added xyz (multi-arch)"
+git push origin main
+```
+
+**7. Verify builds succeed:**
+```bash
+# Push code and check PipelineRun
+git commit --allow-empty -m "test: trigger build with new base images"
+git push origin main
+
+# Monitor build:
+kubectl get pipelineruns -n tekton-pipelines -w
+```
+
+### Base Image Troubleshooting
+
+| Issue | Cause | Fix |
+|-------|-------|-----|
+| `exec format error` | Wrong architecture | Rebuild with `--platform linux/amd64,linux/arm64` |
+| `no matching manifest for linux/amd64` | ARM64-only image in cluster | Use multi-platform build |
+| Build takes 30+ min | Layer cache miss | Ensure base images exist in registry |
+| `Python.h: No such file` | Missing `python3-dev` | Add to `apt-get install` in Dockerfile |
+| Import errors | Package missing | Add to `requirements-unified.txt` |
+
+---
 
 ### How to Update (7-Step Process)
 

@@ -98,19 +98,142 @@ curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
 # Get image manifest
 curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cuda
 
-# Delete image (admin only)
-curl -X DELETE http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/<digest>
+# Verify multi-architecture support
+curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cuda \
+  -H "Accept: application/vnd.oci.image.index.v1+json" | jq '.manifests[]'
+
+# Should show both amd64 and arm64 entries ✅
 ```
 
-### Pull Images for Testing
+---
+
+## 🏗️ Multi-Platform Architecture Support
+
+### ⚠️ CRITICAL: Building for Multi-Architecture
+
+**The Cerebral Platform runs on AMD64 (x86_64) in Kubernetes, but developers use ARM64 (Apple Silicon) on Mac.**
+
+✅ **The base images MUST support both architectures** or builds will fail.
+
+### Current Multi-Architecture Status
+
+```
+✅ cerebral/ai-base:cuda
+   • amd64 (linux/amd64) - for Kubernetes cluster
+   • arm64 (linux/arm64) - for Mac development
+
+✅ cerebral/ai-base:cpu
+   • amd64 (linux/amd64) - for Kubernetes cluster
+   • arm64 (linux/arm64) - for Mac development
+
+Both images: Single tag with automatic architecture resolution
+```
+
+### How Multi-Architecture Works
+
+When you pull `10.34.0.202:5000/cerebral/ai-base:cuda`:
+
+```
+1. Docker/Kaniko requests the image
+2. Registry responds with manifest index
+3. Client detects its own architecture (amd64 or arm64)
+4. Registry returns matching image automatically
+5. No errors, no conflicts ✅
+
+Result: 
+  • Mac gets ARM64 version
+  • Kubernetes gets AMD64 version
+  • Same tag, zero configuration needed
+```
+
+### ⚠️ Architecture Mismatch Issues (RESOLVED)
+
+**What happened (October 25, 2025):**
+
+1. ❌ Built images locally on Mac → ARM64 only
+2. ❌ Pushed to registry as ARM64
+3. ❌ Kubernetes cluster (AMD64) couldn't use ARM64 image
+4. ❌ Kaniko error: "no matching manifest for linux/amd64"
+5. ❌ All builds blocked
+
+**How we fixed it:**
+
+✅ Used `docker buildx build --platform linux/amd64,linux/arm64`  
+✅ Both architectures built in single command  
+✅ Manifest index pushed to registry  
+✅ Now both Mac and cluster work automatically
+
+### Building Multi-Platform Base Images (Correct Way)
+
+**If you need to rebuild the base images, use this procedure:**
 
 ```bash
-# Inside cluster (Kubernetes pods)
-docker pull 10.34.0.202:5000/cerebral/ai-base:cuda
-docker pull 10.34.0.202:5000/cerebral/ai-base:cpu
+cd ~/Development/cerebral
 
-# Outside cluster (requires external registry URL)
-docker pull registry.dev.cerebral.baerautotech.com/cerebral/ai-base:cuda
+# Option 1: Build for both architectures (RECOMMENDED)
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -f docker/Dockerfile.ai-base.cuda \
+  -t 10.34.0.202:5000/cerebral/ai-base:cuda \
+  --push .
+
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -f docker/Dockerfile.ai-base.cpu \
+  -t 10.34.0.202:5000/cerebral/ai-base:cpu \
+  --push .
+
+# Verify multi-architecture:
+curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cuda \
+  -H "Accept: application/vnd.oci.image.index.v1+json" | \
+  jq '.manifests[] | select(.platform.architecture != "unknown") | .platform.architecture'
+
+# Output should be:
+# "amd64"
+# "arm64"
+```
+
+### Why NOT to do single-architecture builds
+
+❌ **WRONG - Building for Mac only:**
+```bash
+docker build -f docker/Dockerfile.ai-base.cuda -t 10.34.0.202:5000/cerebral/ai-base:cuda .
+# This creates ARM64 image only
+# Kubernetes cannot use it ❌
+```
+
+❌ **WRONG - Separate architecture tags:**
+```bash
+docker buildx build --platform linux/amd64 -t 10.34.0.202:5000/cerebral/ai-base:cuda-amd64 ...
+docker buildx build --platform linux/arm64 -t 10.34.0.202:5000/cerebral/ai-base:cuda-arm64 ...
+# Requires different Dockerfiles for Mac vs cluster ❌
+# Developers have to know which tag to use ❌
+```
+
+✅ **CORRECT - Multi-architecture single tag:**
+```bash
+docker buildx build --platform linux/amd64,linux/arm64 \
+  -t 10.34.0.202:5000/cerebral/ai-base:cuda --push .
+# Single tag works everywhere ✅
+# Automatic resolution by OS ✅
+# Zero configuration needed ✅
+```
+
+### Prerequisites for Multi-Platform Builds
+
+Your Mac must have:
+
+```bash
+# Check if docker buildx is available
+docker buildx ls
+
+# Expected output:
+# NAME/NODE           DRIVER/ENDPOINT     STATUS
+# default             docker              running
+# desktop-linux*      docker              running
+
+# If missing, install Docker Desktop (includes buildx)
+# Or: brew install docker-buildx-bin
 ```
 
 ---
@@ -464,3 +587,4 @@ git push origin main
 **Status**: ✅ Production Ready  
 **Last Verified**: October 25, 2025  
 **Maintenance**: Quarterly dependency audit recommended
+
