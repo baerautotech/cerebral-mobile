@@ -8,3 +8,4 @@ export { AuthService, supabase } from './supabase';
 export default {};
 
 
+
