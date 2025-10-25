@@ -29,7 +29,7 @@ graph TB
     
     C -->|3. Routes to port 3000| D["⚙️ github-webhook-receiver<br/>Rust Service<br/>2 Replicas"]
     
-    D -->|4. Validates signature<br/>Creates PipelineRun| E["🔧 Tekton PipelineRun<br/>cerebral-pipelines ns"]
+    D -->|4. Validates signature<br/>Creates PipelineRun| E["🔧 Tekton PipelineRun<br/>tekton-pipelines ns"]
     
     E --> F["📦 Pipeline Tasks"]
     
@@ -192,17 +192,17 @@ git commit -m "feat: Your feature description"
 git push origin main
 
 # Step 4: Watch it build
-kubectl get pipelineruns -n cerebral-pipelines -w
+kubectl get pipelineruns -n tekton-pipelines -w
 ```
 
 ### Monitor Build
 
 ```bash
 # List all builds
-kubectl get pipelineruns -n cerebral-pipelines
+kubectl get pipelineruns -n tekton-pipelines
 
 # Watch a specific build
-kubectl logs -f -n cerebral-pipelines <pipelinerun-name>
+kubectl logs -f -n tekton-pipelines <pipelinerun-name>
 
 # Check if pods updated
 kubectl get pods -n cerebral-platform
@@ -219,7 +219,7 @@ kubectl get deployment -n cerebral-platform
 kubectl logs -n tekton-pipelines -l app.kubernetes.io/name=github-webhook-receiver -f
 
 # Step 3: Check pipeline logs
-kubectl logs -n cerebral-pipelines <pipelinerun-name> -f
+kubectl logs -n tekton-pipelines <pipelinerun-name> -f
 
 # Step 4: Check if image exists in registry
 curl http://10.34.0.202:5000/v2/_catalog
@@ -315,13 +315,13 @@ kubectl get secret github-webhook-secret -n tekton-pipelines -o yaml | grep secr
 **Solution**:
 ```bash
 # List builds
-kubectl get pipelineruns -n cerebral-pipelines
+kubectl get pipelineruns -n tekton-pipelines
 
 # Check specific build
-kubectl describe pipelinerun <name> -n cerebral-pipelines
+kubectl describe pipelinerun <name> -n tekton-pipelines
 
 # View task logs
-kubectl logs -n cerebral-pipelines <pipelinerun-name> -f
+kubectl logs -n tekton-pipelines <pipelinerun-name> -f
 ```
 
 ### Issue: Image not in registry
@@ -332,7 +332,7 @@ kubectl logs -n cerebral-pipelines <pipelinerun-name> -f
 curl http://10.34.0.202:5000/v2/_catalog
 
 # If image missing, check build logs
-kubectl logs -n cerebral-pipelines <pipelinerun-name> -f
+kubectl logs -n tekton-pipelines <pipelinerun-name> -f
 
 # Look for "kaniko-build-task" logs
 ```
