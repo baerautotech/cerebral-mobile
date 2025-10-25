@@ -114,11 +114,15 @@ Agents have been confused about the CI/CD system. This document ends that confus
 - **Status**: ✅ RUNNING (verified Oct 25, 2025)
 
 ### 3. **Traefik IngressRoute** (github-webhook-traefik)
-- **Hostname**: `webhook.dev.cerebral.baerautotech.com`
-- **EntryPoint**: `websecure` (HTTPS/443)
-- **Backend**: `github-webhook-receiver` service on port 3000
-- **TLS**: dev-wildcard-tls certificate
-- **Status**: ✅ WORKING (verified Oct 25, 2025)
+- **Namespace**: `cerebral-development`
+- **Entry Point**: `websecure` (HTTPS/443)
+- **Host Match**: `webhook.dev.cerebral.baerautotech.com`
+- **Backend**: `github-webhook-receiver` service on port 3000 (in `tekton-pipelines` namespace)
+- **TLS Certificate**: `dev-wildcard-tls` (covers *.dev.cerebral.baerautotech.com)
+- **✅ CRITICAL FIX (Oct 25, 2025)**: Traefik DaemonSet has flag `--providers.kubernetescrd.allowCrossNamespace=true`
+  - This allows IngressRoute in `cerebral-development` to reference services in `tekton-pipelines` namespace
+  - Without this flag: 404 Not Found (Traefik blocks cross-namespace references by default)
+  - With this flag: Webhooks route correctly to webhook receiver pods
 
 ### 4. **Tekton Pipeline**
 - **Name**: `cerebral-microservice-pipeline`
