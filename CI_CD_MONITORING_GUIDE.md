@@ -228,6 +228,139 @@ histogram_quantile(0.95, rate(tekton_taskrun_duration_seconds_bucket{task="kanik
 
 ---
 
+## 🐳 Base Image Troubleshooting
+
+### Symptom: Build fails with "no matching manifest for linux/amd64"
+
+**What's happening**:
+- Kaniko is trying to pull a base image from the registry
+- Registry is returning ARM64-only image (built on Mac with single-arch)
+- AMD64 cluster cannot run ARM64 image
+- Build immediately fails
+
+**Root Cause**:
+- Base image was built with `docker build` instead of `docker buildx --platform`
+
+**Fix**:
+```bash
+# Rebuild base image with multi-architecture support
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -f ~/Development/cerebral/docker/Dockerfile.ai-base.cuda \
+  -t 10.34.0.202:5000/cerebral/ai-base:cuda \
+  --push .
+
+# Verify both architectures in registry
+curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cuda \
+  -H "Accept: application/vnd.oci.image.index.v1+json" | \
+  jq '.manifests[] | .platform.architecture'
+# Should output: "amd64" and "arm64"
+
+# Retry the failed PipelineRun
+kubectl delete pipelinerun <failed-pipelinerun-name> -n tekton-pipelines
+git push origin main  # Trigger new build
+```
+
+**Monitor**:
+```bash
+# Watch the retry build in real-time
+kubectl get pipelineruns -n tekton-pipelines -w
+```
+
+### Symptom: Build is slow (30+ minutes)
+
+**What's happening**:
+- Build is re-downloading and compiling all dependencies
+- Indicates base image might not be used or is incorrect
+
+**Check**:
+```bash
+# Look at the Kaniko build log
+LATEST=$(kubectl get pipelinerun -n tekton-pipelines \
+  --sort-by=.metadata.creationTimestamp -o name | tail -1)
+
+kubectl logs ${LATEST}-pod -n tekton-pipelines -c step-build | grep -i "from\|base\|cache"
+```
+
+**Expected output** (with base image):
+```
+FROM 10.34.0.202:5000/cerebral/ai-base:cuda
+# Should use cached layers, completes in ~3 min
+```
+
+**Without base image** (wrong):
+```
+FROM python:3.11
+# Downloads and installs all packages from scratch
+# Takes 30+ minutes
+```
+
+**Fix**:
+```bash
+# Ensure your Dockerfile uses the base image
+# Should have at line 1-3:
+# ARG BASE=10.34.0.202:5000/cerebral/ai-base:cuda
+# FROM ${BASE}
+
+# If not, update Dockerfile and push
+git push origin main
+```
+
+### Symptom: Services can't pull base image during development
+
+**What's happening**:
+- Running `docker pull 10.34.0.202:5000/cerebral/ai-base:cuda` on your Mac
+- Getting error: "no matching manifest for linux/arm64"
+
+**Root Cause**:
+- Base image only has AMD64 (missing ARM64)
+- Mac cannot use AMD64-only image
+
+**Fix**:
+```bash
+# Rebuild with multi-architecture support
+docker buildx build --platform linux/amd64,linux/arm64 \
+  -f ~/Development/cerebral/docker/Dockerfile.ai-base.cuda \
+  -t 10.34.0.202:5000/cerebral/ai-base:cuda \
+  --push .
+
+# Now try pulling on Mac
+docker pull 10.34.0.202:5000/cerebral/ai-base:cuda
+# Should succeed - registry returns ARM64 version for Mac
+```
+
+### Verify Base Images Are Multi-Architecture
+
+**Quick check**:
+```bash
+# Check CUDA image
+echo "=== CUDA Image ===" && \
+curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cuda \
+  -H "Accept: application/vnd.oci.image.index.v1+json" | \
+  jq '.manifests[] | select(.platform.architecture != "unknown") | .platform.architecture' && \
+\
+# Check CPU image
+echo "=== CPU Image ===" && \
+curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cpu \
+  -H "Accept: application/vnd.oci.image.index.v1+json" | \
+  jq '.manifests[] | select(.platform.architecture != "unknown") | .platform.architecture'
+
+# Expected output:
+# === CUDA Image ===
+# "amd64"
+# "arm64"
+# === CPU Image ===
+# "amd64"
+# "arm64"
+```
+
+**If you only see one architecture**:
+- Base image needs to be rebuilt
+- Use: `docker buildx build --platform linux/amd64,linux/arm64`
+- See: `BASE_IMAGES_DOCUMENTATION.md` for full procedure
+
+---
+
 ## Troubleshooting Checklist
 
 - [ ] Webhook receiver pods running (2/2 replicas)
