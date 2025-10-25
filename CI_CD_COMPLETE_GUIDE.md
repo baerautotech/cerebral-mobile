@@ -282,14 +282,55 @@ vim ~/Development/cerebral/docker/Dockerfile.ai-base.cpu
 ```bash
 cd ~/Development/cerebral
 
-# Build CUDA version
-docker build -f docker/Dockerfile.ai-base.cuda -t cerebral/ai-base:cuda .
+# ✅ CORRECT: Build for BOTH architectures (amd64 for cluster, arm64 for Mac)
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -f docker/Dockerfile.ai-base.cuda \
+  -t cerebral/ai-base:cuda \
+  --push .
 
-# Build CPU version
-docker build -f docker/Dockerfile.ai-base.cpu -t cerebral/ai-base:cpu .
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -f docker/Dockerfile.ai-base.cpu \
+  -t cerebral/ai-base:cpu \
+  --push .
+
+# ❌ WRONG - Single architecture only (will break cluster):
+# docker build -f docker/Dockerfile.ai-base.cuda -t cerebral/ai-base:cuda .
 ```
 
-**Step 5: Push to internal registry**
+**Why multi-platform?**
+- Mac (Apple Silicon) = ARM64 architecture
+- Kubernetes cluster = AMD64 architecture
+- Single-arch builds only work for one OS
+- Multi-platform builds support both automatically
+- Kaniko in cluster gets AMD64, Mac gets ARM64
+
+**Step 5: Verify both architectures in registry**
+```bash
+# Verify CUDA image has both architectures
+curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cuda \
+  -H "Accept: application/vnd.oci.image.index.v1+json" | \
+  jq '.manifests[] | select(.platform.architecture != "unknown") | .platform.architecture'
+
+# Should output:
+# "amd64"
+# "arm64"
+
+# Same for CPU image
+curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cpu \
+  -H "Accept: application/vnd.oci.image.index.v1+json" | \
+  jq '.manifests[] | select(.platform.architecture != "unknown") | .platform.architecture'
+```
+
+**Step 6: Tag and push to internal registry**
+
+✅ **If using docker buildx with --push** (recommended above):
+- Images automatically pushed during build
+- Skip this step - already done!
+- Verify with curl commands above
+
+⚠️ **If building locally without --push:**
 ```bash
 # Tag both images
 docker tag cerebral/ai-base:cuda 10.34.0.202:5000/cerebral/ai-base:cuda
@@ -298,25 +339,23 @@ docker tag cerebral/ai-base:cpu 10.34.0.202:5000/cerebral/ai-base:cpu
 # Push both
 docker push 10.34.0.202:5000/cerebral/ai-base:cuda
 docker push 10.34.0.202:5000/cerebral/ai-base:cpu
-
-# Verify in registry
-curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
 ```
 
-**Step 6: Commit changes to git**
+**Step 7: Commit changes to git**
 ```bash
 cd ~/Development/cerebral
 git add docker/requirements-unified.txt docker/Dockerfile.ai-base.*
-git commit -m "chore: Update base images
+git commit -m "chore: Update base images (multi-architecture)
 
 Changes:
 - Updated torch to v2.5.0
 - Added new dependency: spacy-transformers
-- Added build-essential, gcc, g++, python3-dev"
+- Added build-essential, gcc, g++, python3-dev
+- Built for both amd64 (cluster) and arm64 (Mac)"
 git push origin main
 ```
 
-**Step 7: Trigger microservice rebuilds**
+**Step 8: Trigger microservice rebuilds**
 ```bash
 # All services using base images will rebuild on next push
 git commit --allow-empty -m "rebuild: microservices with updated base images"
