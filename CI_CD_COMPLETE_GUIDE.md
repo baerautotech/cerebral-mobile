@@ -136,6 +136,230 @@ spec:
 
 ---
 
+## 🐳 Base Images - Fast Build Foundation
+
+### What Are Base Images?
+
+Base images are pre-built Docker images with all common ML/AI dependencies pre-installed. When your microservice builds, instead of installing 200+ packages, it just uses the pre-built base and adds service-specific code.
+
+**Impact**: Build time reduces from 30+ minutes to 2-3 minutes!
+
+### Available Base Images
+
+| Image | Purpose | Size | Registry Location |
+|---|---|---|---|
+| **ai-base:cuda** | GPU-accelerated services | ~7.5GB | `10.34.0.202:5000/cerebral/ai-base:cuda` |
+| **ai-base:cpu** | CPU-only services | ~2.8GB | `10.34.0.202:5000/cerebral/ai-base:cpu` |
+
+### Using Base Images in Dockerfiles
+
+When building a microservice, use this pattern:
+
+```dockerfile
+# Build argument for base image selection
+ARG REGISTRY=10.34.0.202:5000
+ARG BASE_TAG=cuda  # or 'cpu' for CPU-only
+
+FROM ${REGISTRY}/cerebral/ai-base:${BASE_TAG}
+
+# Add service-specific code
+WORKDIR /app
+COPY . /app
+
+# Add service-specific dependencies (if needed)
+RUN pip install -r requirements.txt
+
+# Start service
+CMD ["python", "-m", "uvicorn", "main:app"]
+```
+
+**Example: ai-services Dockerfile**
+```dockerfile
+ARG BASE=internal-registry.registry.svc.cluster.local:5000/cerebral/ai-base:cuda
+FROM ${BASE}
+
+WORKDIR /app
+COPY . /app
+RUN pip install -r requirements.txt
+CMD ["python", "main.py"]
+```
+
+### Inside Kaniko Pipeline
+
+When Kaniko builds in the pipeline, it automatically:
+1. Pulls the base image from `10.34.0.202:5000`
+2. Adds your code on top
+3. Pushes the result to the registry
+
+```yaml
+# In your PipelineRun
+- name: kaniko-build-task
+  params:
+  - name: image-name
+    value: cerebral/ai-services
+  - name: dockerfile
+    value: microservices/ai-services/Dockerfile
+```
+
+The Dockerfile references the base image → Kaniko pulls it → Build completes in minutes!
+
+### Services Using Base Images
+
+**All AI/ML services use one of the base images:**
+- `ai-services` → CUDA version
+- `bmad-services` → CUDA version
+- `data-services` → CUDA version
+- `knowledge-services` → CUDA version
+- `integration-services` → CUDA or CPU
+- `monitoring-services` → CUDA version
+- All 12+ other microservices
+
+### Registry Access
+
+**Inside Kubernetes (Kaniko builds):**
+```
+Internal URL: http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
+```
+
+**From your local machine:**
+```bash
+# Check available base images
+curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
+
+# Expected response:
+{"name":"cerebral/ai-base","tags":["cuda","cpu"]}
+```
+
+---
+
+## 🔄 Maintaining & Updating Base Images
+
+### When to Update Base Images
+
+Update when:
+- ✅ Adding shared dependencies needed by multiple services
+- ✅ Security patches (PyTorch, transformers, etc.)
+- ✅ Python version upgrade
+- ✅ CUDA version change
+- ✅ OS base image update
+
+Do NOT update for single-service dependencies - add those in the service's `requirements.txt`.
+
+### Complete Update Procedure
+
+**Step 1: Update shared dependencies**
+```bash
+vim ~/Development/cerebral/docker/requirements-unified.txt
+# Add/update packages needed by multiple services
+```
+
+**Step 2: Test both images locally**
+```bash
+cd ~/Development/cerebral
+
+# Test CUDA version
+docker build -f docker/Dockerfile.ai-base.cuda -t test-cuda .
+docker run --rm test-cuda python -c "import torch; print(torch.__version__)"
+
+# Test CPU version
+docker build -f docker/Dockerfile.ai-base.cpu -t test-cpu .
+docker run --rm test-cpu python -c "import torch; print(torch.__version__)"
+```
+
+**Step 3: If Dockerfile changes needed**
+```bash
+# Edit Dockerfile if build dependencies changed
+vim ~/Development/cerebral/docker/Dockerfile.ai-base.cuda
+vim ~/Development/cerebral/docker/Dockerfile.ai-base.cpu
+```
+
+**Common Dockerfile changes:**
+- Add build dependencies: `gcc`, `g++`, `python3-dev`
+- Update base image: `python:3.11-slim` → `python:3.12-slim`
+- Update CUDA: `nvidia/cuda:12.4.1` → `nvidia/cuda:13.0`
+
+**Step 4: Build both images for real**
+```bash
+cd ~/Development/cerebral
+
+# Build CUDA version
+docker build -f docker/Dockerfile.ai-base.cuda -t cerebral/ai-base:cuda .
+
+# Build CPU version
+docker build -f docker/Dockerfile.ai-base.cpu -t cerebral/ai-base:cpu .
+```
+
+**Step 5: Push to internal registry**
+```bash
+# Tag both images
+docker tag cerebral/ai-base:cuda 10.34.0.202:5000/cerebral/ai-base:cuda
+docker tag cerebral/ai-base:cpu 10.34.0.202:5000/cerebral/ai-base:cpu
+
+# Push both
+docker push 10.34.0.202:5000/cerebral/ai-base:cuda
+docker push 10.34.0.202:5000/cerebral/ai-base:cpu
+
+# Verify in registry
+curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
+```
+
+**Step 6: Commit changes to git**
+```bash
+cd ~/Development/cerebral
+git add docker/requirements-unified.txt docker/Dockerfile.ai-base.*
+git commit -m "chore: Update base images
+
+Changes:
+- Updated torch to v2.5.0
+- Added new dependency: spacy-transformers
+- Added build-essential, gcc, g++, python3-dev"
+git push origin main
+```
+
+**Step 7: Trigger microservice rebuilds**
+```bash
+# All services using base images will rebuild on next push
+git commit --allow-empty -m "rebuild: microservices with updated base images"
+git push origin main
+
+# Or manually
+kubectl delete pods -n cerebral-platform -l app=ai-services
+```
+
+### Dockerfile Changes Reference
+
+**Why add build dependencies?**
+
+When you `pip install` packages like `psutil`, `cryptography`, `numpy`, they need to compile C extensions. Without build tools, the install fails.
+
+```dockerfile
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \           # Meta-package: gcc, g++, make
+    gcc g++ \                   # C/C++ compilers
+    python3-dev \               # Python.h headers (for extensions)
+    git curl ca-certificates \  # Other tools
+  && rm -rf /var/lib/apt/lists/
+```
+
+### What's Included in Base Images
+
+**ML/AI Stack:**
+- torch, transformers, pandas, numpy, scikit-learn, scipy
+- sentence-transformers, spacy, nltk, chromadb, onnxruntime
+
+**Data & API:**
+- FastAPI, uvicorn, Pydantic, SQLAlchemy, Redis, Supabase
+
+**Observability:**
+- Prometheus, OpenTelemetry, structlog
+
+**See Full List:**
+```bash
+cat ~/Development/cerebral/docker/requirements-unified.txt
+```
+
+---
+
 ## 📁 Critical Files (Source of Truth)
 
 ### 1. Ingress Configuration
