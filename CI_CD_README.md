@@ -81,6 +81,99 @@ kubectl get pipelineruns -n tekton-pipelines -w
 
 ---
 
+## 🐳 Base Images & Multi-Architecture Builds
+
+### Why This Matters
+
+Kaniko builds your services ON TOP of pre-built base images. These base images contain all common ML/AI dependencies (torch, transformers, pandas, etc.), reducing build time from 30+ minutes to 2-3 minutes.
+
+**⚠️ CRITICAL**: Base images must support BOTH architectures:
+- **AMD64** (x86_64) - for Kubernetes cluster (Linux servers)
+- **ARM64** (Apple Silicon) - for Mac development
+
+### Current Base Images
+
+```
+✅ cerebral/ai-base:cuda - Multi-architecture (amd64 + arm64)
+✅ cerebral/ai-base:cpu - Multi-architecture (amd64 + arm64)
+📍 Location: 10.34.0.202:5000 (internal registry)
+```
+
+### Automatic Resolution
+
+```
+When Kaniko pulls an image:
+  docker pull 10.34.0.202:5000/cerebral/ai-base:cuda
+  
+Registry detects Kubernetes cluster architecture (AMD64)
+  → Returns AMD64 version
+  ✅ Build succeeds
+
+When you pull on Mac:
+  docker pull 10.34.0.202:5000/cerebral/ai-base:cuda
+  
+Registry detects Mac architecture (ARM64)
+  → Returns ARM64 version
+  ✅ Development works
+```
+
+### How Your Service Builds Use Them
+
+```dockerfile
+# Your microservice Dockerfile
+ARG BASE=10.34.0.202:5000/cerebral/ai-base:cuda
+FROM ${BASE}  ← Kaniko pulls correct architecture automatically
+
+COPY . /app
+RUN pip install -r requirements.txt
+CMD ["python", "main.py"]
+```
+
+Result: Build completes in ~3 minutes instead of 30+ ✅
+
+### Updating Base Images (Using Multi-Platform Builds)
+
+**When you need to update base images:**
+
+```bash
+cd ~/Development/cerebral
+
+# ✅ CORRECT: Build for BOTH architectures
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -f docker/Dockerfile.ai-base.cuda \
+  -t 10.34.0.202:5000/cerebral/ai-base:cuda \
+  --push .
+
+# Verify both architectures deployed:
+curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cuda \
+  -H "Accept: application/vnd.oci.image.index.v1+json" | \
+  jq '.manifests[] | .platform.architecture'
+# Output: "amd64" and "arm64"
+```
+
+**For detailed base image update procedures, see**: `BASE_IMAGES_DOCUMENTATION.md`
+
+### Common Mistakes to AVOID
+
+❌ **WRONG** - Using `docker build` (single-architecture):
+```bash
+docker build -f docker/Dockerfile.ai-base.cuda -t ... .
+# Creates ARM64-only image on Mac
+# Cluster builds FAIL with: "no matching manifest for linux/amd64"
+```
+
+✅ **CORRECT** - Using `docker buildx --platform` (multi-architecture):
+```bash
+docker buildx build --platform linux/amd64,linux/arm64 \
+  -f docker/Dockerfile.ai-base.cuda \
+  -t 10.34.0.202:5000/cerebral/ai-base:cuda \
+  --push .
+# Both Mac and cluster work automatically
+```
+
+---
+
 ## 🎯 For Different Roles
 
 ### 👤 Developer
