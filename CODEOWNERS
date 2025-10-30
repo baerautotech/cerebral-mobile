@@ -1,0 +1,9 @@
+# Default reviewers for code changes
+* @development-team
+
+# Infrastructure changes need special attention
+/.github/ @infrastructure-team
+/k8s/ @infrastructure-team
+CI_CD_FOR_AGENTS.md @infrastructure-team
+.git-hooks/ @infrastructure-team
+scripts/setup-git-hooks.sh @infrastructure-team
