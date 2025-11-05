@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.cerebralplatform.app">
+
+    <!-- Camera and Media Permissions -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
+    <!-- Audio Recording -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <!-- Network and Internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+
+    <!-- Location Services -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!-- Push Notifications -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <!-- Background Processing -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.BACKGROUND_ACTIVITY_START" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <!-- File System Access -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
+
+    <!-- Device Features -->
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- Biometric Authentication -->
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+
+    <!-- Calendar and Contacts (for productivity features) -->
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <!-- NFC for device pairing -->
+    <uses-permission android:name="android.permission.NFC" />
+
+    <!-- Bluetooth for wearable connectivity -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+
+    <!-- Hardware Features -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <uses-feature android:name="android.hardware.location" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+    <uses-feature android:name="android.hardware.wifi" android:required="false" />
+    <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
+    <uses-feature android:name="android.hardware.nfc" android:required="false" />
+    <uses-feature android:name="android.hardware.fingerprint" android:required="false" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true"
+        android:preserveLegacyExternalStorage="true"
+        android:hardwareAccelerated="true"
+        android:largeHeap="true"
+        android:exported="true">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBarLaunch"
+            android:screenOrientation="unspecified"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
+            android:windowSoftInputMode="adjustResize">
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Deep Links -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="cerebral" />
+            </intent-filter>
+
+            <!-- Universal Links -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                      android:host="cerebralplatform.com" />
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                      android:host="app.cerebralplatform.com" />
+            </intent-filter>
+        </activity>
+
+        <!-- Push Notification Service -->
+        <service android:name="com.capacitorjs.plugins.pushnotifications.MessagingService"
+                 android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- Background Sync Service -->
+        <service android:name=".BackgroundSyncService"
+                 android:enabled="true"
+                 android:exported="false"
+                 android:foregroundServiceType="dataSync" />
+
+        <!-- File Provider for secure file sharing -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Document Provider for file access -->
+        <provider
+            android:name="androidx.documentfile.provider.DocumentsContractApi19"
+            android:authorities="${applicationId}.documents"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+            </intent-filter>
+        </provider>
+
+        <!-- Accessibility Service -->
+        <service android:name=".AccessibilityService"
+                 android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+                 android:exported="false">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data android:name="android.accessibilityservice"
+                       android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <!-- FCM Messaging -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="cerebral_notifications" />
+
+        <!-- Android Backup -->
+        <meta-data
+            android:name="com.google.android.backup.api_key"
+            android:value="AIzaSyBw-replace-with-your-backup-key" />
+
+        <!-- Auto-backup for user data -->
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc"/>
+
+        <!-- Wear OS Support -->
+        <meta-data android:name="com.google.android.wearable.standalone" android:value="false" />
+
+        <!-- Enterprise Device Management -->
+        <meta-data
+            android:name="android.app.device_admin"
+            android:resource="@xml/device_admin" />
+
+    </application>
+
+    <!-- Queries for package visibility (Android 11+) -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="*/*" />
+        </intent>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.GET_CONTENT" />
+            <data android:mimeType="*/*" />
+        </intent>
+    </queries>
+
+</manifest>

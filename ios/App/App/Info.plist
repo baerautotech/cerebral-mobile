@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>Cerebral Platform</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+
+	<!-- Camera and Photo Library Permissions -->
+	<key>NSCameraUsageDescription</key>
+	<string>Cerebral Platform needs camera access to capture and share documents, images, and educational content.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Cerebral Platform needs photo library access to upload and manage images and documents.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Cerebral Platform needs permission to save captured images and documents to your photo library.</string>
+
+	<!-- Microphone for Voice Notes and Audio -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Cerebral Platform uses the microphone to record voice notes and audio content for knowledge management.</string>
+
+	<!-- Location Services for Context-Aware Features -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Cerebral Platform may use location to provide context-aware features and location-based reminders.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Cerebral Platform may use location to provide context-aware features and location-based reminders.</string>
+
+	<!-- File System Access -->
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+
+	<!-- Background Processing -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>background-processing</string>
+		<string>background-fetch</string>
+		<string>remote-notification</string>
+	</array>
+
+	<!-- Notifications -->
+	<key>UIUserNotificationSettings</key>
+	<dict>
+		<key>UIUserNotificationTypesAllowed</key>
+		<array>
+			<string>UIUserNotificationTypeAlert</string>
+			<string>UIUserNotificationTypeBadge</string>
+			<string>UIUserNotificationTypeSound</string>
+		</array>
+	</dict>
+
+	<!-- Network and Security -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSExceptionMinimumTLSVersion</key>
+				<string>TLSv1.0</string>
+				<key>NSExceptionRequiresForwardSecrecy</key>
+				<false/>
+			</dict>
+		</dict>
+	</dict>
+
+	<!-- Accessibility Support -->
+	<key>UIAccessibilityTraits</key>
+	<string>UIAccessibilityTraitNotification</string>
+
+	<!-- Supported URL Schemes -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.cerebralplatform.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>cerebral</string>
+				<string>https</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- Universal Links -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:cerebralplatform.com</string>
+		<string>applinks:app.cerebralplatform.com</string>
+	</array>
+
+	<!-- Enterprise Features -->
+	<key>UIRequiresPersistentWiFi</key>
+	<false/>
+	<key>UIPrerenderedIcon</key>
+	<false/>
+
+	<!-- Keyboard Extensions -->
+	<key>UIKeyboardInputMode</key>
+	<string>en-US</string>
+
+	<!-- Watch Connectivity -->
+	<key>WKWatchConnectivityEnabled</key>
+	<true/>
+</dict>
+</plist>
