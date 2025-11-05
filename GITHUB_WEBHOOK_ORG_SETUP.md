@@ -357,3 +357,4 @@ kubectl get secret github-webhook-secret -n tekton-pipelines -o jsonpath='{.data
 
 **This is the DEFINITIVE guide for GitHub organization webhook configuration.**  
 **No other method will work for Cerebral Platform CI/CD.**
+

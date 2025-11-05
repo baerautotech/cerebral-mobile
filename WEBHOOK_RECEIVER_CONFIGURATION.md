@@ -132,3 +132,5 @@ The permanent solution to prevent reversion:
 - Ingress definition: `k8s/ci-cd/webhook-receiver-ingress.yaml`
 - Secret: `github-webhook-secret` (tekton-pipelines namespace)
 - Tekton pipeline: `cerebral-microservice-pipeline` (tekton-pipelines namespace)
+
+
