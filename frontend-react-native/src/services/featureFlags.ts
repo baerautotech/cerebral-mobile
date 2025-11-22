@@ -5,6 +5,7 @@
  */
 
 import { FeatureFlags } from '../types/featureFlags';
+import { backendClient } from '@cerebral/core';
 
 /**
  * Fetch feature flags from the backend
@@ -20,21 +21,12 @@ import { FeatureFlags } from '../types/featureFlags';
  */
 export async function fetchFeatureFlags(): Promise<FeatureFlags> {
   try {
-    const response = await fetch('/api/flags', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    // Use backendClient from core
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const flags = await (backendClient as any).request('GET', '/api/flags');
 
-    if (!response.ok) {
-      console.warn(`Failed to fetch feature flags: ${response.status} ${response.statusText}`);
-      return {};
-    }
-
-    const flags: FeatureFlags = await response.json();
     console.log('Feature flags loaded from backend:', flags);
-    return flags;
+    return flags as FeatureFlags;
   } catch (error) {
     console.error('Error fetching feature flags:', error);
     // Return empty object to allow offline fallback

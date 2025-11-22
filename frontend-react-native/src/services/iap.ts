@@ -6,6 +6,7 @@
  */
 
 import { CustomerInfo, Purchase, PurchaseResult } from '../types/iap';
+import { backendClient } from '@cerebral/core';
 
 /**
  * Initialize RevenueCat SDK
@@ -168,24 +169,14 @@ export async function verifyReceiptWithBackend(
   platform: 'ios' | 'android'
 ): Promise<{ valid: boolean; tier?: string }> {
   try {
-    const response = await fetch('/api/iap/verify-receipt', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        receipt,
-        sku,
-        platform,
-      }),
+    // Use backendClient from core
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result: any = await (backendClient as any).request('POST', '/api/iap/verify-receipt', {
+      receipt,
+      sku,
+      platform,
     });
 
-    if (!response.ok) {
-      console.warn(`IAP verification failed: ${response.status}`);
-      return { valid: false };
-    }
-
-    const result = await response.json();
     return result;
   } catch (error) {
     console.error('Error verifying receipt:', error);

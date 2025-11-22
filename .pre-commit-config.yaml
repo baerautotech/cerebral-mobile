@@ -90,8 +90,7 @@ repos:
       - id: forbid-direct-fetch
         name: Forbid Direct Fetch/Axios
         # Fail if grep finds matches in apps/native or frontend-react-native
-        # Excluding known legacy files to be refactored
-        entry: bash -c 'if grep -rE "fetch\(|axios\." apps/native frontend-react-native | grep -v "BackendClient.ts" | grep -v "frontend-react-native/src/services/featureFlags.ts" | grep -v "frontend-react-native/src/services/api.ts" | grep -v "frontend-react-native/src/services/api.enhanced.ts" | grep -v "frontend-react-native/src/services/iap.ts"; then echo "❌ Found forbidden direct fetch/axios calls. Use @cerebral/core BackendClient."; exit 1; fi'
+        entry: bash -c 'if grep -rE "fetch\(|axios\." apps/native frontend-react-native | grep -v "BackendClient.ts"; then echo "❌ Found forbidden direct fetch/axios calls. Use @cerebral/core BackendClient."; exit 1; fi'
         language: system
         types: [text]
         pass_filenames: false
