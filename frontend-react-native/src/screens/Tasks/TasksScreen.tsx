@@ -4,13 +4,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  FlatList,
-} from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList } from 'react-native';
 
 import { FilterBar } from './components/FilterBar';
 import { TaskCard } from './components/TaskCard';
@@ -76,18 +70,25 @@ export const TasksScreen: React.FC = () => {
 
   const getStatusColor = (status: Task['status']): string => {
     switch (status) {
-      case 'completed': return '#4CD964';
-      case 'in_progress': return '#007AFF';
-      case 'blocked': return '#FF3B30';
-      default: return '#FF9500';
+      case 'completed':
+        return '#4CD964';
+      case 'in_progress':
+        return '#007AFF';
+      case 'blocked':
+        return '#FF3B30';
+      default:
+        return '#FF9500';
     }
   };
 
   const getPriorityColor = (priority: Task['priority']): string => {
     switch (priority) {
-      case 'high': return '#FF3B30';
-      case 'medium': return '#FF9500';
-      default: return '#999';
+      case 'high':
+        return '#FF3B30';
+      case 'medium':
+        return '#FF9500';
+      default:
+        return '#999';
     }
   };
 
@@ -115,14 +116,18 @@ export const TasksScreen: React.FC = () => {
         {/* Beta: Advanced Filtering */}
         <FeatureFlagGuard flag="advanced_filtering">
           <View style={{ padding: 8, backgroundColor: '#1f5f3f', borderRadius: 4, marginTop: 8 }}>
-            <Text style={{ color: '#fff', fontSize: 12, fontWeight: '600' }}>✨ Advanced Filters Available</Text>
+            <Text style={{ color: '#fff', fontSize: 12, fontWeight: '600' }}>
+              ✨ Advanced Filters Available
+            </Text>
           </View>
         </FeatureFlagGuard>
 
         {/* Beta: Bulk Actions */}
         <FeatureFlagGuard flag="advanced_actions">
           <View style={{ padding: 8, backgroundColor: '#3f5f1f', borderRadius: 4, marginTop: 8 }}>
-            <Text style={{ color: '#fff', fontSize: 12, fontWeight: '600' }}>⚡ Bulk Actions Enabled</Text>
+            <Text style={{ color: '#fff', fontSize: 12, fontWeight: '600' }}>
+              ⚡ Bulk Actions Enabled
+            </Text>
           </View>
         </FeatureFlagGuard>
       </View>
@@ -147,9 +152,22 @@ export const TasksScreen: React.FC = () => {
         ListFooterComponent={
           <FeatureFlagGuard flag="ai_suggestions">
             <TierGuard tier="enterprise">
-              <View style={{ padding: 16, backgroundColor: '#2a1a3a', borderRadius: 8, marginTop: 16, marginHorizontal: 16, marginBottom: 16 }}>
-                <Text style={{ color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 8 }}>🤖 AI Task Suggestions</Text>
-                <Text style={{ color: '#ccc', fontSize: 12 }}>Get AI-powered suggestions to optimize your task workflow</Text>
+              <View
+                style={{
+                  padding: 16,
+                  backgroundColor: '#2a1a3a',
+                  borderRadius: 8,
+                  marginTop: 16,
+                  marginHorizontal: 16,
+                  marginBottom: 16,
+                }}
+              >
+                <Text style={{ color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 8 }}>
+                  🤖 AI Task Suggestions
+                </Text>
+                <Text style={{ color: '#ccc', fontSize: 12 }}>
+                  Get AI-powered suggestions to optimize your task workflow
+                </Text>
               </View>
             </TierGuard>
           </FeatureFlagGuard>

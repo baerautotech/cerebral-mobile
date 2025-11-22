@@ -8,11 +8,13 @@
 ## Quick Start
 
 ### Start Monitoring Dashboard
+
 ```bash
 ./scripts/monitor-ci-cd.sh
 ```
 
 This shows real-time status of:
+
 - ✅ PipelineRuns (webhook-triggered builds)
 - ✅ TaskRuns (individual task execution)
 - ✅ Webhook receiver pods
@@ -25,12 +27,14 @@ This shows real-time status of:
 ### ✅ Success Indicators
 
 **PipelineRun Status**:
+
 ```
 NAME                    SUCCEEDED   REASON       STARTTIME      COMPLETIONTIME
 webhook-backend-...     True        Completed    5m ago         2m ago
 ```
 
 **Expected Timeline**:
+
 1. `git-clone` (30s-2m) → Clone repository ✅ NOW WORKING
 2. `prepare-namespaces` (10-30s) → Create K8s namespaces
 3. `build-image` (3-5m) → Kaniko builds Docker image
@@ -42,18 +46,19 @@ webhook-backend-...     True        Completed    5m ago         2m ago
 
 **Common Failures**:
 
-| Error | Cause | Fix |
-|-------|-------|-----|
-| `git clone failed` | Auth error | Check github-credentials secret |
-| `Dockerfile not found` | Wrong path | Check dockerfile parameter |
-| `Image push failed` | Registry auth | Check internal-registry-secret |
-| `Deploy failed` | RBAC issue | Check service account permissions |
+| Error                  | Cause         | Fix                               |
+| ---------------------- | ------------- | --------------------------------- |
+| `git clone failed`     | Auth error    | Check github-credentials secret   |
+| `Dockerfile not found` | Wrong path    | Check dockerfile parameter        |
+| `Image push failed`    | Registry auth | Check internal-registry-secret    |
+| `Deploy failed`        | RBAC issue    | Check service account permissions |
 
 ---
 
 ## Monitoring Commands
 
 ### Watch PipelineRuns in Real-Time
+
 ```bash
 kubectl get pipelineruns -n tekton-pipelines \
   --sort-by=.metadata.creationTimestamp \
@@ -62,6 +67,7 @@ kubectl get pipelineruns -n tekton-pipelines \
 ```
 
 ### Get Latest PipelineRun Logs
+
 ```bash
 LATEST=$(kubectl get pipelinerun -n tekton-pipelines \
   --sort-by=.metadata.creationTimestamp -o name | tail -1)
@@ -70,6 +76,7 @@ kubectl logs $LATEST -n tekton-pipelines -f
 ```
 
 ### Monitor TaskRuns
+
 ```bash
 kubectl get taskruns -n tekton-pipelines \
   --sort-by=.metadata.creationTimestamp \
@@ -77,6 +84,7 @@ kubectl get taskruns -n tekton-pipelines \
 ```
 
 ### Check Webhook Receiver Logs
+
 ```bash
 kubectl logs -n tekton-pipelines \
   -l app.kubernetes.io/name=github-webhook-receiver \
@@ -85,12 +93,14 @@ kubectl logs -n tekton-pipelines \
 ```
 
 ### See All Events
+
 ```bash
 kubectl get events -n tekton-pipelines \
   --sort-by='.lastTimestamp'
 ```
 
 ### Describe Latest PipelineRun
+
 ```bash
 LATEST=$(kubectl get pipelinerun -n tekton-pipelines \
   --sort-by=.metadata.creationTimestamp -o name | tail -1)
@@ -99,6 +109,7 @@ kubectl describe $LATEST -n tekton-pipelines
 ```
 
 ### Check Specific TaskRun Logs
+
 ```bash
 # List taskruns
 kubectl get taskruns -n tekton-pipelines
@@ -112,12 +123,14 @@ kubectl logs <taskrun-name>-pod -n tekton-pipelines -c step-<step-name>
 ## Phase Breakdown
 
 ### Phase 1: Webhook Reception
+
 ```
 GitHub Push → webhook.dev.cerebral.baerautotech.com →
 Custom Rust Receiver → HMAC validation → PipelineRun creation
 ```
 
 **Check**:
+
 ```bash
 kubectl logs -n tekton-pipelines \
   -l app.kubernetes.io/name=github-webhook-receiver \
@@ -127,11 +140,13 @@ kubectl logs -n tekton-pipelines \
 **Expected**: HTTP 202 response, event_id logged
 
 ### Phase 2: Git Clone
+
 ```
 PipelineRun starts → git-clone-task → Fetch GitHub repo with PAT
 ```
 
 **Check**:
+
 ```bash
 LATEST=$(kubectl get taskrun -n tekton-pipelines \
   -l tekton.dev/taskRunTemplate='' \
@@ -143,12 +158,14 @@ kubectl logs ${LATEST}-pod -n tekton-pipelines -c step-clone
 **Expected**: ✅ Now shows "Clone successful" with file count
 
 ### Phase 3: Build Image
+
 ```
 Git workspace → Kaniko build → Docker image created →
 Push to registry
 ```
 
 **Check**:
+
 ```bash
 LATEST=$(kubectl get taskrun -n tekton-pipelines \
   -l tekton.dev/taskName=kaniko-build-task \
@@ -160,11 +177,13 @@ kubectl logs ${LATEST}-pod -n tekton-pipelines -c step-build
 **Expected**: Build output showing layers being created
 
 ### Phase 4: Deploy
+
 ```
 Image digest → Update deployment → Patch K8s service
 ```
 
 **Check**:
+
 ```bash
 kubectl get deployment <service-name> -n cerebral-platform -o wide
 kubectl get pods -n cerebral-platform -l app=<service-name>
@@ -217,14 +236,14 @@ histogram_quantile(0.95, rate(tekton_taskrun_duration_seconds_bucket{task="kanik
 
 ## Performance Baselines
 
-| Metric | Target | Alert Threshold |
-|--------|--------|-----------------|
-| Webhook → PipelineRun | < 1s | > 5s |
-| Git clone | < 2m | > 5m |
-| Build image | 3-5m | > 10m |
-| Deploy | 30-60s | > 2m |
-| Total time | 5-10m | > 15m |
-| Success rate | > 95% | < 90% |
+| Metric                | Target | Alert Threshold |
+| --------------------- | ------ | --------------- |
+| Webhook → PipelineRun | < 1s   | > 5s            |
+| Git clone             | < 2m   | > 5m            |
+| Build image           | 3-5m   | > 10m           |
+| Deploy                | 30-60s | > 2m            |
+| Total time            | 5-10m  | > 15m           |
+| Success rate          | > 95%  | < 90%           |
 
 ---
 
@@ -233,15 +252,18 @@ histogram_quantile(0.95, rate(tekton_taskrun_duration_seconds_bucket{task="kanik
 ### Symptom: Build fails with "no matching manifest for linux/amd64"
 
 **What's happening**:
+
 - Kaniko is trying to pull a base image from the registry
 - Registry is returning ARM64-only image (built on Mac with single-arch)
 - AMD64 cluster cannot run ARM64 image
 - Build immediately fails
 
 **Root Cause**:
+
 - Base image was built with `docker build` instead of `docker buildx --platform`
 
 **Fix**:
+
 ```bash
 # Rebuild base image with multi-architecture support
 docker buildx build \
@@ -262,6 +284,7 @@ git push origin main  # Trigger new build
 ```
 
 **Monitor**:
+
 ```bash
 # Watch the retry build in real-time
 kubectl get pipelineruns -n tekton-pipelines -w
@@ -270,10 +293,12 @@ kubectl get pipelineruns -n tekton-pipelines -w
 ### Symptom: Build is slow (30+ minutes)
 
 **What's happening**:
+
 - Build is re-downloading and compiling all dependencies
 - Indicates base image might not be used or is incorrect
 
 **Check**:
+
 ```bash
 # Look at the Kaniko build log
 LATEST=$(kubectl get pipelinerun -n tekton-pipelines \
@@ -283,12 +308,14 @@ kubectl logs ${LATEST}-pod -n tekton-pipelines -c step-build | grep -i "from\|ba
 ```
 
 **Expected output** (with base image):
+
 ```
 FROM 10.34.0.202:5000/cerebral/ai-base:cuda
 # Should use cached layers, completes in ~3 min
 ```
 
 **Without base image** (wrong):
+
 ```
 FROM python:3.11
 # Downloads and installs all packages from scratch
@@ -296,6 +323,7 @@ FROM python:3.11
 ```
 
 **Fix**:
+
 ```bash
 # Ensure your Dockerfile uses the base image
 # Should have at line 1-3:
@@ -309,14 +337,17 @@ git push origin main
 ### Symptom: Services can't pull base image during development
 
 **What's happening**:
+
 - Running `docker pull 10.34.0.202:5000/cerebral/ai-base:cuda` on your Mac
 - Getting error: "no matching manifest for linux/arm64"
 
 **Root Cause**:
+
 - Base image only has AMD64 (missing ARM64)
 - Mac cannot use AMD64-only image
 
 **Fix**:
+
 ```bash
 # Rebuild with multi-architecture support
 docker buildx build --platform linux/amd64,linux/arm64 \
@@ -332,6 +363,7 @@ docker pull 10.34.0.202:5000/cerebral/ai-base:cuda
 ### Verify Base Images Are Multi-Architecture
 
 **Quick check**:
+
 ```bash
 # Check CUDA image
 echo "=== CUDA Image ===" && \
@@ -355,6 +387,7 @@ curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cpu \
 ```
 
 **If you only see one architecture**:
+
 - Base image needs to be rebuilt
 - Use: `docker buildx build --platform linux/amd64,linux/arm64`
 - See: `BASE_IMAGES_DOCUMENTATION.md` for full procedure
@@ -384,13 +417,13 @@ curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cpu \
 
 ## Key Logs to Check
 
-| Component | Log Location | Command |
-|-----------|--------------|---------|
-| Webhook Receiver | Pod logs | `kubectl logs -l app.kubernetes.io/name=github-webhook-receiver -f` |
-| Git Clone | TaskRun pod | `kubectl logs <pr>-fetch-repository-pod -c step-clone` |
-| Build | TaskRun pod | `kubectl logs <pr>-build-image-pod -c step-build` |
-| Deploy | TaskRun pod | `kubectl logs <pr>-deploy-pod -c step-deploy` |
-| Traefik Ingress | Pod logs | `kubectl logs -n traefik -l app.kubernetes.io/name=traefik` |
+| Component        | Log Location | Command                                                             |
+| ---------------- | ------------ | ------------------------------------------------------------------- |
+| Webhook Receiver | Pod logs     | `kubectl logs -l app.kubernetes.io/name=github-webhook-receiver -f` |
+| Git Clone        | TaskRun pod  | `kubectl logs <pr>-fetch-repository-pod -c step-clone`              |
+| Build            | TaskRun pod  | `kubectl logs <pr>-build-image-pod -c step-build`                   |
+| Deploy           | TaskRun pod  | `kubectl logs <pr>-deploy-pod -c step-deploy`                       |
+| Traefik Ingress  | Pod logs     | `kubectl logs -n traefik -l app.kubernetes.io/name=traefik`         |
 
 ---
 

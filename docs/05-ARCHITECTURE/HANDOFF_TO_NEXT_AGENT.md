@@ -21,18 +21,23 @@
 ## THE FIX EXPLAINED
 
 ### Problem
+
 GitHub webhook was returning 404 because Traefik couldn't route to a service in a different namespace:
+
 - IngressRoute: `cerebral-development` namespace
 - Service: `tekton-pipelines` namespace
 - Traefik default: Block cross-namespace references for security
 
 ### Solution
+
 Added ONE flag to Traefik DaemonSet:
+
 ```yaml
 --providers.kubernetescrd.allowCrossNamespace=true
 ```
 
 ### Result
+
 Traefik now allows IngressRoutes to reference services in ANY namespace (with proper RBAC).
 
 ---
@@ -166,20 +171,21 @@ Traefik now allows IngressRoutes to reference services in ANY namespace (with pr
 
 ## CRITICAL COMPONENTS
 
-| Component | Namespace | Status | Port | Details |
-|-----------|-----------|--------|------|---------|
-| Traefik DaemonSet | traefik-production | ✅ Running (7) | 443 | allowCrossNamespace=true |
-| IngressRoute | cerebral-development | ✅ Active | - | Routes to tekton-pipelines service |
-| Service | tekton-pipelines | ✅ Active | 3000 | ClusterIP with 2 endpoints |
-| Webhook Pods | tekton-pipelines | ✅ Running (2) | 3000 | Rust receiver on each pod |
-| Secret | tekton-pipelines | ✅ Active | - | 64-char HMAC token |
-| Tekton Pipeline | tekton-pipelines | ✅ Ready | - | cerebral-microservice-pipeline |
+| Component         | Namespace            | Status         | Port | Details                            |
+| ----------------- | -------------------- | -------------- | ---- | ---------------------------------- |
+| Traefik DaemonSet | traefik-production   | ✅ Running (7) | 443  | allowCrossNamespace=true           |
+| IngressRoute      | cerebral-development | ✅ Active      | -    | Routes to tekton-pipelines service |
+| Service           | tekton-pipelines     | ✅ Active      | 3000 | ClusterIP with 2 endpoints         |
+| Webhook Pods      | tekton-pipelines     | ✅ Running (2) | 3000 | Rust receiver on each pod          |
+| Secret            | tekton-pipelines     | ✅ Active      | -    | 64-char HMAC token                 |
+| Tekton Pipeline   | tekton-pipelines     | ✅ Ready       | -    | cerebral-microservice-pipeline     |
 
 ---
 
 ## HOW TO USE - COMPLETE WORKFLOW
 
 ### 1. Push Code Change to Microservice
+
 ```bash
 cd /Users/bbaer/Development/cerebral
 
@@ -193,6 +199,7 @@ git push origin main
 ```
 
 ### 2. GitHub Webhook Fires (Automatic)
+
 - GitHub detects push to `main` branch
 - Webhook configured at org level (baerautotech)
 - Sends POST to: `https://webhook.dev.cerebral.baerautotech.com/`
@@ -200,18 +207,21 @@ git push origin main
 - Signed with: HMAC-SHA256 using org secret
 
 ### 3. Request Reaches Our Infrastructure
+
 - Firewall translates: `67.221.99.140:443` → `10.34.0.246:443`
 - Traefik accepts on port 443 (websecure)
 - TLS handshake completes (cert: `*.dev.cerebral.baerautotech.com`)
 - HTTP/2 stream opened to `/`
 
 ### 4. Traefik Routes Request
+
 - Traefik matches IngressRoute rule: `Host(webhook.dev.cerebral.baerautotech.com)`
 - Looks up service: `github-webhook-receiver` in namespace `tekton-pipelines`
 - ✅ Cross-namespace lookup succeeds (flag enabled)
 - Routes to ClusterIP: `github-webhook-receiver:3000`
 
 ### 5. Webhook Receiver Processes
+
 - Request arrives at Pod running Rust Axum server
 - Pod logs: `"Processing webhook"`
 - Validates HMAC signature against secret
@@ -219,6 +229,7 @@ git push origin main
 - Extracts service name from `microservices/{service}/` path in modified files
 
 ### 6. PipelineRun Created
+
 - Receiver creates Tekton PipelineRun
 - Name: `webhook-api-gateway-1761414312`
 - Parameters: repo URL, branch, image name, registry URL
@@ -226,6 +237,7 @@ git push origin main
 - Pod logs: `"PipelineRun created"`
 
 ### 7. Build Pipeline Executes
+
 - Tekton controller detects new PipelineRun
 - Allocates workspace (1Gi persistent volume)
 - Task 1: Git clone from GitHub
@@ -233,6 +245,7 @@ git push origin main
 - Task 3: kubectl deploy updates Service in `cerebral-platform`
 
 ### 8. Service Deployed
+
 - Image pushed to registry: `10.34.0.202:5000/cerebral/api-gateway:main`
 - Deployment updated with new image
 - Rolling update (RollingUpdateStrategy)
@@ -240,6 +253,7 @@ git push origin main
 - Health checks validate
 
 ### 9. Verify Success
+
 ```bash
 # Check PipelineRun status
 kubectl get pipelinerun webhook-api-gateway-1761414312 -n tekton-pipelines -o yaml | grep -A 5 "status:"
@@ -256,12 +270,14 @@ kubectl rollout status deployment/api-gateway -n cerebral-platform
 ## TESTING THE WEBHOOK
 
 ### Quick Manual Test
+
 ```bash
 # Run the E2E test script
 bash scripts/test-webhook-e2e.sh
 ```
 
 ### Expected Output
+
 ```
 ================================
 🧪 END-TO-END WEBHOOK TEST
@@ -293,6 +309,7 @@ bash scripts/test-webhook-e2e.sh
 ```
 
 ### Real GitHub Test
+
 ```bash
 # Push a change to any microservice
 cd /Users/bbaer/Development/cerebral
@@ -315,20 +332,26 @@ kubectl get pipelineruns -n tekton-pipelines --sort-by='.metadata.creationTimest
 ## TROUBLESHOOTING
 
 ### Issue: Webhook Returns 404
+
 **Check**:
+
 1. Traefik has flag: `kubectl get daemonset traefik -n traefik-production -o yaml | grep allowCrossNamespace`
 2. Should show: `--providers.kubernetescrd.allowCrossNamespace=true`
 3. If missing, apply the fix: see WEBHOOK_404_FIX_COMPLETE.md
 
 ### Issue: No PipelineRun Created
+
 **Check**:
+
 1. Webhook receiver pods running: `kubectl get pods -n tekton-pipelines -l app.kubernetes.io/name=github-webhook-receiver`
 2. Service has endpoints: `kubectl get endpoints github-webhook-receiver -n tekton-pipelines`
 3. Secret exists: `kubectl get secret github-webhook-secret -n tekton-pipelines`
 4. Logs: `kubectl logs -n tekton-pipelines -l app.kubernetes.io/name=github-webhook-receiver --tail=20`
 
 ### Issue: PipelineRun Fails
+
 **Check**:
+
 1. PipelineRun status: `kubectl describe pipelinerun <name> -n tekton-pipelines`
 2. Task logs: `kubectl logs -n tekton-pipelines -l pipelinerun=<name>`
 3. Build job: `kubectl get jobs -n build-system | grep kaniko`
@@ -365,22 +388,26 @@ kubectl get pipelineruns -n tekton-pipelines --sort-by='.metadata.creationTimest
 ## NEXT STEPS FOR NEXT AGENT
 
 ### Immediate (Validation)
+
 1. Run: `bash scripts/test-webhook-e2e.sh`
 2. Verify all 5 tests pass
 3. Check recent PipelineRuns: `kubectl get pipelineruns -n tekton-pipelines --sort-by='.metadata.creationTimestamp' | tail -5`
 
 ### Short-term (Monitor)
+
 1. Watch a real GitHub push trigger a build (24-48 hours recommended)
 2. Verify each of the 11 non-GPU microservices auto-builds
 3. Check deployment updated in `cerebral-platform` namespace
 4. Monitor logs for any errors
 
 ### Documentation Review
+
 - Read: `🚨_READ_THIS_FIRST_CI_CD_SYSTEM.md` (updated with Traefik details)
 - Reference: `WEBHOOK_404_FIX_COMPLETE.md` (fix details)
 - Troubleshoot: `CI_CD_COMPLETE_GUIDE.md` (all scenarios covered)
 
 ### If Issues Arise
+
 1. Check Traefik logs: `kubectl logs -n traefik-production -l app.kubernetes.io/name=traefik --tail=50`
 2. Check receiver logs: `kubectl logs -n tekton-pipelines -l app.kubernetes.io/name=github-webhook-receiver --tail=50`
 3. Check IngressRoute: `kubectl get ingressroute github-webhook-receiver -n cerebral-development -o yaml`
@@ -391,12 +418,14 @@ kubectl get pipelineruns -n tekton-pipelines --sort-by='.metadata.creationTimest
 ## SUMMARY FOR NEXT AGENT
 
 ### What Changed
+
 - ✅ Traefik DaemonSet updated with `allowCrossNamespace=true`
 - ✅ Webhook now successfully routes cross-namespace
 - ✅ All 5 E2E tests passing
 - ✅ PipelineRuns created on webhook receipt
 
 ### What's Working
+
 - ✅ GitHub org webhook configured
 - ✅ DNS resolves to Traefik LoadBalancer
 - ✅ TLS handshake succeeds
@@ -406,9 +435,11 @@ kubectl get pipelineruns -n tekton-pipelines --sort-by='.metadata.creationTimest
 - ✅ All 14 microservices ready to build
 
 ### Current Status
+
 🟢 PRODUCTION READY - All systems operational
 
 ### Time to Complete Full Validation
+
 1-3 days (waiting for real GitHub push events)
 
 ---

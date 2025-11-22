@@ -10,6 +10,7 @@
 ## EXECUTIVE SUMMARY
 
 Traefik is the main ingress controller for Cerebral Platform. It handles:
+
 - ✅ HTTPS/TLS termination for all services
 - ✅ Host-based routing (different domains → different services)
 - ✅ Cross-namespace service routing (with `allowCrossNamespace=true`)
@@ -17,6 +18,7 @@ Traefik is the main ingress controller for Cerebral Platform. It handles:
 - ✅ Metrics collection for Prometheus
 
 ### Critical Fix Applied (Oct 25, 2025)
+
 Added `--providers.kubernetescrd.allowCrossNamespace=true` to enable webhook routing across namespaces.
 
 ---
@@ -24,6 +26,7 @@ Added `--providers.kubernetescrd.allowCrossNamespace=true` to enable webhook rou
 ## INSTALLATION & DEPLOYMENT
 
 ### Current Installation
+
 - **Type**: DaemonSet (runs on every node)
 - **Replicas**: 7 (one per cluster node)
 - **Version**: v3.5.3
@@ -42,44 +45,44 @@ spec:
   template:
     spec:
       containers:
-      - name: traefik
-        image: docker.io/traefik:v3.5.3
-        args:
-          # Global settings
-          - --global.checkNewVersion=true
-          - --global.sendAnonymousUsage=false
+        - name: traefik
+          image: docker.io/traefik:v3.5.3
+          args:
+            # Global settings
+            - --global.checkNewVersion=true
+            - --global.sendAnonymousUsage=false
 
-          # Entry Points (where Traefik listens)
-          - --entryPoints.web.address=:8000           # HTTP
-          - --entryPoints.websecure.address=:8443     # HTTPS
-          - --entryPoints.metrics.address=:9090       # Prometheus
+            # Entry Points (where Traefik listens)
+            - --entryPoints.web.address=:8000 # HTTP
+            - --entryPoints.websecure.address=:8443 # HTTPS
+            - --entryPoints.metrics.address=:9090 # Prometheus
 
-          # HTTP → HTTPS redirect
-          - --entryPoints.web.http.redirections.entryPoint.to=websecure
-          - --entryPoints.web.http.redirections.entryPoint.scheme=https
+            # HTTP → HTTPS redirect
+            - --entryPoints.web.http.redirections.entryPoint.to=websecure
+            - --entryPoints.web.http.redirections.entryPoint.scheme=https
 
-          # Providers (what Traefik watches for routing rules)
-          - --providers.kubernetescrd                  # Watch Traefik CRDs
-          - --providers.kubernetescrd.allowCrossNamespace=true  # ✅ CRITICAL - Enable cross-namespace
-          - --providers.kubernetesingress              # Watch Kubernetes Ingress resources
+            # Providers (what Traefik watches for routing rules)
+            - --providers.kubernetescrd # Watch Traefik CRDs
+            - --providers.kubernetescrd.allowCrossNamespace=true # ✅ CRITICAL - Enable cross-namespace
+            - --providers.kubernetesingress # Watch Kubernetes Ingress resources
 
-          # Metrics
-          - --metrics.prometheus.addEntryPointsLabels=true
-          - --metrics.prometheus.addServicesLabels=true
+            # Metrics
+            - --metrics.prometheus.addEntryPointsLabels=true
+            - --metrics.prometheus.addServicesLabels=true
 
-          # Logging & Dashboard
-          - --log.level=INFO
-          - --accesslog=true
-          - --api.dashboard=true
-          - --api.insecure=false
+            # Logging & Dashboard
+            - --log.level=INFO
+            - --accesslog=true
+            - --api.dashboard=true
+            - --api.insecure=false
 
-        ports:
-        - containerPort: 8000    # HTTP
-          name: http
-        - containerPort: 8443    # HTTPS
-          name: https
-        - containerPort: 9090    # Metrics
-          name: metrics
+          ports:
+            - containerPort: 8000 # HTTP
+              name: http
+            - containerPort: 8443 # HTTPS
+              name: https
+            - containerPort: 9090 # Metrics
+              name: metrics
 ```
 
 ---
@@ -87,18 +90,21 @@ spec:
 ## ENTRY POINTS EXPLAINED
 
 ### web (Port 8000)
+
 - **Protocol**: HTTP
 - **Traffic**: Incoming HTTP requests
 - **Behavior**: Automatically redirects to HTTPS
 - **External**: Exposed by firewall
 
 ### websecure (Port 8443)
+
 - **Protocol**: HTTPS/TLS
 - **Traffic**: Incoming HTTPS requests (all production traffic)
 - **Certificates**: Managed by cert-manager or manual TLS secrets
 - **External**: Primary endpoint - firewall routes 443 → 8443
 
 ### metrics (Port 9090)
+
 - **Protocol**: HTTP
 - **Traffic**: Prometheus metrics scraping
 - **Endpoint**: `/metrics`
@@ -125,10 +131,12 @@ spec:
 **Critical Flag**: `--providers.kubernetescrd.allowCrossNamespace=true`
 
 **What it does**:
+
 - Allows IngressRoute in namespace `A` to reference services in namespace `B`
 - Default (without flag): Only allows same-namespace references
 
 **Example**:
+
 ```yaml
 # This IngressRoute is in cerebral-development namespace
 apiVersion: traefik.io/v1alpha1
@@ -137,11 +145,11 @@ metadata:
   namespace: cerebral-development
 spec:
   routes:
-  - match: Host(`webhook.dev.cerebral.baerautotech.com`)
-    services:
-    - name: github-webhook-receiver
-      namespace: tekton-pipelines    # ← Different namespace!
-      port: 3000
+    - match: Host(`webhook.dev.cerebral.baerautotech.com`)
+      services:
+        - name: github-webhook-receiver
+          namespace: tekton-pipelines # ← Different namespace!
+          port: 3000
 ```
 
 **Without flag**: 404 Not Found
@@ -185,10 +193,10 @@ DNS:
 
 ### Certificates in Use
 
-| Certificate | Namespace | Secret Name | Domains | Issuer |
-|-------------|-----------|-------------|---------|--------|
-| Wildcard Dev | cerebral-development | dev-wildcard-tls | *.dev.cerebral.baerautotech.com | Let's Encrypt |
-| Prod (if exists) | cert-manager | prod-tls | *.cerebral.baerautotech.com | Let's Encrypt |
+| Certificate      | Namespace            | Secret Name      | Domains                          | Issuer        |
+| ---------------- | -------------------- | ---------------- | -------------------------------- | ------------- |
+| Wildcard Dev     | cerebral-development | dev-wildcard-tls | \*.dev.cerebral.baerautotech.com | Let's Encrypt |
+| Prod (if exists) | cert-manager         | prod-tls         | \*.cerebral.baerautotech.com     | Let's Encrypt |
 
 ### Certificate Configuration
 
@@ -196,10 +204,10 @@ DNS:
 # IngressRoute TLS reference
 spec:
   tls:
-    secretName: dev-wildcard-tls  # Kubernetes Secret
+    secretName: dev-wildcard-tls # Kubernetes Secret
   routes:
-  - match: Host(`webhook.dev.cerebral.baerautotech.com`)
-    tls: {}  # Use entryPoints.websecure TLS
+    - match: Host(`webhook.dev.cerebral.baerautotech.com`)
+      tls: {} # Use entryPoints.websecure TLS
 ```
 
 ### Checking Certificate Status
@@ -237,13 +245,14 @@ spec:
     - match: Host(`webhook.dev.cerebral.baerautotech.com`)
       services:
         - name: github-webhook-receiver
-          namespace: tekton-pipelines  # ← Cross-namespace
+          namespace: tekton-pipelines # ← Cross-namespace
           port: 3000
   tls:
     secretName: dev-wildcard-tls
 ```
 
 **Flow**:
+
 1. Webhook arrives on `webhook.dev.cerebral.baerautotech.com:443`
 2. Traefik matches Host rule
 3. Routes to `github-webhook-receiver` service in `tekton-pipelines` namespace
@@ -257,17 +266,17 @@ spec:
 
 ```yaml
 routes:
-  - match: Host(`example.com`)        # Match single host
+  - match: Host(`example.com`) # Match single host
     services:
       - name: backend-service
         port: 8000
 
-  - match: Host(`*.example.com`)      # Match wildcard
+  - match: Host(`*.example.com`) # Match wildcard
     services:
       - name: wildcard-service
         port: 8000
 
-  - match: Host(`api.example.com`) && PathPrefix(`/v1`)  # Host AND path
+  - match: Host(`api.example.com`) && PathPrefix(`/v1`) # Host AND path
     services:
       - name: api-v1-service
         port: 8000
@@ -279,10 +288,10 @@ routes:
 routes:
   - match: Host(`example.com`) && PathPrefix(`/api`)
     services:
-      - name: api-service          # Primary
+      - name: api-service # Primary
         weight: 80
       - name: api-service-backup
-        weight: 20               # 20% traffic to backup
+        weight: 20 # 20% traffic to backup
 ```
 
 ---
@@ -334,11 +343,13 @@ histogram_quantile(0.95, rate(traefik_request_duration_seconds_bucket[5m]))
 **Symptoms**: All requests return "404 page not found"
 
 **Causes**:
+
 1. IngressRoute doesn't match the Host header
 2. Service referenced in IngressRoute doesn't exist
 3. Cross-namespace service reference blocked (missing `allowCrossNamespace=true`)
 
 **Debug**:
+
 ```bash
 # 1. Check IngressRoute exists
 kubectl get ingressroute -A | grep webhook
@@ -362,11 +373,13 @@ kubectl logs -n traefik-production -l app.kubernetes.io/name=traefik --tail=50 |
 **Symptoms**: `ERR_SSL_VERSION_OR_CIPHER_MISMATCH` or invalid certificate
 
 **Causes**:
+
 1. Certificate expired
 2. Wrong certificate for domain
 3. TLS secret not found
 
 **Debug**:
+
 ```bash
 # Check certificate validity
 kubectl get certificate -n cerebral-development -o wide
@@ -383,11 +396,13 @@ kubectl get secret dev-wildcard-tls -n cerebral-development -o jsonpath='{.data.
 **Symptoms**: Requests taking >1 second
 
 **Causes**:
+
 1. Service behind pods are slow
 2. Traefik CPU/memory exhausted
 3. Network congestion
 
 **Debug**:
+
 ```bash
 # Check Traefik resource usage
 kubectl top pod -n traefik-production
@@ -449,7 +464,7 @@ metadata:
   name: traefik
   namespace: traefik-production
 spec:
-  replicas: 3  # Control number of pods
+  replicas: 3 # Control number of pods
   selector:
     matchLabels:
       app.kubernetes.io/name: traefik
@@ -494,6 +509,7 @@ curl -v -X POST https://webhook.dev.cerebral.baerautotech.com/ \
 ## SUMMARY
 
 **Traefik Configuration (Oct 25, 2025)**:
+
 - ✅ DaemonSet with 7 replicas
 - ✅ Listens on 8000 (HTTP) → 8443 (HTTPS)
 - ✅ Watches Traefik CRDs and Kubernetes Ingress resources

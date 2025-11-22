@@ -3,13 +3,13 @@
  * Unified API client for calling Cerebral backend services
  */
 
-
 import { AuthService } from './supabase';
 
 // API configuration
-const API_BASE_URL = Platform.OS === 'web'
-  ? '/api' // Use relative path for web (nginx proxies to backend)
-  : 'https://cerebral.baerautotech.com/api'; // Direct URL for mobile
+const API_BASE_URL =
+  Platform.OS === 'web'
+    ? '/api' // Use relative path for web (nginx proxies to backend)
+    : 'https://cerebral.baerautotech.com/api'; // Direct URL for mobile
 
 /**
  * API client with automatic authentication
@@ -52,9 +52,7 @@ export class ApiClient {
       return { data, error: null };
     } catch (error) {
       if (__DEV__) {
-
         console.error('API request error:', error);
-
       }
       return { data: null, error };
     }
@@ -70,7 +68,10 @@ export class ApiClient {
   /**
    * POST request
    */
-  static async post<T>(endpoint: string, body?: Record<string, unknown>): Promise<{ data: T | null; error: Error | null }> {
+  static async post<T>(
+    endpoint: string,
+    body?: Record<string, unknown>
+  ): Promise<{ data: T | null; error: Error | null }> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: body ? JSON.stringify(body) : undefined,
@@ -80,7 +81,10 @@ export class ApiClient {
   /**
    * PUT request
    */
-  static async put<T>(endpoint: string, body?: Record<string, unknown>): Promise<{ data: T | null; error: Error | null }> {
+  static async put<T>(
+    endpoint: string,
+    body?: Record<string, unknown>
+  ): Promise<{ data: T | null; error: Error | null }> {
     return this.request<T>(endpoint, {
       method: 'PUT',
       body: body ? JSON.stringify(body) : undefined,

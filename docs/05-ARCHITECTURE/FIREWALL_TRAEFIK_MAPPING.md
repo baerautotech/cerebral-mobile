@@ -5,16 +5,16 @@
 
 ## 📋 Current Firewall Rules (67.221.99.140)
 
-| Description | Protocol | Public Port | LAN IP | Local Port | Status |
-|---|---|---|---|---|---|
-| redis-token-external | TCP | 6385 | 10.34.0.201 | 6385 | ✅ Direct (not Traefik) |
-| HTTP | TCP | 80 | 10.34.0.246 | 80 | ⚠️ Traefik but wrong config |
-| HTTPS | TCP | 443 | 10.34.0.246 | 443 | ✅ Correct - Traefik primary |
-| redis-tls-external | TCP | 6380 | 10.34.0.203 | 6380 | ✅ Direct (not Traefik) |
-| s3-vector-proxy-service | TCP | 9000 | 10.34.0.240 | 9000 | ⚠️ Wrong IP (should be .246) |
-| minio-console-service | TCP | 9001 | 10.34.0.204 | 9001 | ⚠️ Wrong IP (should be .246) |
-| internal-registry | TCP | 5000 | 10.34.0.202 | 5000 | ✅ Direct (not Traefik) |
-| github-webhook-handle | TCP | 8080 | 10.34.0.240 | 8080 | ⚠️ Wrong (should be 443→.246) |
+| Description             | Protocol | Public Port | LAN IP      | Local Port | Status                        |
+| ----------------------- | -------- | ----------- | ----------- | ---------- | ----------------------------- |
+| redis-token-external    | TCP      | 6385        | 10.34.0.201 | 6385       | ✅ Direct (not Traefik)       |
+| HTTP                    | TCP      | 80          | 10.34.0.246 | 80         | ⚠️ Traefik but wrong config   |
+| HTTPS                   | TCP      | 443         | 10.34.0.246 | 443        | ✅ Correct - Traefik primary  |
+| redis-tls-external      | TCP      | 6380        | 10.34.0.203 | 6380       | ✅ Direct (not Traefik)       |
+| s3-vector-proxy-service | TCP      | 9000        | 10.34.0.240 | 9000       | ⚠️ Wrong IP (should be .246)  |
+| minio-console-service   | TCP      | 9001        | 10.34.0.204 | 9001       | ⚠️ Wrong IP (should be .246)  |
+| internal-registry       | TCP      | 5000        | 10.34.0.202 | 5000       | ✅ Direct (not Traefik)       |
+| github-webhook-handle   | TCP      | 8080        | 10.34.0.240 | 8080       | ⚠️ Wrong (should be 443→.246) |
 
 ## 🎯 WHAT NEEDS TO BE CONFIGURED IN TRAEFIK
 
@@ -68,24 +68,29 @@
 ## 🔧 TRAEFIK CONFIGURATION FOR FIREWALL PORTS
 
 ### Port 443 (HTTPS/TLS)
+
 - **Entry Point**: `websecure` (443)
 - **Handles**: All HTTPS traffic
 - **Routes**: By Host header via IngressRoutes
 - **Config**: ✅ Already correct
 
 ### Custom Ports (9000, 9001, etc.)
+
 **Option A - Direct Service (Current, Complex)**
+
 - Firewall: 9000 → 10.34.0.240:9000 (s3-vector-proxy-service)
 - Each service needs separate port forward
 - Problem: Scales poorly, hard to manage
 
 **Option B - Traefik Host-Based Routing (Recommended)**
+
 - Firewall: Forward ALL to 10.34.0.246:443
 - Let Traefik route by Host header
 - Traefik routes s3-vector-proxy to port 9000 internally
 - Cleaner, more scalable
 
 ### Current Traefik Entry Points
+
 ```
 Port 80 (http) → Target port: 8000
 Port 443 (https) → Target port: 8443
@@ -94,20 +99,21 @@ Port 9090 (metrics) → Target port: 9090
 
 ## ✅ RECOMMENDED FIREWALL CONFIGURATION
 
-| Description | Public Port | Protocol | LAN IP | Local Port | Purpose |
-|---|---|---|---|---|---|
-| **HTTPS Main** | 443 | TCP | 10.34.0.246 | 443 | **ALL Traefik routes (✅ Keep as-is)** |
-| HTTP Redirect | 80 | TCP | 10.34.0.246 | 80 | HTTP→HTTPS redirect (optional) |
-| redis-token-external | 6385 | TCP | 10.34.0.201 | 6385 | Direct (✅ Keep as-is) |
-| redis-tls-external | 6380 | TCP | 10.34.0.203 | 6380 | Direct (✅ Keep as-is) |
-| internal-registry | 5000 | TCP | 10.34.0.202 | 5000 | Direct (✅ Keep as-is) |
-| ~~s3-vector-proxy~~ | ~~9000~~ | TCP | ~~10.34.0.240~~ | ~~9000~~ | **DELETE - use 443 instead** |
-| ~~minio-console~~ | ~~9001~~ | TCP | ~~10.34.0.204~~ | ~~9001~~ | **DELETE - use 443 instead** |
-| ~~github-webhook~~ | ~~8080~~ | TCP | ~~10.34.0.240~~ | ~~8080~~ | **DELETE - use 443 instead** |
+| Description          | Public Port | Protocol | LAN IP          | Local Port | Purpose                                |
+| -------------------- | ----------- | -------- | --------------- | ---------- | -------------------------------------- |
+| **HTTPS Main**       | 443         | TCP      | 10.34.0.246     | 443        | **ALL Traefik routes (✅ Keep as-is)** |
+| HTTP Redirect        | 80          | TCP      | 10.34.0.246     | 80         | HTTP→HTTPS redirect (optional)         |
+| redis-token-external | 6385        | TCP      | 10.34.0.201     | 6385       | Direct (✅ Keep as-is)                 |
+| redis-tls-external   | 6380        | TCP      | 10.34.0.203     | 6380       | Direct (✅ Keep as-is)                 |
+| internal-registry    | 5000        | TCP      | 10.34.0.202     | 5000       | Direct (✅ Keep as-is)                 |
+| ~~s3-vector-proxy~~  | ~~9000~~    | TCP      | ~~10.34.0.240~~ | ~~9000~~   | **DELETE - use 443 instead**           |
+| ~~minio-console~~    | ~~9001~~    | TCP      | ~~10.34.0.204~~ | ~~9001~~   | **DELETE - use 443 instead**           |
+| ~~github-webhook~~   | ~~8080~~    | TCP      | ~~10.34.0.240~~ | ~~8080~~   | **DELETE - use 443 instead**           |
 
 ## 🎯 WHAT THIS MEANS
 
 ### For S3 Vector Proxy Service (minio:9000)
+
 - **Currently**: Public port 9000 goes directly to service
 - **With Traefik**: Public port 443, Traefik routes by Host header
 - **Change needed**: Delete port 9000 rule
@@ -115,6 +121,7 @@ Port 9090 (metrics) → Target port: 9090
 - **IngressRoute**: ✅ Already configured
 
 ### For MinIO Console (minio:9001)
+
 - **Currently**: Public port 9001 goes directly to service
 - **With Traefik**: Public port 443, Traefik routes by Host header
 - **Change needed**: Delete port 9001 rule
@@ -122,6 +129,7 @@ Port 9090 (metrics) → Target port: 9090
 - **IngressRoute**: ✅ Already configured
 
 ### For GitHub Webhook Handler
+
 - **Currently**: Public port 8080 goes to service
 - **With Traefik**: Public port 443, Traefik routes by Host header
 - **Change needed**: Delete port 8080 rule
@@ -131,7 +139,9 @@ Port 9090 (metrics) → Target port: 9090
 ## ✅ ACTION ITEMS
 
 ### In Traefik (Already Done ✅)
+
 All IngressRoutes are configured with:
+
 - Entry Point: `websecure` (443)
 - TLS Certificate: `dev-wildcard-tls`
 - Host-based routing
@@ -139,15 +149,18 @@ All IngressRoutes are configured with:
 ### In Firewall (You Need To Do ⚠️)
 
 **DELETE these rules:**
+
 1. ~~s3-vector-proxy-service: 9000 → 10.34.0.240:9000~~
 2. ~~minio-console-service: 9001 → 10.34.0.204:9001~~
 3. ~~github-webhook-handle: 8080 → 10.34.0.240:8080~~
 
 **CHANGE this rule:**
+
 1. HTTP: Keep as-is (optional) or set to redirect to 443
    - If keeping: 80 → 10.34.0.246:80 (Traefik redirect)
 
 **VERIFY/KEEP these rules:**
+
 1. HTTPS: 443 → 10.34.0.246:443 ✅ **PRIMARY - DO NOT CHANGE**
 2. redis-token-external: 6385 → 10.34.0.201:6385 ✅
 3. redis-tls-external: 6380 → 10.34.0.203:6380 ✅
@@ -180,11 +193,13 @@ MinIO service on port 9000 (but from client perspective, they used 443!)
 But you don't need individual public ports for each service!
 
 Instead:
+
 - **Public**: All traffic on 443 (HTTPS)
 - **Traefik**: Routes by Host header
 - **Internal**: Traefik maps to custom ports (9000, 9001, etc.)
 
 **Firewall Changes Required**:
+
 1. Delete: 9000, 9001, 8080 port forward rules
 2. Keep: 443 → 10.34.0.246 (the main one!)
 3. Keep: Direct services (redis, registry)

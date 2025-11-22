@@ -13,10 +13,15 @@ import { createClient, SupabaseClient, Session, User } from '@supabase/supabase-
 
 // Supabase configuration
 const SUPABASE_URL = 'https://txlzlhcrfippujcmnief.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bHpsaGNyZmlwcHVqY21uaWVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM4NTk3MzcsImV4cCI6MjA0OTQzNTczN30.YkZV-aqBT_F86PEhxW_9s48cTn-M16FZVWZlwkIPmek';
+const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bHpsaGNyZmlwcHVqY21uaWVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM4NTk3MzcsImV4cCI6MjA0OTQzNTczN30.YkZV-aqBT_F86PEhxW_9s48cTn-M16FZVWZlwkIPmek';
 
 // Storage configuration for auth tokens
-const getStorage = (): { getItem: (key: string) => string | null | Promise<string | null>; setItem: (key: string, value: string) => void | Promise<void>; removeItem: (key: string) => void | Promise<void> } => {
+const getStorage = (): {
+  getItem: (key: string) => string | null | Promise<string | null>;
+  setItem: (key: string, value: string) => void | Promise<void>;
+  removeItem: (key: string) => void | Promise<void>;
+} => {
   if (Platform.OS === 'web') {
     // Use localStorage for web
     return {
@@ -45,25 +50,24 @@ const getStorage = (): { getItem: (key: string) => string | null | Promise<strin
 };
 
 // Create Supabase client
-export const supabase: SupabaseClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY,
-  {
-    auth: {
-      storage: getStorage(),
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: Platform.OS === 'web',
-    },
-  }
-);
+export const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    storage: getStorage(),
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: Platform.OS === 'web',
+  },
+});
 
 // Authentication service
 export class AuthService {
   /**
    * Sign in with email and password
    */
-  static async signIn(email: string, password: string): Promise<{ user: User | null; session: Session | null; error: Error | null }> {
+  static async signIn(
+    email: string,
+    password: string
+  ): Promise<{ user: User | null; session: Session | null; error: Error | null }> {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -71,9 +75,7 @@ export class AuthService {
 
     if (error) {
       if (__DEV__) {
-
         console.error('Sign in error:', error);
-
       }
       return { user: null, session: null, error };
     }
@@ -84,7 +86,11 @@ export class AuthService {
   /**
    * Sign up with email and password
    */
-  static async signUp(email: string, password: string, metadata?: Record<string, unknown>): Promise<{ user: User | null; session: Session | null; error: Error | null }> {
+  static async signUp(
+    email: string,
+    password: string,
+    metadata?: Record<string, unknown>
+  ): Promise<{ user: User | null; session: Session | null; error: Error | null }> {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -95,9 +101,7 @@ export class AuthService {
 
     if (error) {
       if (__DEV__) {
-
         console.error('Sign up error:', error);
-
       }
       return { user: null, session: null, error };
     }
@@ -113,9 +117,7 @@ export class AuthService {
 
     if (error) {
       if (__DEV__) {
-
         console.error('Sign out error:', error);
-
       }
     }
 
@@ -130,9 +132,7 @@ export class AuthService {
 
     if (error) {
       if (__DEV__) {
-
         console.error('Get session error:', error);
-
       }
       return { session: null, error };
     }
@@ -148,9 +148,7 @@ export class AuthService {
 
     if (error) {
       if (__DEV__) {
-
         console.error('Get user error:', error);
-
       }
       return { user: null, error };
     }
@@ -161,7 +159,9 @@ export class AuthService {
   /**
    * Listen to auth state changes
    */
-  static onAuthStateChange(callback: (event: string, session: Session | null) => void): { data: { subscription: { unsubscribe: () => void } } } {
+  static onAuthStateChange(callback: (event: string, session: Session | null) => void): {
+    data: { subscription: { unsubscribe: () => void } };
+  } {
     return supabase.auth.onAuthStateChange(callback);
   }
 
@@ -170,16 +170,15 @@ export class AuthService {
    */
   static async resetPassword(email: string): Promise<{ error: Error | null }> {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: Platform.OS === 'web'
-        ? `${window.location.origin}/reset-password`
-        : 'cerebral://reset-password',
+      redirectTo:
+        Platform.OS === 'web'
+          ? `${window.location.origin}/reset-password`
+          : 'cerebral://reset-password',
     });
 
     if (error) {
       if (__DEV__) {
-
         console.error('Reset password error:', error);
-
       }
     }
 
@@ -196,9 +195,7 @@ export class AuthService {
 
     if (error) {
       if (__DEV__) {
-
         console.error('Update password error:', error);
-
       }
     }
 

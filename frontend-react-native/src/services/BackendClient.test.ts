@@ -624,9 +624,7 @@ describe('BackendClient', () => {
         json: async () => mockError,
       });
 
-      await expect(
-        client.markNotificationAsRead('nonexistent-id')
-      ).rejects.toThrow(NotFoundError);
+      await expect(client.markNotificationAsRead('nonexistent-id')).rejects.toThrow(NotFoundError);
     });
   });
 
@@ -717,7 +715,7 @@ describe('BackendClient', () => {
         expect.objectContaining({
           headers: expect.objectContaining({
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            Accept: 'application/json',
           }),
         })
       );

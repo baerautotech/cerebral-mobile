@@ -30,11 +30,16 @@ export const IAPContext = createContext<IAPContextType | null>(null);
  *   <App />
  * </IAPProvider>
  */
-export function IAPProvider({
-  apiKey,
-  children,
-}: IAPProviderProps): JSX.Element {
-  const { purchasedSKUs, loading, customerInfo, initiateCheckout, restorePurchases, refresh, hasPurchase } = useIAP();
+export function IAPProvider({ apiKey, children }: IAPProviderProps): JSX.Element {
+  const {
+    purchasedSKUs,
+    loading,
+    customerInfo,
+    initiateCheckout,
+    restorePurchases,
+    refresh,
+    hasPurchase,
+  } = useIAP();
 
   // Initialize IAP on mount
   useEffect(() => {
@@ -53,11 +58,7 @@ export function IAPProvider({
     hasPurchase,
   };
 
-  return (
-    <IAPContext.Provider value={value}>
-      {children}
-    </IAPContext.Provider>
-  );
+  return <IAPContext.Provider value={value}>{children}</IAPContext.Provider>;
 }
 
 /**

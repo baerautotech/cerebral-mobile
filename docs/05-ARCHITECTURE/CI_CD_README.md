@@ -9,13 +9,13 @@
 
 ## 📚 Quick Navigation
 
-| Document | Purpose | Read Time |
-|----------|---------|-----------|
-| **This File** | 5-minute overview | ⭐⭐⭐ START HERE |
-| `CI_CD_COMPLETE_GUIDE.md` | Full system documentation + mermaid diagram | 10 min |
-| `WEBHOOK_RECEIVER_CONFIGURATION.md` | Detailed webhook receiver configuration | 5 min |
-| `.cursor/rules.md` | Quick reference rules (in Cursor) | 2 min |
-| `scripts/validate-webhook-receiver.sh` | Validation script | Run it |
+| Document                               | Purpose                                     | Read Time         |
+| -------------------------------------- | ------------------------------------------- | ----------------- |
+| **This File**                          | 5-minute overview                           | ⭐⭐⭐ START HERE |
+| `CI_CD_COMPLETE_GUIDE.md`              | Full system documentation + mermaid diagram | 10 min            |
+| `WEBHOOK_RECEIVER_CONFIGURATION.md`    | Detailed webhook receiver configuration     | 5 min             |
+| `.cursor/rules.md`                     | Quick reference rules (in Cursor)           | 2 min             |
+| `scripts/validate-webhook-receiver.sh` | Validation script                           | Run it            |
 
 ---
 
@@ -88,6 +88,7 @@ kubectl get pipelineruns -n tekton-pipelines -w
 Kaniko builds your services ON TOP of pre-built base images. These base images contain all common ML/AI dependencies (torch, transformers, pandas, etc.), reducing build time from 30+ minutes to 2-3 minutes.
 
 **⚠️ CRITICAL**: Base images must support BOTH architectures:
+
 - **AMD64** (x86_64) - for Kubernetes cluster (Linux servers)
 - **ARM64** (Apple Silicon) - for Mac development
 
@@ -157,6 +158,7 @@ curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cuda \
 ### Common Mistakes to AVOID
 
 ❌ **WRONG** - Using `docker build` (single-architecture):
+
 ```bash
 docker build -f docker/Dockerfile.ai-base.cuda -t ... .
 # Creates ARM64-only image on Mac
@@ -164,6 +166,7 @@ docker build -f docker/Dockerfile.ai-base.cuda -t ... .
 ```
 
 ✅ **CORRECT** - Using `docker buildx --platform` (multi-architecture):
+
 ```bash
 docker buildx build --platform linux/amd64,linux/arm64 \
   -f docker/Dockerfile.ai-base.cuda \
@@ -179,6 +182,7 @@ docker buildx build --platform linux/amd64,linux/arm64 \
 ### 👤 Developer
 
 **What you need to know**:
+
 - Push code: `git push origin main`
 - Watch it build: `kubectl get pipelineruns -n tekton-pipelines -w`
 - Relax - it's automatic!
@@ -188,6 +192,7 @@ docker buildx build --platform linux/amd64,linux/arm64 \
 ### 🔧 DevOps/Infrastructure
 
 **What you need to know**:
+
 - Webhook receiver runs on port 3000 (NOT 80!)
 - Ingress routes to `github-webhook-receiver:3000`
 - All config in `k8s/ci-cd/webhook-receiver-ingress.yaml`
@@ -198,6 +203,7 @@ docker buildx build --platform linux/amd64,linux/arm64 \
 ### 🤖 AI Agents/Debugging
 
 **What you need to know**:
+
 - System is completely automated (no manual PipelineRuns!)
 - DO NOT manually patch ingress
 - DO NOT bypass webhook receiver
@@ -211,14 +217,17 @@ docker buildx build --platform linux/amd64,linux/arm64 \
 ## 🛠️ Configuration Files (Source of Truth)
 
 ### 1. Ingress Configuration
+
 ```
 k8s/ci-cd/webhook-receiver-ingress.yaml
 ```
+
 - **What**: Routes webhook.dev.cerebral.baerautotech.com to port 3000
 - **When to edit**: If changing webhook URL, port, or certificate
 - **How to apply**: `kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml`
 
 ### 2. Webhook Receiver Deployment
+
 ```
 Namespace: tekton-pipelines
 Name: github-webhook-receiver
@@ -228,6 +237,7 @@ Port: 3000
 ```
 
 ### 3. Tekton Components
+
 ```
 Namespace: tekton-pipelines
 Pipeline: cerebral-microservice-pipeline
@@ -242,11 +252,13 @@ Tasks:
 ## ✅ Validation
 
 **Run this to verify everything is working**:
+
 ```bash
 ./scripts/validate-webhook-receiver.sh
 ```
 
 **Expected output**:
+
 ```
 ✅ ALL CHECKS PASSED
 🌐 Webhook URL: https://webhook.dev.cerebral.baerautotech.com/
@@ -260,6 +272,7 @@ Tasks:
 ### Issue: "Connection refused" when accessing webhook URL
 
 **Solution**:
+
 ```bash
 # Check ingress is routing to port 3000
 kubectl get ingress cerebral-github-listener -n cerebral-development -o yaml | grep number
@@ -272,6 +285,7 @@ kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml
 ### Issue: Webhook not being received
 
 **Debug**:
+
 ```bash
 # Check webhook receiver logs
 kubectl logs -n tekton-pipelines -l app.kubernetes.io/name=github-webhook-receiver -f
@@ -283,6 +297,7 @@ kubectl logs -n tekton-pipelines -l app.kubernetes.io/name=github-webhook-receiv
 ### Issue: Build failed or stuck
 
 **Check**:
+
 ```bash
 # List builds
 kubectl get pipelineruns -n tekton-pipelines
@@ -333,22 +348,22 @@ git push origin main
 
 ## 📊 Performance
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| Webhook latency | < 100ms | GitHub → receiver |
-| Build time | 2-5 min | Depends on image size |
-| Deployment time | 30-60 sec | Rolling update |
-| Total pipeline | 3-7 min | Push to production |
-| Pod startup | 10-30 sec | Container + health checks |
+| Metric          | Value     | Notes                     |
+| --------------- | --------- | ------------------------- |
+| Webhook latency | < 100ms   | GitHub → receiver         |
+| Build time      | 2-5 min   | Depends on image size     |
+| Deployment time | 30-60 sec | Rolling update            |
+| Total pipeline  | 3-7 min   | Push to production        |
+| Pod startup     | 10-30 sec | Container + health checks |
 
 ---
 
 ## 🌐 URLs & Endpoints
 
-| Service | URL | Access |
-|---------|-----|--------|
-| Webhook endpoint | https://webhook.dev.cerebral.baerautotech.com/ | External (GitHub) |
-| Internal registry | http://10.34.0.302:5000 | Inside cluster |
+| Service           | URL                                            | Access                  |
+| ----------------- | ---------------------------------------------- | ----------------------- |
+| Webhook endpoint  | https://webhook.dev.cerebral.baerautotech.com/ | External (GitHub)       |
+| Internal registry | http://10.34.0.302:5000                        | Inside cluster          |
 | External registry | https://registry.dev.cerebral.baerautotech.com | Outside cluster (HTTPS) |
 
 ---
@@ -363,12 +378,12 @@ git push origin main
 
 ### Common Issues
 
-| Issue | Command |
-|-------|---------|
-| Ingress not routing | `kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml` |
-| Webhook not received | Check GitHub webhook settings + logs |
-| Build failed | `kubectl logs -n tekton-pipelines <pipelinerun-name> -f` |
-| Image not in registry | Check Kaniko build logs |
+| Issue                 | Command                                                    |
+| --------------------- | ---------------------------------------------------------- |
+| Ingress not routing   | `kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml` |
+| Webhook not received  | Check GitHub webhook settings + logs                       |
+| Build failed          | `kubectl logs -n tekton-pipelines <pipelinerun-name> -f`   |
+| Image not in registry | Check Kaniko build logs                                    |
 
 ---
 
@@ -384,6 +399,7 @@ git push origin main
 ## 🎉 Summary
 
 **What We Have**:
+
 - ✅ Fully automated CI/CD pipeline
 - ✅ GitHub push triggers builds automatically
 - ✅ Tekton handles everything (build, push, deploy)
@@ -392,6 +408,7 @@ git push origin main
 - ✅ Validation script prevents reversions
 
 **What Developers Do**:
+
 ```bash
 git push origin main
 # ... automatically builds and deploys

@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'grey',
     margin: 10,
-  }
+  },
 });
 
 export default ARViewScreen;

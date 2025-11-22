@@ -223,18 +223,21 @@ Pre-built components available:
    - App-specific → `apps/*/src`
 
 2. **Develop and test**:
+
    ```bash
    pnpm dev -F <package-or-app>
    pnpm test -F <package-or-app>
    ```
 
 3. **Lint and format**:
+
    ```bash
    pnpm lint
    pnpm format
    ```
 
 4. **Commit and push**:
+
    ```bash
    git add .
    git commit -m "feat: description"
@@ -255,6 +258,7 @@ The monorepo uses strict TypeScript configuration for type safety:
 - Module resolution via path aliases
 
 Path aliases available:
+
 ```json
 {
   "@cerebral/core": "packages/core/src",
@@ -297,6 +301,7 @@ pnpm test --coverage
 4. Open a Pull Request
 
 All PRs must:
+
 - Pass linting and formatting
 - Have tests
 - Pass CI/CD checks
@@ -307,6 +312,7 @@ All PRs must:
 ## 📊 Project Dependencies
 
 ### Production Dependencies
+
 - `react` (18.3+)
 - `react-native` (0.74+)
 - `react-dom` (18.3+)
@@ -314,6 +320,7 @@ All PRs must:
 - `zustand` (4.5+)
 
 ### Development Dependencies
+
 - `typescript` (5.5+)
 - `eslint` (9+)
 - `prettier` (3+)
@@ -326,6 +333,7 @@ All PRs must:
 ### Native App Deployment
 
 **iOS**:
+
 ```bash
 cd apps/native/ios
 pod install
@@ -335,6 +343,7 @@ pnpm run ios
 ```
 
 **Android**:
+
 ```bash
 # Configure Android environment first
 cd apps/native
@@ -360,6 +369,7 @@ pnpm build -F cerebral-tablet
 ### Issue: Dependency conflicts
 
 **Solution**: Clear and reinstall
+
 ```bash
 pnpm clean
 pnpm install
@@ -372,6 +382,7 @@ pnpm install
 ### Issue: Build fails
 
 **Solution**: Run linter and formatter first
+
 ```bash
 pnpm lint
 pnpm format
@@ -383,6 +394,7 @@ pnpm build
 ## 📞 Support
 
 For issues or questions:
+
 1. Check existing issues on GitHub
 2. Review documentation in `/docs`
 3. Open a new issue with detailed information

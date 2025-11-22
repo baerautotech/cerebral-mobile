@@ -9,6 +9,7 @@
 ## DELIVERABLES CHECKLIST
 
 ### 1. Type Definitions
+
 - [ ] `frontend-react-native/src/types/featureFlags.ts`
   - [ ] `FeatureFlags` interface (Record<string, boolean>)
   - [ ] `FeatureFlagContextType` interface
@@ -16,6 +17,7 @@
   - [ ] Export all types
 
 ### 2. Feature Flag Service
+
 - [ ] `frontend-react-native/src/services/featureFlags.ts`
   - [ ] `fetchFeatureFlags()` function - calls backend /api/flags
   - [ ] Handle network errors gracefully
@@ -24,9 +26,10 @@
   - [ ] Add JSDoc comments
 
 ### 3. Feature Flag Hook
+
 - [ ] `frontend-react-native/src/hooks/useFeatureFlags.ts`
   - [ ] `CACHE_KEY` constant = 'feature_flags'
-  - [ ] `CACHE_TTL` constant = 5 * 60 * 1000 (5 minutes)
+  - [ ] `CACHE_TTL` constant = 5 _ 60 _ 1000 (5 minutes)
   - [ ] State: `flags`, `loading`, `lastUpdated`
   - [ ] `loadFlags()` function with caching logic
   - [ ] Check AsyncStorage for cached flags
@@ -39,6 +42,7 @@
   - [ ] Export as named export
 
 ### 4. Feature Flag Guard Component
+
 - [ ] `frontend-react-native/src/components/FeatureFlagGuard.tsx`
   - [ ] Props: `flag: string`, `children: ReactNode`, `fallback?: ReactNode`
   - [ ] Use `useFeatureFlags()` hook
@@ -49,6 +53,7 @@
   - [ ] Export as named export
 
 ### 5. Feature Flag Provider
+
 - [ ] `frontend-react-native/src/providers/FeatureFlagProvider.tsx`
   - [ ] Create `FeatureFlagContext` using React.createContext
   - [ ] `FeatureFlagProvider` component
@@ -59,6 +64,7 @@
   - [ ] Export context and provider
 
 ### 6. Update App.tsx
+
 - [ ] `frontend-react-native/App.tsx`
   - [ ] Import `FeatureFlagProvider`
   - [ ] Wrap root component with provider
@@ -66,6 +72,7 @@
   - [ ] Test that app still starts
 
 ### 7. Unit Tests
+
 - [ ] `frontend-react-native/__tests__/hooks/useFeatureFlags.test.ts`
   - [ ] Test: flags loaded from backend
   - [ ] Test: flags cached in AsyncStorage
@@ -86,6 +93,7 @@
   - [ ] Mock `useFeatureFlags` hook
 
 ### 8. Documentation
+
 - [ ] `docs/FEATURE_FLAGS.md`
   - [ ] Architecture overview
   - [ ] Code patterns and examples
@@ -100,15 +108,18 @@
 ## DEPENDENCIES
 
 ### NPM Packages (Already Installed)
+
 - ✅ react-native
 - ✅ @react-native-async-storage/async-storage (v1.21.0)
-- ✅ @react-navigation/* (navigation)
+- ✅ @react-navigation/\* (navigation)
 - ✅ typescript
 
 ### NPM Packages (Might Need to Add)
+
 - ⏳ @react-native-async-storage/async-storage (verify version)
 
 ### Backend API Contract
+
 ```typescript
 // GET /api/flags
 // Returns: { flag_name: boolean, ... }
@@ -120,12 +131,14 @@
 ## TESTING CHECKLIST
 
 ### Unit Tests
+
 - [ ] Run tests: `npm test -- useFeatureFlags`
 - [ ] All tests passing
 - [ ] Coverage > 90%
 - [ ] No console errors
 
 ### Manual Testing on Simulator
+
 - [ ] App starts without error
 - [ ] Console logs show flags loaded
 - [ ] AsyncStorage contains flags
@@ -137,6 +150,7 @@
 - [ ] Network restored - flags update
 
 ### Manual Testing on Real Device (iOS)
+
 - [ ] Build app: `npm run ios`
 - [ ] App installs and launches
 - [ ] Flags load correctly
@@ -144,6 +158,7 @@
 - [ ] No crashes or errors
 
 ### Manual Testing on Real Device (Android)
+
 - [ ] Build app: `npm run android`
 - [ ] App installs and launches
 - [ ] Flags load correctly
@@ -155,6 +170,7 @@
 ## CODE PATTERNS
 
 ### Feature Flag Service
+
 ```typescript
 // src/services/featureFlags.ts
 import axios from 'axios';
@@ -171,6 +187,7 @@ export async function fetchFeatureFlags(): Promise<Record<string, boolean>> {
 ```
 
 ### Feature Flag Hook
+
 ```typescript
 // src/hooks/useFeatureFlags.ts
 import { useState, useEffect } from 'react';
@@ -222,6 +239,7 @@ export function useFeatureFlags() {
 ```
 
 ### Feature Flag Guard Component
+
 ```typescript
 // src/components/FeatureFlagGuard.tsx
 import React, { ReactNode } from 'react';
@@ -249,6 +267,7 @@ export function FeatureFlagGuard({ flag, children, fallback }: FeatureFlagGuardP
 ```
 
 ### Feature Flag Provider
+
 ```typescript
 // src/providers/FeatureFlagProvider.tsx
 import React, { ReactNode, createContext } from 'react';
@@ -272,6 +291,7 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
 ## DEBUGGING TIPS
 
 ### Check Cached Flags
+
 ```bash
 # Via Xcode (iOS)
 # In simulator, inspect ~/Library/Developer/CoreSimulator/Devices/<device_id>/data/Containers/Data/Application/<app_id>/Documents/
@@ -281,6 +301,7 @@ adb shell "cat /data/data/com.cerebral.mobile/shared_prefs/RCTAsyncStorage.xml"
 ```
 
 ### Check Network Requests
+
 ```bash
 # Use React Native Debugger or:
 # iOS: Xcode console logs
@@ -288,7 +309,9 @@ adb shell "cat /data/data/com.cerebral.mobile/shared_prefs/RCTAsyncStorage.xml"
 ```
 
 ### Console Logging
+
 Add logging to verify:
+
 ```typescript
 console.log('Loading flags from cache...');
 console.log('Flags loaded:', flags);
@@ -314,11 +337,13 @@ console.log('Cache timestamp:', lastUpdated);
 ## NOTES & BLOCKERS
 
 ### Potential Issues
+
 - If backend not ready: Use mock endpoint returning hardcoded flags
 - If AsyncStorage not working: Add error logging and fallback
 - If network slow: Add timeout and fallback to cache
 
 ### Questions to Clarify
+
 - What's the exact URL for /api/flags endpoint?
 - What does the backend return for flags?
 - Should flags auto-refresh in background?

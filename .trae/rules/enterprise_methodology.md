@@ -184,19 +184,19 @@ import { injectable, inject } from 'tsyringe';
 
 @injectable()
 export class UserService extends BaseEnterpriseService<User> {
-    constructor(
-        @inject('Database') private db: Database,
-        @inject('Logger') private logger: StructuredLogger,
-        @inject('Monitor') private monitor: PerformanceMonitor
-    ) {
-        super();
-    }
+  constructor(
+    @inject('Database') private db: Database,
+    @inject('Logger') private logger: StructuredLogger,
+    @inject('Monitor') private monitor: PerformanceMonitor
+  ) {
+    super();
+  }
 }
 
 // ❌ FORBIDDEN: Hard-coded instantiation
 export class UserService extends BaseEnterpriseService<User> {
-    private db = new Database();  // VIOLATION: Direct instantiation
-    private logger = new Logger();  // VIOLATION: Hard-coded
+  private db = new Database(); // VIOLATION: Direct instantiation
+  private logger = new Logger(); // VIOLATION: Hard-coded
 }
 ```
 
@@ -464,13 +464,13 @@ These violations have **ZERO tolerance** - no exceptions:
 
 ## 🎯 PERFORMANCE TARGETS (MANDATORY)
 
-| Metric | Target | 95th Percentile |
-|--------|--------|-----------------|
-| Response Time | <100ms | <200ms |
-| Memory Usage | <256MB | <512MB |
-| Error Rate | <0.01% | <0.1% |
-| Throughput | >5000 req/s | >1000 req/s |
-| Cache Hit Rate | >80% | >70% |
+| Metric         | Target      | 95th Percentile |
+| -------------- | ----------- | --------------- |
+| Response Time  | <100ms      | <200ms          |
+| Memory Usage   | <256MB      | <512MB          |
+| Error Rate     | <0.01%      | <0.1%           |
+| Throughput     | >5000 req/s | >1000 req/s     |
+| Cache Hit Rate | >80%        | >70%            |
 
 ---
 

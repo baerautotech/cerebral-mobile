@@ -13,13 +13,13 @@ Cerebral Mobile is a **pnpm monorepo** containing three platform-specific applic
 
 ### Applications & Packages
 
-| Package | Type | Platform | Technology |
-|---------|------|----------|-----------|
-| **@cerebral/core** | Shared | All | TypeScript, React Native |
-| **@cerebral/design-system** | Shared | All | TypeScript, React |
-| **cerebral-native** | App | iOS/Android | React Native |
-| **cerebral-wearable** | App | WearOS/watchOS | React Native Wearable |
-| **cerebral-tablet** | App | Web | React + Tailwind |
+| Package                     | Type   | Platform       | Technology               |
+| --------------------------- | ------ | -------------- | ------------------------ |
+| **@cerebral/core**          | Shared | All            | TypeScript, React Native |
+| **@cerebral/design-system** | Shared | All            | TypeScript, React        |
+| **cerebral-native**         | App    | iOS/Android    | React Native             |
+| **cerebral-wearable**       | App    | WearOS/watchOS | React Native Wearable    |
+| **cerebral-tablet**         | App    | Web            | React + Tailwind         |
 
 ---
 
@@ -168,18 +168,21 @@ cerebral-mobile/
 **Target Platforms**: Apple iOS, Google Android
 
 **Technology Stack**:
+
 - React Native 0.74+
 - TypeScript 5.5+
 - React Navigation 6+
 - Zustand for state management
 
 **Key Features**:
+
 - Native modules for performance-critical operations
 - Platform-specific UI components (TabBar, etc.)
 - Background task execution via Detox
 - Push notifications (Firebase Cloud Messaging)
 
 **Directory Structure**:
+
 ```
 apps/native/
 ├── ios/              # Xcode project
@@ -191,6 +194,7 @@ apps/native/
 ```
 
 **Build Process**:
+
 ```bash
 # Development
 npm run dev -F cerebral-native
@@ -211,17 +215,20 @@ npm run android:prod     # Production build
 **Target Platforms**: Android WearOS, Apple watchOS
 
 **Technology Stack**:
+
 - React Native Wearable
 - TypeScript 5.5+
 - Minimal UI for watch screens
 
 **Key Features**:
+
 - Compact interfaces optimized for small screens
 - Watchface complications and widgets
 - Background task synchronization
 - Limited battery usage
 
 **Directory Structure**:
+
 ```
 apps/wearable/
 ├── wearos/           # Android Wear specific
@@ -232,6 +239,7 @@ apps/wearable/
 ```
 
 **Build Process**:
+
 ```bash
 # WearOS
 npm run wearable:android
@@ -247,18 +255,21 @@ npm run wearable:ios
 **Target Platforms**: Web Browsers (desktop, tablet)
 
 **Technology Stack**:
+
 - React 18.3+
 - TypeScript 5.5+
 - Next.js 14+ (or equivalent)
 - Tailwind CSS 3.3+
 
 **Key Features**:
+
 - Responsive design (tablet-optimized)
 - Progressive Web App (PWA) support
 - Offline-first with service workers
 - Touch-optimized UI
 
 **Directory Structure**:
+
 ```
 apps/tablet/
 ├── public/           # Static assets
@@ -271,6 +282,7 @@ apps/tablet/
 ```
 
 **Build Process**:
+
 ```bash
 # Development
 npm run dev -F cerebral-tablet
@@ -323,6 +335,7 @@ const MyComponent = () => {
 ```
 
 **Dependencies**:
+
 - axios (HTTP client)
 - zustand (state management)
 - zod (validation)
@@ -335,15 +348,15 @@ const MyComponent = () => {
 
 **Components**:
 
-| Component | Platforms | Notes |
-|-----------|-----------|-------|
-| Button | All | Primary, secondary, tertiary variants |
-| Card | All | Container component |
-| Input | All | Text input with validation |
-| Modal | All | Dialog/Alert modals |
-| Toast | All | Notification toasts |
-| Navigation | Native | Tab navigator |
-| Tabs | Web/Tablet | Web-specific tabs |
+| Component  | Platforms  | Notes                                 |
+| ---------- | ---------- | ------------------------------------- |
+| Button     | All        | Primary, secondary, tertiary variants |
+| Card       | All        | Container component                   |
+| Input      | All        | Text input with validation            |
+| Modal      | All        | Dialog/Alert modals                   |
+| Toast      | All        | Notification toasts                   |
+| Navigation | Native     | Tab navigator                         |
+| Tabs       | Web/Tablet | Web-specific tabs                     |
 
 **Usage**:
 
@@ -369,7 +382,7 @@ export const colors = {
   success: '#4CD964',
   error: '#FF3B30',
   text: '#000000',
-  background: '#FFFFFF'
+  background: '#FFFFFF',
 };
 
 // typography.ts
@@ -380,8 +393,8 @@ export const typography = {
     base: 16,
     lg: 18,
     xl: 20,
-    xxl: 24
-  }
+    xxl: 24,
+  },
 };
 ```
 
@@ -494,13 +507,14 @@ pnpm build -F cerebral-tablet
 
 Each app has its own GitHub Actions workflow:
 
-| Workflow | Trigger | Steps |
-|----------|---------|-------|
-| **native-build.yml** | Push to main | Lint, Test, Build (iOS+Android), Upload |
+| Workflow               | Trigger      | Steps                                      |
+| ---------------------- | ------------ | ------------------------------------------ |
+| **native-build.yml**   | Push to main | Lint, Test, Build (iOS+Android), Upload    |
 | **wearable-build.yml** | Push to main | Lint, Test, Build (WearOS+watchOS), Upload |
-| **tablet-build.yml** | Push to main | Lint, Test, Build, Push to registry |
+| **tablet-build.yml**   | Push to main | Lint, Test, Build, Push to registry        |
 
 **Build Output**:
+
 - Native: APK/AAB (Android), IPA (iOS)
 - Wearable: APK (WearOS), IPA (watchOS)
 - Tablet: Docker image → Registry
@@ -524,7 +538,7 @@ export const useAuthStore = create((set) => ({
     set({ user: response.user, isAuthenticated: true });
   },
 
-  logout: () => set({ user: null, isAuthenticated: false })
+  logout: () => set({ user: null, isAuthenticated: false }),
 }));
 
 // Usage
@@ -533,13 +547,13 @@ const { user, login } = useAuthStore();
 
 ### Comparison: Redux vs Zustand
 
-| Feature | Redux Toolkit | Zustand |
-|---------|---------------|---------|
-| Boilerplate | More | Less |
-| DevTools | Excellent | Good |
-| Bundle Size | Larger | Smaller |
-| Learning Curve | Steeper | Gentler |
-| Scalability | Best for large apps | Good for medium apps |
+| Feature        | Redux Toolkit       | Zustand              |
+| -------------- | ------------------- | -------------------- |
+| Boilerplate    | More                | Less                 |
+| DevTools       | Excellent           | Good                 |
+| Bundle Size    | Larger              | Smaller              |
+| Learning Curve | Steeper             | Gentler              |
+| Scalability    | Best for large apps | Good for medium apps |
 
 **Decision**: Zustand chosen for monorepo due to smaller bundle size and simpler API.
 
@@ -624,8 +638,8 @@ module.exports = {
     '<rootDir>/packages/core/jest.config.js',
     '<rootDir>/packages/design-system/jest.config.js',
     '<rootDir>/apps/native/jest.config.js',
-    '<rootDir>/apps/tablet/jest.config.js'
-  ]
+    '<rootDir>/apps/tablet/jest.config.js',
+  ],
 };
 ```
 
@@ -639,7 +653,7 @@ module.exports = {
 // All requests include Bearer token
 import { useAuthStore } from '@cerebral/core';
 
-api.interceptors.request.use(config => {
+api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().token;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -662,7 +676,7 @@ import { z } from 'zod';
 const createTaskSchema = z.object({
   title: z.string().min(1).max(100),
   description: z.string().optional(),
-  priority: z.enum(['low', 'medium', 'high'])
+  priority: z.enum(['low', 'medium', 'high']),
 });
 
 type CreateTaskInput = z.infer<typeof createTaskSchema>;
@@ -704,7 +718,7 @@ export const handleError = (error: any) => {
   if (axios.isAxiosError(error)) {
     return {
       code: error.response?.status,
-      message: error.response?.data?.message
+      message: error.response?.data?.message,
     };
   }
   return { code: 500, message: 'Unknown error' };
@@ -786,12 +800,14 @@ pnpm build -- --analyze
 ### Common Issues
 
 **Issue**: Dependency conflicts
+
 ```bash
 pnpm clean
 pnpm install
 ```
 
 **Issue**: Build fails
+
 ```bash
 pnpm lint:fix
 pnpm format
@@ -799,6 +815,7 @@ pnpm build
 ```
 
 **Issue**: Module not found
+
 ```bash
 # Check tsconfig.json path aliases
 # Verify package.json exports

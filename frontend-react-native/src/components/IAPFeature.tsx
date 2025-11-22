@@ -35,11 +35,7 @@ import { UpgradeCTA } from './UpgradeCTA';
  *   <PremiumContent />
  * </IAPFeature>
  */
-export function IAPFeature({
-  sku,
-  children,
-  fallback,
-}: IAPFeatureProps): ReactNode {
+export function IAPFeature({ sku, children, fallback }: IAPFeatureProps): ReactNode {
   const { purchasedSKUs, loading, initiateCheckout } = useIAP();
 
   // Show nothing while loading

@@ -3,7 +3,6 @@
  * Production-ready API client with resilience patterns
  */
 
-
 import { logApiError, logPerformance, addBreadcrumb } from './monitoring';
 import { AuthService } from './supabase';
 import { env } from '../config/env';
@@ -162,7 +161,6 @@ class EnhancedApiClient {
 
       const data = await response.json();
       return { data, error: null };
-
     } catch (error: unknown) {
       // Network error or timeout
       logApiError(endpoint, options.method ?? 'GET', 0, error);
@@ -232,14 +230,19 @@ class EnhancedApiClient {
   /**
    * GET request
    */
-  public async get<T>(endpoint: string): Promise<{ data: T | null; error: Record<string, unknown> }> {
+  public async get<T>(
+    endpoint: string
+  ): Promise<{ data: T | null; error: Record<string, unknown> }> {
     return this.request<T>(endpoint, { method: 'GET' });
   }
 
   /**
    * POST request
    */
-  public async post<T>(endpoint: string, body?: Record<string, unknown>): Promise<{ data: T | null; error: Record<string, unknown> }> {
+  public async post<T>(
+    endpoint: string,
+    body?: Record<string, unknown>
+  ): Promise<{ data: T | null; error: Record<string, unknown> }> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: body ? JSON.stringify(body) : undefined,
@@ -249,7 +252,10 @@ class EnhancedApiClient {
   /**
    * PUT request
    */
-  public async put<T>(endpoint: string, body?: Record<string, unknown>): Promise<{ data: T | null; error: Record<string, unknown> }> {
+  public async put<T>(
+    endpoint: string,
+    body?: Record<string, unknown>
+  ): Promise<{ data: T | null; error: Record<string, unknown> }> {
     return this.request<T>(endpoint, {
       method: 'PUT',
       body: body ? JSON.stringify(body) : undefined,
@@ -259,7 +265,9 @@ class EnhancedApiClient {
   /**
    * DELETE request
    */
-  public async delete<T>(endpoint: string): Promise<{ data: T | null; error: Record<string, unknown> }> {
+  public async delete<T>(
+    endpoint: string
+  ): Promise<{ data: T | null; error: Record<string, unknown> }> {
     return this.request<T>(endpoint, { method: 'DELETE' });
   }
 }

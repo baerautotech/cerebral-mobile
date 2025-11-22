@@ -9,13 +9,7 @@
  */
 
 import React, { Component, ReactNode } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -81,8 +75,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             <Text style={styles.emoji}>😔</Text>
             <Text style={styles.title}>Something Went Wrong</Text>
             <Text style={styles.message}>
-              We're sorry, but something unexpected happened. The error has been logged and
-              we'll look into it.
+              We're sorry, but something unexpected happened. The error has been logged and we'll
+              look into it.
             </Text>
 
             {__DEV__ && this.state.error && (
@@ -90,9 +84,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 <Text style={styles.errorTitle}>Error Details (Development Only)</Text>
                 <Text style={styles.errorText}>{this.state.error.toString()}</Text>
                 {this.state.errorInfo && (
-                  <Text style={styles.errorStack}>
-                    {this.state.errorInfo.componentStack}
-                  </Text>
+                  <Text style={styles.errorStack}>{this.state.errorInfo.componentStack}</Text>
                 )}
               </View>
             )}

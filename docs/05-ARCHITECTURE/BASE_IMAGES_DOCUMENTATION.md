@@ -12,10 +12,10 @@ The Cerebral Platform uses two pre-built base images with ML/AI dependencies pre
 
 ### Base Images Available
 
-| Image | Purpose | Size | Base Image | Registry Path |
-|---|---|---|---|---|
+| Image            | Purpose                     | Size   | Base Image                               | Registry Path                            |
+| ---------------- | --------------------------- | ------ | ---------------------------------------- | ---------------------------------------- |
 | **ai-base:cuda** | GPU-accelerated AI services | ~7.5GB | `nvidia/cuda:12.4.1-runtime-ubuntu22.04` | `10.34.0.202:5000/cerebral/ai-base:cuda` |
-| **ai-base:cpu** | CPU-only AI services | ~2.8GB | `python:3.11-slim` | `10.34.0.202:5000/cerebral/ai-base:cpu` |
+| **ai-base:cpu**  | CPU-only AI services        | ~2.8GB | `python:3.11-slim`                       | `10.34.0.202:5000/cerebral/ai-base:cpu`  |
 
 ---
 
@@ -24,6 +24,7 @@ The Cerebral Platform uses two pre-built base images with ML/AI dependencies pre
 ### Services Using Base Images
 
 **CUDA Version (`cerebral/ai-base:cuda`):**
+
 - `ai-services` - AI/ML model serving
 - `bmad-services` - BMAD orchestration
 - `data-services` - Data processing with GPU
@@ -196,6 +197,7 @@ curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cuda \
 ### Why NOT to do single-architecture builds
 
 ❌ **WRONG - Building for Mac only:**
+
 ```bash
 docker build -f docker/Dockerfile.ai-base.cuda -t 10.34.0.202:5000/cerebral/ai-base:cuda .
 # This creates ARM64 image only
@@ -203,6 +205,7 @@ docker build -f docker/Dockerfile.ai-base.cuda -t 10.34.0.202:5000/cerebral/ai-b
 ```
 
 ❌ **WRONG - Separate architecture tags:**
+
 ```bash
 docker buildx build --platform linux/amd64 -t 10.34.0.202:5000/cerebral/ai-base:cuda-amd64 ...
 docker buildx build --platform linux/arm64 -t 10.34.0.202:5000/cerebral/ai-base:cuda-arm64 ...
@@ -211,6 +214,7 @@ docker buildx build --platform linux/arm64 -t 10.34.0.202:5000/cerebral/ai-base:
 ```
 
 ✅ **CORRECT - Multi-architecture single tag:**
+
 ```bash
 docker buildx build --platform linux/amd64,linux/arm64 \
   -t 10.34.0.202:5000/cerebral/ai-base:cuda --push .
@@ -243,6 +247,7 @@ docker buildx ls
 ### Common Dependencies (Both Images)
 
 **Python ML/AI Stack:**
+
 - `torch` - PyTorch for deep learning
 - `transformers` - Hugging Face transformers (NLP)
 - `pandas` - Data manipulation
@@ -251,6 +256,7 @@ docker buildx ls
 - `scipy` - Scientific computing
 
 **Data & Storage:**
+
 - `sqlalchemy` - ORM
 - `redis` - Caching
 - `psycopg2` - PostgreSQL driver
@@ -258,6 +264,7 @@ docker buildx ls
 - `chromadb` - Vector database
 
 **Web & API:**
+
 - `fastapi` - Web framework
 - `uvicorn` - ASGI server
 - `pydantic` - Data validation
@@ -265,6 +272,7 @@ docker buildx ls
 - `httpx` - Async HTTP client
 
 **ML Infrastructure:**
+
 - `sentence-transformers` - Embeddings
 - `spacy` - NLP
 - `nltk` - NLP toolkit
@@ -273,11 +281,13 @@ docker buildx ls
 - `huggingface_hub` - Model downloads
 
 **Observability:**
+
 - `prometheus-client` - Metrics
 - `opentelemetry` - Tracing
 - `structlog` - Structured logging
 
 **See Full List:**
+
 ```bash
 # View all dependencies
 cat ~/Development/cerebral/docker/requirements-unified.txt
@@ -289,6 +299,7 @@ kubectl exec -it <pod-name> -- pip list
 ### CUDA-Specific
 
 The `:cuda` image additionally includes:
+
 - `nvidia/cuda:12.4.1-runtime` base
 - `torch[cuda]` - PyTorch with CUDA support
 - `torchvision[cuda]` - Computer vision
@@ -301,6 +312,7 @@ The `:cuda` image additionally includes:
 ### When to Update Base Images
 
 Update base images when:
+
 1. ✅ Adding new dependencies needed by multiple services
 2. ✅ Upgrading existing packages (security patches, features)
 3. ✅ Changing Python version (3.11 → 3.12)
@@ -328,6 +340,7 @@ vim ~/Development/cerebral/docker/requirements-unified.txt
 #### Step 2: Test Dependency Changes
 
 **For CUDA Version:**
+
 ```bash
 cd ~/Development/cerebral
 docker build -f docker/Dockerfile.ai-base.cuda -t cerebral/ai-base:cuda-test .
@@ -335,6 +348,7 @@ docker run --rm cerebral/ai-base:cuda-test python -c "import torch; print(torch.
 ```
 
 **For CPU Version:**
+
 ```bash
 cd ~/Development/cerebral
 docker build -f docker/Dockerfile.ai-base.cpu -t cerebral/ai-base:cpu-test .
@@ -354,6 +368,7 @@ vim ~/Development/cerebral/docker/Dockerfile.ai-base.cpu
 ```
 
 **Common changes:**
+
 - Add build dependencies: `gcc`, `g++`, `python3-dev`
 - Update base image: `python:3.11-slim` → `python:3.12-slim`
 - Update CUDA: `nvidia/cuda:12.4.1` → `nvidia/cuda:13.0`
@@ -424,6 +439,7 @@ kubectl delete pods -n cerebral-platform -l app=ai-services  # Forces redeploy
 **Cause**: Base image not found in registry
 
 **Solution:**
+
 ```bash
 # 1. Verify image exists
 curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
@@ -443,6 +459,7 @@ gh workflow run build.yml --repo baerautotech/cerebral
 **Cause**: Package not in base image or version mismatch
 
 **Solution:**
+
 ```bash
 # 1. Check if in base image
 docker run --rm 10.34.0.202:5000/cerebral/ai-base:cuda python -c "import <package>"
@@ -463,6 +480,7 @@ docker push 10.34.0.202:5000/cerebral/ai-base:cuda
 **Cause**: Base image not cached or dependencies rebuilding
 
 **Solution:**
+
 ```bash
 # 1. Verify base image is in local Docker
 docker image ls | grep ai-base
@@ -516,15 +534,18 @@ Updated: 2025-10-25 (added gcc, g++, python3-dev)
 ### Why These Are Needed
 
 **python3-dev / python3.11-dev:**
+
 - Required for C extensions (psutil, lxml, etc.)
 - Provides Python.h header files
 - Needed during `pip install` for packages that compile from source
 
 **gcc / g++ (C/C++ compilers):**
+
 - Required for compiling C/C++ extensions
 - Needed by: psutil, cryptography, numpy, scipy, etc.
 
 **build-essential:**
+
 - Meta-package containing gcc, g++, make, libc-dev
 - Standard for build environments
 
@@ -555,11 +576,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ## 🎯 Quick Reference
 
 ### Check Images in Registry
+
 ```bash
 curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
 ```
 
 ### Build & Push Updated Images
+
 ```bash
 cd ~/Development/cerebral
 docker build -f docker/Dockerfile.ai-base.cuda -t cerebral/ai-base:cuda .
@@ -571,6 +594,7 @@ docker push 10.34.0.202:5000/cerebral/ai-base:cpu
 ```
 
 ### Add New Dependency
+
 ```bash
 # 1. Edit requirements file
 echo "new-package==1.0.0" >> ~/Development/cerebral/docker/requirements-unified.txt

@@ -126,7 +126,10 @@ export class BackendClient {
   private readonly retryDelay: number;
 
   constructor(options: BackendClientOptions = {}) {
-    this.baseURL = options.baseURL || process.env.REACT_APP_API_URL || 'https://api.dev.cerebral.baerautotech.com';
+    this.baseURL =
+      options.baseURL ||
+      process.env.REACT_APP_API_URL ||
+      'https://api.dev.cerebral.baerautotech.com';
     this.timeout = options.timeout || 30000;
     this.enableLogging = options.enableLogging ?? true;
     this.retryAttempts = options.retryAttempts || 3;
@@ -402,7 +405,7 @@ export class BackendClient {
           method,
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            Accept: 'application/json',
           },
           credentials: 'include',
           signal: AbortSignal.timeout(this.timeout),
@@ -420,13 +423,12 @@ export class BackendClient {
         }
 
         if (!response.ok) {
-          const errorData = await response.json() as { error: ErrorResponse['error'] };
+          const errorData = (await response.json()) as { error: ErrorResponse['error'] };
           this.handleError(response.status, errorData.error);
         }
 
-        const result = await response.json() as T;
+        const result = (await response.json()) as T;
         return result;
-
       } catch (error: any) {
         lastError = error;
 
@@ -509,16 +511,14 @@ export class BackendClient {
     const emoji = status < 300 ? '✅' : status < 500 ? '⚠️' : '❌';
     const retry = attempt > 1 ? ` (retry ${attempt})` : '';
 
-    console.log(
-      `${emoji} [BackendClient] ${method} ${path} → ${status} (${duration}ms)${retry}`
-    );
+    console.log(`${emoji} [BackendClient] ${method} ${path} → ${status} (${duration}ms)${retry}`);
   }
 
   /**
    * Delay helper for retry logic
    */
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**

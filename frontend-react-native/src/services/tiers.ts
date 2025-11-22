@@ -25,7 +25,7 @@ function decodeJWT(token: string): Record<string, any> | null {
     const payload = parts[1];
 
     // Add padding if needed
-    const padded = payload + '==='.substring(0, (4 - payload.length % 4) % 4);
+    const padded = payload + '==='.substring(0, (4 - (payload.length % 4)) % 4);
 
     // Convert base64url to base64
     const base64 = padded.replace(/-/g, '+').replace(/_/g, '/');

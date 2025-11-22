@@ -11,6 +11,7 @@
 The tier system controls feature access based on user subscription level. Users are assigned one of three tiers: Free, Standard, or Enterprise.
 
 ### Tier Hierarchy
+
 ```
 Free (0)  ← Standard (1)  ← Enterprise (2)
 ```
@@ -22,12 +23,14 @@ Higher tiers include all features from lower tiers plus additional premium featu
 ## Tier Levels
 
 ### Free Tier (Default)
+
 - No payment required
 - Basic features only
 - Community support
 - Default for all new users
 
 ### Standard Tier ($9.99/month)
+
 - Includes all Free tier features
 - Advanced analytics
 - Custom reports
@@ -36,6 +39,7 @@ Higher tiers include all features from lower tiers plus additional premium featu
 - Team collaboration
 
 ### Enterprise Tier ($49.99/month)
+
 - Includes all Standard tier features
 - AI-powered insights
 - Custom integrations
@@ -50,6 +54,7 @@ Higher tiers include all features from lower tiers plus additional premium featu
 ## Architecture
 
 ### Data Flow
+
 ```
 App Start
     ↓
@@ -98,6 +103,7 @@ Components use TierGuard or useUserTier
 ### Step 1: Wrap Your App
 
 In `App.tsx`:
+
 ```typescript
 import { TierProvider } from './src/providers/TierProvider';
 
@@ -181,7 +187,9 @@ Your backend should return a JWT with the `tier` field:
 ```
 
 ### Supported Tier Fields
+
 The system checks for these field names in order:
+
 1. `tier`
 2. `user_tier`
 
@@ -192,6 +200,7 @@ If neither exists, defaults to `free`.
 ## Tier Hierarchy
 
 The system enforces tier hierarchy:
+
 - `hasTier('free')` returns true for all tiers
 - `hasTier('standard')` returns true for standard and enterprise
 - `hasTier('enterprise')` returns true for enterprise only
@@ -199,8 +208,8 @@ The system enforces tier hierarchy:
 ```typescript
 const { hasTier } = useUserTier();
 
-hasTier('free');       // true for all users
-hasTier('standard');   // true if standard or enterprise
+hasTier('free'); // true for all users
+hasTier('standard'); // true if standard or enterprise
 hasTier('enterprise'); // true if enterprise
 ```
 
@@ -209,6 +218,7 @@ hasTier('enterprise'); // true if enterprise
 ## Common Patterns
 
 ### Pattern 1: Simple Tier Check
+
 ```typescript
 <TierGuard tier="standard">
   <AdvancedFeature />
@@ -216,6 +226,7 @@ hasTier('enterprise'); // true if enterprise
 ```
 
 ### Pattern 2: With Fallback UI
+
 ```typescript
 <TierGuard
   tier="enterprise"
@@ -226,6 +237,7 @@ hasTier('enterprise'); // true if enterprise
 ```
 
 ### Pattern 3: Hook-Based Check
+
 ```typescript
 function MyScreen() {
   const { hasTier, tier } = useUserTier();
@@ -239,6 +251,7 @@ function MyScreen() {
 ```
 
 ### Pattern 4: Combined with Feature Flags
+
 ```typescript
 <FeatureFlagGuard flag="premium_analytics_beta">
   <TierGuard tier="enterprise">
@@ -276,9 +289,7 @@ const { tierInfo } = useUserTier();
 
 if (tierInfo?.expiresAt) {
   const expiryDate = new Date(tierInfo.expiresAt);
-  const daysLeft = Math.floor(
-    (expiryDate - new Date()) / (1000 * 60 * 60 * 24)
-  );
+  const daysLeft = Math.floor((expiryDate - new Date()) / (1000 * 60 * 60 * 24));
   console.log(`Tier expires in ${daysLeft} days`);
 }
 ```
@@ -288,6 +299,7 @@ if (tierInfo?.expiresAt) {
 ## Testing
 
 ### Running Tests
+
 ```bash
 npm test
 ```
@@ -308,6 +320,7 @@ npm test
 ## Debugging
 
 ### Check Extracted Tier
+
 ```typescript
 import { extractTierFromJWT } from '../services/tiers';
 
@@ -317,7 +330,9 @@ console.log('Extracted tier:', tier);
 ```
 
 ### Console Logging
+
 The tier system includes console logs:
+
 ```
 "Tier extracted from JWT: standard"
 "User tier loaded: enterprise"
@@ -326,16 +341,19 @@ The tier system includes console logs:
 ### Common Issues
 
 **Issue**: All users see as free tier
+
 - Verify backend returns JWT with `tier` field
 - Check JWT format is valid
 - Verify tier value is lowercase: 'free', 'standard', 'enterprise'
 
 **Issue**: TierGuard always shows fallback
+
 - Check JWT extraction with console.log
 - Verify tier hierarchy (hasTierAccess logic)
 - Ensure useUserTier hook is within TierProvider
 
 **Issue**: Tier doesn't update after purchase
+
 - Call `refresh()` after purchase completes
 - Ensure backend returns updated JWT
 - Check new JWT contains new tier
@@ -345,6 +363,7 @@ The tier system includes console logs:
 ## Best Practices
 
 ### ✅ DO
+
 - Use tier-based access for core monetization
 - Combine tiers with feature flags for A/B testing
 - Show upgrade prompts for insufficient tier
@@ -352,6 +371,7 @@ The tier system includes console logs:
 - Validate tier server-side for premium actions
 
 ### ❌ DON'T
+
 - Use tier for user-specific logic (use user_id)
 - Trust client-side tier checks alone
 - Hardcode tier values in UI
@@ -431,6 +451,7 @@ export const TIER_CONFIGS: Record<TierLevel, TierConfig> = {
 ## Summary
 
 The tier system:
+
 - ✅ **Simple**: Hierarchy-based access control
 - ✅ **Secure**: Server-side validation via JWT
 - ✅ **Flexible**: Supports multiple tiers

@@ -35,11 +35,7 @@ import { TierGuardProps, formatTierName } from '../types/tiers';
  *   <AIFeaturesScreen />
  * </TierGuard>
  */
-export function TierGuard({
-  tier,
-  children,
-  fallback,
-}: TierGuardProps): ReactNode {
+export function TierGuard({ tier, children, fallback }: TierGuardProps): ReactNode {
   const { tier: userTier, loading, hasTier } = useUserTier();
 
   // Show nothing while loading

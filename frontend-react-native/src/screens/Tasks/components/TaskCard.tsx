@@ -39,9 +39,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           {task.priority}
         </Text>
       </View>
-      <Text style={styles.taskDate}>
-        {new Date(task.created_at).toLocaleDateString()}
-      </Text>
+      <Text style={styles.taskDate}>{new Date(task.created_at).toLocaleDateString()}</Text>
     </View>
   </TouchableOpacity>
 );

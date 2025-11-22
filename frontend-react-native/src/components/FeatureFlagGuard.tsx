@@ -33,11 +33,7 @@ import { FeatureFlagGuardProps } from '../types/featureFlags';
  *   <BetaUI />
  * </FeatureFlagGuard>
  */
-export function FeatureFlagGuard({
-  flag,
-  children,
-  fallback,
-}: FeatureFlagGuardProps): ReactNode {
+export function FeatureFlagGuard({ flag, children, fallback }: FeatureFlagGuardProps): ReactNode {
   const { flags, loading } = useFeatureFlags();
 
   // During loading, don't render anything (avoid flashing)

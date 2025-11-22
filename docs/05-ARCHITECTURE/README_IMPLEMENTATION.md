@@ -75,6 +75,7 @@ cerebral-mobile-1/
 ## 🚀 QUICK START
 
 ### Prerequisites Check
+
 ```bash
 cd /Users/bbaer/Development/cerebral-mobile-1
 
@@ -93,6 +94,7 @@ npm run android  # Android
 ```
 
 ### Read These First (In Order)
+
 1. **SETUP_COMPLETE.md** (12 min read)
    - Quick overview of what's been set up
    - Getting started instructions
@@ -118,6 +120,7 @@ npm run android  # Android
 ## 📋 PHASE 1: Feature Flags SDK (Days 1-4)
 
 ### Deliverables Checklist
+
 - [ ] `src/types/featureFlags.ts` - Type definitions
 - [ ] `src/services/featureFlags.ts` - Backend client
 - [ ] `src/hooks/useFeatureFlags.ts` - React hook with caching
@@ -128,6 +131,7 @@ npm run android  # Android
 - [ ] `docs/FEATURE_FLAGS.md` documentation
 
 ### Success Criteria
+
 - [ ] Flags fetched from backend on startup
 - [ ] Flags cached in AsyncStorage (5 min TTL)
 - [ ] Pull-to-refresh updates flags
@@ -139,6 +143,7 @@ npm run android  # Android
 - [ ] Works on real devices
 
 ### Start Phase 1
+
 ```bash
 # Create feature branch
 git checkout -b feature/feature-flags-sdk develop
@@ -156,15 +161,18 @@ touch frontend-react-native/src/types/featureFlags.ts
 ## 📚 YOUR RESOURCES
 
 ### Main Documents
+
 - **MOBILE_IMPLEMENTATION_PLAN.md** - Your complete roadmap (read this!)
 - **SETUP_COMPLETE.md** - Getting started guide
 - **build-todo/PHASE_1_FEATURE_FLAGS.md** - Today's detailed checklist
 
 ### Cursor Rules (Reference While Coding)
+
 - **.cursor/rules/cerebral-mobile.mdc** - Repository rules and patterns
 - **.cursor/rules/feature-flags-mobile.mdc** - Feature flags guide with code examples
 
 ### External Resources
+
 - [React Native AsyncStorage Docs](https://react-native-async-storage.github.io/async-storage/)
 - [React Hooks Documentation](https://react.dev/reference/react)
 - [RevenueCat React Native](https://www.revenuecat.com/docs/reactnative)
@@ -175,17 +183,18 @@ touch frontend-react-native/src/types/featureFlags.ts
 
 ## 🎯 6-PHASE ROADMAP AT A GLANCE
 
-| Phase | Focus | Duration | Status |
-|-------|-------|----------|--------|
-| 1 | Feature Flags SDK | 3-4 days | ⏳ Next |
-| 2 | Tier System & IAP | 3-4 days | ⏳ After Phase 1 |
-| 3 | Screen Wrapping (30+) | 4-5 days | ⏳ After Phase 2 |
-| 4 | Build Automation | 2-3 days | ⏳ After Phase 3 |
-| 5 | App Store Distribution | 1-2 days | ⏳ After Phase 4 |
-| 6 | Testing & QA | 3-4 days | ⏳ Final phase |
-| **Total** | **All Features** | **4-6 weeks** | ⏳ In Progress |
+| Phase     | Focus                  | Duration      | Status           |
+| --------- | ---------------------- | ------------- | ---------------- |
+| 1         | Feature Flags SDK      | 3-4 days      | ⏳ Next          |
+| 2         | Tier System & IAP      | 3-4 days      | ⏳ After Phase 1 |
+| 3         | Screen Wrapping (30+)  | 4-5 days      | ⏳ After Phase 2 |
+| 4         | Build Automation       | 2-3 days      | ⏳ After Phase 3 |
+| 5         | App Store Distribution | 1-2 days      | ⏳ After Phase 4 |
+| 6         | Testing & QA           | 3-4 days      | ⏳ Final phase   |
+| **Total** | **All Features**       | **4-6 weeks** | ⏳ In Progress   |
 
 ### Phase 1 Timeline (This Week)
+
 - **Day 1**: Create types, service, hook
 - **Day 2**: Create guard component, provider
 - **Day 3**: Write tests, update App.tsx
@@ -198,7 +207,9 @@ touch frontend-react-native/src/types/featureFlags.ts
 All code patterns are in two places:
 
 ### Location 1: Cursor Rules
+
 `.cursor/rules/feature-flags-mobile.mdc` contains:
+
 - Feature flag hook with caching
 - FeatureFlagGuard component
 - Tier guard component
@@ -206,7 +217,9 @@ All code patterns are in two places:
 - Test examples
 
 ### Location 2: Phase Checklist
+
 `build-todo/PHASE_1_FEATURE_FLAGS.md` contains:
+
 - Feature flag service
 - Feature flag hook
 - FeatureFlagGuard component
@@ -222,6 +235,7 @@ All code patterns are in two places:
 These endpoints must exist (or you mock them for testing):
 
 ### Feature Flags Endpoint
+
 ```typescript
 // GET /api/flags
 // Returns: { flag_name: boolean, ... }
@@ -233,6 +247,7 @@ These endpoints must exist (or you mock them for testing):
 ```
 
 ### JWT Token (Phase 2)
+
 ```typescript
 // JWT must include tier field
 // Structure: { user_id, tier, ... }
@@ -244,6 +259,7 @@ These endpoints must exist (or you mock them for testing):
 ```
 
 ### IAP Verification (Phase 2)
+
 ```typescript
 // POST /api/iap/verify-receipt
 // Body: { receipt, sku, platform }
@@ -259,6 +275,7 @@ These endpoints must exist (or you mock them for testing):
 ## 🛠 DEVELOPMENT WORKFLOW
 
 ### Daily Routine
+
 1. **Start**: `npm start` (Metro bundler in terminal)
 2. **Code**: Implement feature in small chunks
 3. **Test**: `npm run ios` or `npm run android` after each file
@@ -267,6 +284,7 @@ These endpoints must exist (or you mock them for testing):
 6. **End**: Push to feature branch
 
 ### Git Workflow
+
 ```bash
 # Start Phase 1
 git checkout -b feature/feature-flags-sdk develop
@@ -286,6 +304,7 @@ git push origin feature/feature-flags-sdk
 ```
 
 ### Testing Workflow
+
 ```bash
 # Run tests
 npm test
@@ -305,14 +324,18 @@ npm run android
 ## ❌ COMMON ISSUES & SOLUTIONS
 
 ### Issue: AsyncStorage Not Working
+
 **Solution**:
+
 1. Verify package installed: `npm list @react-native-async-storage/async-storage`
 2. If not: `npm install @react-native-async-storage/async-storage@1.21.0`
 3. Rebuild iOS: `cd frontend-react-native && pod install && cd ..`
 4. Rebuild Android: `npm run android` (clean build)
 
 ### Issue: Backend Endpoint Not Ready
+
 **Solution**: Use mock API for testing
+
 ```typescript
 // In services/featureFlags.ts
 export async function fetchFeatureFlags() {
@@ -326,13 +349,17 @@ export async function fetchFeatureFlags() {
 ```
 
 ### Issue: TypeScript Errors
+
 **Solution**:
+
 1. Check `frontend-react-native/tsconfig.json`
 2. Run `npm run lint -- --fix`
 3. Run `npm run format`
 
 ### Issue: Metro Bundler Issues
+
 **Solution**:
+
 ```bash
 # Kill all Metro processes
 pkill -f "react-native start"
@@ -351,6 +378,7 @@ npm start
 ## 📊 SUCCESS METRICS
 
 ### Phase 1 Success
+
 - ✅ Feature flags fetched from backend
 - ✅ Flags cached in AsyncStorage
 - ✅ FeatureFlagGuard working correctly
@@ -364,6 +392,7 @@ npm start
 - ✅ Works on real Android device
 
 ### All 6 Phases Success (4-6 weeks)
+
 - ✅ Feature flags system complete
 - ✅ Tier system enforced
 - ✅ In-App Purchases working
@@ -379,29 +408,34 @@ npm start
 ## 🚀 NEXT IMMEDIATE STEPS
 
 ### Today (Right Now)
+
 1. [ ] Verify you can run the app: `npm run ios` or `npm run android`
 2. [ ] Read `SETUP_COMPLETE.md` (12 min)
 3. [ ] Read `MOBILE_IMPLEMENTATION_PLAN.md` (20 min)
 4. [ ] Skim `build-todo/PHASE_1_FEATURE_FLAGS.md` (5 min)
 
 ### Tomorrow (Day 1 of Phase 1)
+
 1. [ ] Create feature branch: `git checkout -b feature/feature-flags-sdk develop`
 2. [ ] Create `src/types/featureFlags.ts`
 3. [ ] Create `src/services/featureFlags.ts`
 4. [ ] Start on `src/hooks/useFeatureFlags.ts`
 
 ### Day 2-3
+
 1. [ ] Finish useFeatureFlags hook
 2. [ ] Create FeatureFlagGuard component
 3. [ ] Create FeatureFlagProvider
 
 ### Day 4
+
 1. [ ] Write unit tests (>90% coverage)
 2. [ ] Test on iOS and Android simulators
 3. [ ] Test on real devices
 4. [ ] Create PR to develop
 
 ### Day 5
+
 1. [ ] Start Phase 2 (Tier System & IAP)
 
 ---
@@ -409,6 +443,7 @@ npm start
 ## 📞 QUICK REFERENCE
 
 ### Commands
+
 ```bash
 # Install dependencies
 pnpm install
@@ -434,6 +469,7 @@ npm run build
 ```
 
 ### File Locations
+
 ```
 Workspace rules:     .cursor/rules/cerebral-mobile.mdc
 Implementation plan: MOBILE_IMPLEMENTATION_PLAN.md
@@ -443,6 +479,7 @@ Main app code:       frontend-react-native/src/
 ```
 
 ### Key Directories
+
 ```
 hooks:       frontend-react-native/src/hooks/
 services:    frontend-react-native/src/services/
@@ -460,6 +497,7 @@ tests:       frontend-react-native/__tests__/
 **Setup is COMPLETE. You're ready to code!**
 
 What's been done:
+
 - ✅ Workspace rules configured
 - ✅ Implementation plan created (4-6 weeks)
 - ✅ Phase 1 checklist detailed
@@ -468,6 +506,7 @@ What's been done:
 - ✅ Todo list created
 
 What's left (Phases 1-6):
+
 - ⏳ Feature Flags SDK
 - ⏳ Tier System & In-App Purchases
 - ⏳ Screen Wrapping

@@ -22,7 +22,9 @@ jest.mock('../../src/providers/TierProvider', () => ({
   TierProvider: ({ children }: any) => children,
 }));
 
-const MockFeatureFlagContext = useFeatureFlagContext as jest.MockedFunction<typeof useFeatureFlagContext>;
+const MockFeatureFlagContext = useFeatureFlagContext as jest.MockedFunction<
+  typeof useFeatureFlagContext
+>;
 const MockTierContext = useTierContext as jest.MockedFunction<typeof useTierContext>;
 
 describe('Combined Guards Integration Tests', () => {

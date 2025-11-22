@@ -15,7 +15,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet } from 'react-native';
 
-
 // Import screens
 import ARViewScreen from '../screens/ARViewScreen';
 import LoginScreen from '../screens/Auth/LoginScreen';
@@ -101,7 +100,7 @@ const MainNavigator = (): void => {
         component={DashboardScreen}
         options={{
           title: 'Dashboard',
-              tabBarIcon: DashboardIcon,
+          tabBarIcon: DashboardIcon,
         }}
       />
 
@@ -170,11 +169,9 @@ export const RootNavigator = (): void => {
     checkAuthState();
 
     // Listen for auth changes
-    const { data: authListener } = AuthService.onAuthStateChange(
-      (event, session) => {
-        setIsAuthenticated(session !== null);
-      }
-    );
+    const { data: authListener } = AuthService.onAuthStateChange((event, session) => {
+      setIsAuthenticated(session !== null);
+    });
 
     return () => {
       authListener?.subscription.unsubscribe();
@@ -187,9 +184,7 @@ export const RootNavigator = (): void => {
       setIsAuthenticated(authenticated);
     } catch (error) {
       if (__DEV__) {
-
         console.error('Failed to check auth state:', error);
-
       }
       setIsAuthenticated(false);
     } finally {

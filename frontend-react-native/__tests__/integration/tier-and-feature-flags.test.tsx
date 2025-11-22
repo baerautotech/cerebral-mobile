@@ -28,11 +28,11 @@ jest.mock('../../src/hooks/useAuth');
 jest.mock('../../src/services/api');
 
 // Test wrapper component that provides all contexts
-const TestWrapper: React.FC<{ children: React.ReactNode; tier?: string; flags?: Record<string, boolean> }> = ({
-  children,
-  tier = 'free',
-  flags = {},
-}) => {
+const TestWrapper: React.FC<{
+  children: React.ReactNode;
+  tier?: string;
+  flags?: Record<string, boolean>;
+}> = ({ children, tier = 'free', flags = {} }) => {
   const { useFeatureFlags } = require('../../src/hooks/useFeatureFlags');
   const { useUserTier } = require('../../src/hooks/useUserTier');
 

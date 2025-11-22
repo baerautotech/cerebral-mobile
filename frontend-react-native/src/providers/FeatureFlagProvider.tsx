@@ -52,11 +52,7 @@ export function FeatureFlagProvider({ children }: FeatureFlagProviderProps): JSX
     lastUpdated,
   };
 
-  return (
-    <FeatureFlagContext.Provider value={value}>
-      {children}
-    </FeatureFlagContext.Provider>
-  );
+  return <FeatureFlagContext.Provider value={value}>{children}</FeatureFlagContext.Provider>;
 }
 
 /**
@@ -83,9 +79,7 @@ export function useFeatureFlagContext(): FeatureFlagContextType {
   const context = React.useContext(FeatureFlagContext);
 
   if (!context) {
-    throw new Error(
-      'useFeatureFlagContext must be used within FeatureFlagProvider'
-    );
+    throw new Error('useFeatureFlagContext must be used within FeatureFlagProvider');
   }
 
   return context;

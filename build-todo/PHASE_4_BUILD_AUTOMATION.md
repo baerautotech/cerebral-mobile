@@ -1,6 +1,7 @@
 # Phase 4: Build Automation with Tekton/Kaniko - Mobile App CI/CD
 
 ## Overview
+
 Complete build automation setup for React Native mobile app (iOS + Android) using Tekton Pipelines and Kaniko container builds, integrated with the existing Cerebral Platform CI/CD system.
 
 **Status**: 🚀 IN PROGRESS
@@ -16,12 +17,14 @@ Complete build automation setup for React Native mobile app (iOS + Android) usin
 ### Existing System (Already in Place)
 
 The Cerebral Platform CI/CD system is **production-ready** and documented in:
+
 - 📄 `🚨_READ_THIS_FIRST_CI_CD_SYSTEM.md` - **READ THIS FIRST**
 - 📄 `CI_CD_README.md` - 30-second overview
 - 📄 `CI_CD_COMPLETE_GUIDE.md` - Full documentation
 - 📄 `TEKTON_PIPELINE_PARAMETERS_COMPLETE.md` - Pipeline parameters
 
 **Flow Overview**:
+
 ```
 git push main → GitHub Webhook → Webhook Receiver (Rust) → Tekton Pipeline
     ↓
@@ -37,6 +40,7 @@ git-clone task → kaniko-build task → deploy task → Pod restarts with new i
 **Task**: Create mobile-specific build configuration
 
 **Deliverables**:
+
 - [ ] Dockerfile for React Native frontend
 - [ ] Build configuration for iOS
 - [ ] Build configuration for Android
@@ -94,6 +98,7 @@ CMD ["serve", "-s", "dist", "-l", "3000"]
 **Task**: Create mobile-specific Tekton tasks
 
 **Deliverables**:
+
 - [ ] ios-build-task.yaml
 - [ ] android-build-task.yaml
 - [ ] firebase-deploy-task.yaml (TestFlight + Play Store)
@@ -273,6 +278,7 @@ spec:
 **Task**: Create mobile-specific Tekton pipeline
 
 **Deliverables**:
+
 - [ ] cerebral-mobile-pipeline.yaml
 - [ ] Pipeline triggers
 - [ ] Pipeline parameters
@@ -302,7 +308,7 @@ spec:
     - name: build-target
       type: string
       default: all
-      description: "Build target: ios, android, or all"
+      description: 'Build target: ios, android, or all'
     - name: version
       type: string
       description: App version (e.g., 1.0.0)
@@ -332,7 +338,7 @@ spec:
         - name: revision
           value: $(params.repo-branch)
         - name: deleteExisting
-          value: "true"
+          value: 'true'
       workspaces:
         - name: output
           workspace: shared-workspace
@@ -371,7 +377,7 @@ spec:
       when:
         - input: $(params.build-target)
           operator: in
-          values: ["ios", "all"]
+          values: ['ios', 'all']
       runAfter:
         - run-tests
         - lint-code
@@ -393,7 +399,7 @@ spec:
       when:
         - input: $(params.build-target)
           operator: in
-          values: ["android", "all"]
+          values: ['android', 'all']
       runAfter:
         - run-tests
         - lint-code
@@ -433,6 +439,7 @@ spec:
 **Task**: Create Kubernetes secrets for signing keys and certificates
 
 **Deliverables**:
+
 - [ ] iOS signing certificate secret
 - [ ] Android keystore secret
 - [ ] Firebase service account secret
@@ -494,17 +501,20 @@ kubectl get secret firebase-credentials -n tekton-pipelines
 The existing system uses **organization-level webhooks** that automatically trigger for all repositories.
 
 **Current Configuration**:
+
 - Organization: `baerautotech`
 - Endpoint: `https://webhook.dev.cerebral.baerautotech.com/`
 - Events: `push`, `pull_request`
 - Secret: Stored in `github-webhook-secret` Kubernetes secret
 
 **For Mobile Repo** (`cerebral-mobile-1`):
+
 - Webhook already configured at org level ✅
 - All pushes to `main` trigger builds automatically
 - No additional configuration needed
 
 **Verify Webhook**:
+
 ```bash
 # Check webhook receiver logs
 kubectl logs -l app=github-webhook-receiver -n tekton-pipelines -f
@@ -520,6 +530,7 @@ kubectl get pipelineruns -n tekton-pipelines -w
 **Task**: Setup build monitoring and metrics collection
 
 **Deliverables**:
+
 - [ ] Build success/failure tracking
 - [ ] Build duration metrics
 - [ ] Deployment frequency metrics
@@ -554,6 +565,7 @@ tkn pipelinerun logs <PIPELINERUN_NAME> -n tekton-pipelines
 **Task**: Setup version management for mobile releases
 
 **Deliverables**:
+
 - [ ] Version file (version.txt or package.json)
 - [ ] Automated version bumping
 - [ ] Git tag creation
@@ -612,6 +624,7 @@ echo "✅ Version bumped to $NEW_VERSION"
 ## Implementation Roadmap
 
 ### Week 1: Core Setup
+
 - [ ] Create Dockerfile for mobile
 - [ ] Create iOS/Android build tasks
 - [ ] Create mobile pipeline YAML
@@ -619,6 +632,7 @@ echo "✅ Version bumped to $NEW_VERSION"
 - [ ] Test pipeline with sample build
 
 ### Week 2: Integration & Testing
+
 - [ ] Integrate with webhook receiver
 - [ ] Test end-to-end build flow
 - [ ] Setup Slack notifications
@@ -626,6 +640,7 @@ echo "✅ Version bumped to $NEW_VERSION"
 - [ ] Create documentation
 
 ### Week 3: Optimization
+
 - [ ] Optimize build times
 - [ ] Setup caching layers
 - [ ] Add performance monitoring
@@ -701,30 +716,33 @@ kubectl get events -n tekton-pipelines --sort-by='.lastTimestamp'
 
 ## Key Files & Locations
 
-| File | Purpose | Status |
-|------|---------|--------|
-| `k8s/tekton/tasks/ios-build-task.yaml` | iOS build task | ⏳ To create |
-| `k8s/tekton/tasks/android-build-task.yaml` | Android build task | ⏳ To create |
-| `k8s/tekton/pipelines/cerebral-mobile-pipeline.yaml` | Mobile pipeline | ⏳ To create |
-| `frontend-react-native/Dockerfile.build` | Frontend Docker image | ⏳ To create |
-| `frontend-react-native/version.txt` | Version file | ⏳ To create |
-| `scripts/bump-version.sh` | Version bumping script | ⏳ To create |
+| File                                                 | Purpose                | Status       |
+| ---------------------------------------------------- | ---------------------- | ------------ |
+| `k8s/tekton/tasks/ios-build-task.yaml`               | iOS build task         | ⏳ To create |
+| `k8s/tekton/tasks/android-build-task.yaml`           | Android build task     | ⏳ To create |
+| `k8s/tekton/pipelines/cerebral-mobile-pipeline.yaml` | Mobile pipeline        | ⏳ To create |
+| `frontend-react-native/Dockerfile.build`             | Frontend Docker image  | ⏳ To create |
+| `frontend-react-native/version.txt`                  | Version file           | ⏳ To create |
+| `scripts/bump-version.sh`                            | Version bumping script | ⏳ To create |
 
 ---
 
 ## Documentation Links
 
 **Phase 4 Reference**:
+
 - 📄 `🚨_READ_THIS_FIRST_CI_CD_SYSTEM.md` - **CRITICAL** - Existing CI/CD architecture
 - 📄 `CI_CD_README.md` - 30-second overview
 - 📄 `CI_CD_COMPLETE_GUIDE.md` - Full system documentation
 - 📄 `TEKTON_PIPELINE_PARAMETERS_COMPLETE.md` - Pipeline parameters
 
 **Related Phases**:
+
 - 📄 `PHASE_3_INTEGRATION_TESTS.md` - Integration testing
 - 📄 `PHASE_3_MANUAL_TESTING.md` - Manual testing guide
 
 **External Resources**:
+
 - [Tekton Pipelines Docs](https://tekton.dev/)
 - [Kaniko Documentation](https://github.com/GoogleContainerTools/kaniko)
 - [Fastlane Documentation](https://docs.fastlane.tools/)
@@ -736,6 +754,7 @@ kubectl get events -n tekton-pipelines --sort-by='.lastTimestamp'
 **Phase 4 - Build Automation** sets up production-ready CI/CD for the mobile app using the existing Cerebral Platform infrastructure.
 
 **Key Deliverables**:
+
 - ✅ Mobile-specific Tekton tasks (iOS + Android)
 - ✅ Mobile pipeline configuration
 - ✅ Kubernetes secrets for signing keys

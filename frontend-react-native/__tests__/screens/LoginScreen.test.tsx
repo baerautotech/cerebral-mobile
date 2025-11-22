@@ -102,10 +102,7 @@ describe('LoginScreen', () => {
       fireEvent.press(getAllByText('Sign In')[1]); // Button, not header
 
       await waitFor(() => {
-        expect(AuthService.signIn).toHaveBeenCalledWith(
-          'test@example.com',
-          'password123'
-        );
+        expect(AuthService.signIn).toHaveBeenCalledWith('test@example.com', 'password123');
       });
     });
 
@@ -169,9 +166,7 @@ describe('LoginScreen', () => {
 
   describe('Navigation', () => {
     it('should call onNavigateToSignup when signup link pressed', () => {
-      const { getByText } = render(
-        <LoginScreen onNavigateToSignup={mockOnNavigateToSignup} />
-      );
+      const { getByText } = render(<LoginScreen onNavigateToSignup={mockOnNavigateToSignup} />);
 
       fireEvent.press(getByText('Sign Up'));
       expect(mockOnNavigateToSignup).toHaveBeenCalled();

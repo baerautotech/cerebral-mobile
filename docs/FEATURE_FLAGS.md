@@ -11,6 +11,7 @@
 This guide covers the feature flags system for the Cerebral mobile app. Feature flags allow you to enable/disable features dynamically without rebuilding the app.
 
 ### Key Features
+
 - ✅ Fetch flags from backend (`GET /api/flags`)
 - ✅ Cache flags locally in AsyncStorage (5-minute TTL)
 - ✅ Offline support (uses cached flags)
@@ -23,6 +24,7 @@ This guide covers the feature flags system for the Cerebral mobile app. Feature 
 ## Architecture
 
 ### Data Flow
+
 ```
 App Start
     ↓
@@ -71,6 +73,7 @@ Components use FeatureFlagGuard to conditionally render
 ### Step 1: Wrap Your App
 
 In `App.tsx`:
+
 ```typescript
 import { FeatureFlagProvider } from './src/providers/FeatureFlagProvider';
 
@@ -172,15 +175,18 @@ Headers:
 ## Caching Strategy
 
 ### AsyncStorage Keys
+
 - `cerebral_feature_flags` - Serialized flags JSON
 - `cerebral_feature_flags_time` - Timestamp of last update
 
 ### Cache Invalidation
+
 - **TTL**: 5 minutes (300,000 ms)
 - **Refresh**: Manually via `refresh()` function
 - **Fallback**: Uses expired cache if offline
 
 ### Example Timeline
+
 ```
 10:00 AM - Fetch flags from backend, cache them
           Cache = fresh
@@ -203,6 +209,7 @@ Headers:
 ## Testing
 
 ### Running Tests
+
 ```bash
 # Run all tests
 npm test
@@ -215,10 +222,12 @@ npm test -- --coverage
 ```
 
 ### Test Files
+
 - `__tests__/hooks/useFeatureFlags.test.ts` - Hook tests
 - `__tests__/components/FeatureFlagGuard.test.tsx` - Component tests
 
 ### Key Tests
+
 1. ✅ Fetches from backend on startup
 2. ✅ Caches in AsyncStorage
 3. ✅ Uses fresh cache (< 5 min)
@@ -233,6 +242,7 @@ npm test -- --coverage
 ## Common Patterns
 
 ### Pattern 1: Simple Feature Flag
+
 ```typescript
 <FeatureFlagGuard flag="ai_features">
   <AIAnalyticsScreen />
@@ -240,6 +250,7 @@ npm test -- --coverage
 ```
 
 ### Pattern 2: With Fallback UI
+
 ```typescript
 <FeatureFlagGuard
   flag="new_dashboard"
@@ -250,6 +261,7 @@ npm test -- --coverage
 ```
 
 ### Pattern 3: Multiple Flags
+
 ```typescript
 <FeatureFlagGuard flag="experimental_features">
   <FeatureFlagGuard flag="ai_enabled">
@@ -259,6 +271,7 @@ npm test -- --coverage
 ```
 
 ### Pattern 4: Manual Refresh
+
 ```typescript
 function useManualRefresh() {
   const context = useContext(FeatureFlagContext);
@@ -282,13 +295,16 @@ function useManualRefresh() {
 ## Debugging
 
 ### Check Cached Flags
+
 ```bash
 # Via React Native debugger
 adb shell "cat /data/data/com.cerebral.mobile/shared_prefs/*"
 ```
 
 ### Console Logging
+
 The feature flags system includes console logs:
+
 ```
 // When loading from cache
 "Using cached feature flags (age: 45s)"
@@ -304,16 +320,19 @@ The feature flags system includes console logs:
 ### Common Issues
 
 **Issue**: Flag always shows as disabled
+
 - Check backend returns `true` for that flag
 - Check AsyncStorage is working: `npm list @react-native-async-storage/async-storage`
 - Check FeatureFlagGuard spelling matches backend
 
 **Issue**: App crashes on load
+
 - Verify `FeatureFlagProvider` wraps root component in `App.tsx`
 - Check for TypeScript errors: `npm run lint`
 - Verify imports are correct
 
 **Issue**: Offline flags not working
+
 - Verify at least one successful flag fetch (creates cache)
 - Check AsyncStorage isn't full
 - Try `npm run clean && npm install`
@@ -323,6 +342,7 @@ The feature flags system includes console logs:
 ## Best Practices
 
 ### ✅ DO
+
 - Wrap features that are rolling out
 - Use consistent flag names across backend/mobile
 - Test with flag enabled and disabled
@@ -330,6 +350,7 @@ The feature flags system includes console logs:
 - Use pull-to-refresh for manual updates
 
 ### ❌ DON'T
+
 - Hardcode feature flag values
 - Update flags without backend change
 - Forget to wrap root with FeatureFlagProvider
@@ -341,12 +362,14 @@ The feature flags system includes console logs:
 ## Performance
 
 ### Metrics
+
 - **AsyncStorage read**: ~1-5ms
 - **Backend fetch**: ~100-500ms (depends on network)
 - **Cache TTL**: 5 minutes (configurable in hook)
 - **Memory overhead**: ~1KB per flag
 
 ### Optimization
+
 - Cache is checked before backend call
 - Loading state avoids UI flashing
 - Fallback prevents blank screens
@@ -366,6 +389,7 @@ The feature flags system includes console logs:
 ## Rollout Checklist
 
 For each feature flag, verify:
+
 - [ ] Flag created in backend database
 - [ ] Backend endpoint returns flag correctly
 - [ ] Mobile wraps screen/component with FeatureFlagGuard
@@ -385,6 +409,7 @@ For each feature flag, verify:
 ## Summary
 
 The feature flags system is:
+
 - ✅ **Reliable**: Caching + offline support
 - ✅ **Fast**: AsyncStorage queries < 5ms
 - ✅ **Simple**: Easy to use FeatureFlagGuard

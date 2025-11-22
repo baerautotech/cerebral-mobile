@@ -125,8 +125,7 @@ GATE: Block merge if any test fails
 After Each Phase (Before starting next):
 
 PHASE 1 GATE (After Story 1.1.5):
-  Questions:
-    ✓ Are health checks passing consistently?
+  Questions: ✓ Are health checks passing consistently?
     ✓ Can we handle 100 alerts/min?
     ✓ What's the pod memory usage?
     ✓ Are there any timeouts?
@@ -135,8 +134,7 @@ PHASE 1 GATE (After Story 1.1.5):
   Action: 30-min architecture sync (if PROCEED, skip)
 
 PHASE 2 GATE (After Story 2.1.5):
-  Questions:
-    ✓ Is BMAD API stable?
+  Questions: ✓ Is BMAD API stable?
     ✓ Are agent handoffs working?
     ✓ What's the latency?
     ✓ Any edge cases discovered?
@@ -144,8 +142,7 @@ PHASE 2 GATE (After Story 2.1.5):
   Decision: PROCEED / ADJUST / PAUSE
 
 PHASE 3 GATE (After Story 3.1.5):
-  Questions:
-    ✓ Is RAG search performing?
+  Questions: ✓ Is RAG search performing?
     ✓ Are embeddings working?
     ✓ Knowledge graph sync stable?
     ✓ Any data inconsistencies?
@@ -162,6 +159,7 @@ PHASE 4-6 GATES: Similar pattern
 ### Sprint 1-2 Preparation (GCP + FastAPI Foundation)
 
 **Story 1.1.1-1.1.5 Error Scenarios** (2h)
+
 ```
 1.1.1 (GCP Setup)
   - GCP API quota exceeded
@@ -195,6 +193,7 @@ PHASE 4-6 GATES: Similar pattern
 ```
 
 **Integration Test Suite** (4h)
+
 ```
 Phase 1-2 Tests:
   ✓ GCP authentication works
@@ -210,6 +209,7 @@ Phase 1-2 Tests:
 ```
 
 **Architecture Review Checklist** (2h)
+
 ```
 Phase 1 GATE:
   [ ] Load test: 100 alerts/min
@@ -226,6 +226,7 @@ Phase 2 GATE:
 ```
 
 **Edge Case Documentation** (2h)
+
 ```
 Phase 1-2 Edge Cases:
   • What if GCP rate limit hit? (Back off exponentially)
@@ -240,6 +241,7 @@ Phase 1-2 Edge Cases:
 ### Phase 3+ Preparation (Knowledge Pipeline)
 
 **Story 3.1.1-3.1.5 Error Scenarios** (2h)
+
 ```
 3.1.1 (RAG Backend)
   - Document too large for embedding
@@ -273,6 +275,7 @@ Phase 1-2 Edge Cases:
 ```
 
 **Knowledge Pipeline Test Matrix** (2h)
+
 ```
 RAG Integration Tests:
   ✓ Embedding generation works
@@ -295,6 +298,7 @@ Edge Cases:
 ### Phase 4-6 Preparation (Advanced Features)
 
 **Multi-Agent Orchestration Error Scenarios** (1h)
+
 ```
 4.1.1 (Multi-Agent Routing)
   - No matching agent for request
@@ -311,6 +315,7 @@ Edge Cases:
 ```
 
 **Voice Integration Error Scenarios** (1h)
+
 ```
 5.1.1 (Voice Input)
   - Audio too quiet/noisy
@@ -326,6 +331,7 @@ Edge Cases:
 ```
 
 **Video Integration Error Scenarios** (1h)
+
 ```
 6.1.1 (Video Streams)
   - WebRTC connection fails
@@ -353,14 +359,14 @@ Edge Cases:
 ## Success Criteria (91% Accuracy Target)
 
 All stories must:
-  ✓ Pass acceptance criteria (100%)
-  ✓ Pass error scenario tests (100%)
-  ✓ Pass integration tests (100%)
-  ✓ Have 90%+ code coverage
-  ✓ Be merged to main with CI green
-  ✓ Be deployed to staging automatically
-  ✓ Pass end-to-end tests
-  ✓ Have full git audit trail
+✓ Pass acceptance criteria (100%)
+✓ Pass error scenario tests (100%)
+✓ Pass integration tests (100%)
+✓ Have 90%+ code coverage
+✓ Be merged to main with CI green
+✓ Be deployed to staging automatically
+✓ Pass end-to-end tests
+✓ Have full git audit trail
 
 ## Known Issues from Previous Sprint
 
@@ -386,37 +392,42 @@ All stories must:
 **Description**: [User story]
 
 **Acceptance Criteria**:
-  1. [AC1]
-  2. [AC2]
-  3. [AC3]
+
+1. [AC1]
+2. [AC2]
+3. [AC3]
 
 **Error Scenarios** (Must implement handlers):
-  • Scenario 1: [Description] → Handler: [Action]
-  • Scenario 2: [Description] → Handler: [Action]
-  • Scenario 3: [Description] → Handler: [Action]
+• Scenario 1: [Description] → Handler: [Action]
+• Scenario 2: [Description] → Handler: [Action]
+• Scenario 3: [Description] → Handler: [Action]
 
 **Integration Tests** (Must pass before merge):
-  ✓ Test 1: [Setup] → [Action] → [Verify]
-  ✓ Test 2: [Setup] → [Action] → [Verify]
+✓ Test 1: [Setup] → [Action] → [Verify]
+✓ Test 2: [Setup] → [Action] → [Verify]
 
 **Dependencies**:
-  - [Dependency 1]
-  - [Dependency 2]
+
+- [Dependency 1]
+- [Dependency 2]
 
 **Code Changes**:
-  - New files: [List]
-  - Modified files: [List]
-  - Deleted files: [List]
+
+- New files: [List]
+- Modified files: [List]
+- Deleted files: [List]
 
 **Deployment**:
-  - Dockerfile updates: [Yes/No]
-  - Database migrations: [Yes/No]
-  - ConfigMap updates: [Yes/No]
-  - Secret updates: [Yes/No]
+
+- Dockerfile updates: [Yes/No]
+- Database migrations: [Yes/No]
+- ConfigMap updates: [Yes/No]
+- Secret updates: [Yes/No]
 
 ---
 
 ### Story [ID+1]: [Title] ([SP] points)
+
 [Continue for each story]
 
 ## Gate Decision
@@ -424,12 +435,12 @@ All stories must:
 **Before starting story [X]**: Must complete phase gate review
 
 Gate Review Checklist:
-  [ ] Load test passed
-  [ ] Performance acceptable
-  [ ] Error rate < threshold
-  [ ] No regressions
-  [ ] Architecture sound
-  [ ] User feedback positive
+[ ] Load test passed
+[ ] Performance acceptable
+[ ] Error rate < threshold
+[ ] No regressions
+[ ] Architecture sound
+[ ] User feedback positive
 
 **Gate Result**: PROCEED / REVIEW / PAUSE
 
@@ -474,6 +485,7 @@ Gate Review Checklist:
 ## Go/No-Go Decision
 
 **Ready for autonomous execution?**
+
 - [ ] All acceptance criteria clear
 - [ ] All error scenarios identified
 - [ ] All tests ready
@@ -490,17 +502,20 @@ Gate Review Checklist:
 ## Part 4: How to Use This for Maximum Accuracy
 
 ### Week 1: Sprint 1 (Foundation)
+
 1. Use template above for Sprint 1
 2. Execute stories 1.1.1-1.1.5 autonomously
 3. Run phase gate review on Friday
 4. Document any issues found
 
 ### Week 2: Sprint 2 (Integration)
+
 1. Use lessons from Sprint 1
 2. Execute stories 1.2.1-1.2.5 with same rigor
 3. Run phase gate review
 
 ### Week 3: Continuous Improvement
+
 1. After each phase, update prompt with lessons learned
 2. Add any new error scenarios discovered
 3. Tighten acceptance criteria
@@ -513,12 +528,14 @@ Gate Review Checklist:
 ## The Math
 
 **Pure YOLO** (current state):
+
 - Accuracy: 79%
 - Stories needing rework: 108 of 137
 - Timeline: 45-48 weeks
 - Risk: HIGH
 
 **With This Blueprint**:
+
 - Accuracy: 91-93%
 - Stories needing rework: 9-12 of 137
 - Timeline: 39-41 weeks (on track)

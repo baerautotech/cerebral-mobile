@@ -62,11 +62,9 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({
     setLoading(true);
 
     try {
-      const { user, error: signUpError } = await AuthService.signUp(
-        email,
-        password,
-        { full_name: fullName }
-      );
+      const { user, error: signUpError } = await AuthService.signUp(email, password, {
+        full_name: fullName,
+      });
 
       if (signUpError) {
         setError(signUpError.message ?? 'Signup failed');
@@ -79,24 +77,16 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({
     } catch (err) {
       setError('An unexpected error occurred');
       if (__DEV__) {
-
         console.error('Signup error:', err);
-
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const containerStyle = [
-    styles.container,
-    isWeb && !isMobile && styles.containerDesktop,
-  ];
+  const containerStyle = [styles.container, isWeb && !isMobile && styles.containerDesktop];
 
-  const formStyle = [
-    styles.form,
-    isWeb && !isMobile && styles.formDesktop,
-  ];
+  const formStyle = [styles.form, isWeb && !isMobile && styles.formDesktop];
 
   return (
     <KeyboardAvoidingView

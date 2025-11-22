@@ -45,12 +45,7 @@ module.exports = {
       '@semantic-release/git',
       {
         // Files to update with version
-        assets: [
-          'CHANGELOG.md',
-          'package.json',
-          'packages/*/package.json',
-          'apps/*/package.json',
-        ],
+        assets: ['CHANGELOG.md', 'package.json', 'packages/*/package.json', 'apps/*/package.json'],
         // Commit message format
         message: 'chore(release): <%= nextRelease.version %> [skip ci]\n\n<%= nextRelease.notes %>',
       },

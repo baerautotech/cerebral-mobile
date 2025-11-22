@@ -7,12 +7,15 @@
 ## FEATURE FLAG CATEGORIES
 
 ### Beta Features (New/Experimental)
+
 Controlled rollout of new functionality
 
 ### Experimental Features
+
 Advanced features being tested
 
 ### Performance Features
+
 Features with performance implications
 
 ---
@@ -20,6 +23,7 @@ Features with performance implications
 ## FEATURE FLAG DEFINITIONS
 
 ### new_dashboard (Beta)
+
 - **Description**: Redesigned dashboard layout
 - **Type**: Beta/UI
 - **Screen**: DashboardScreen
@@ -30,6 +34,7 @@ Features with performance implications
 - **Rollout**: Gradual (0% → 100%)
 
 ### live_dashboard (Feature)
+
 - **Description**: Real-time dashboard updates
 - **Type**: Core Feature (requires Standard tier)
 - **Screen**: LiveDashboardScreen
@@ -46,6 +51,7 @@ Features with performance implications
   ```
 
 ### advanced_filtering (Beta)
+
 - **Description**: Advanced task filtering UI
 - **Type**: Beta/Performance
 - **Screen**: TasksScreen
@@ -56,6 +62,7 @@ Features with performance implications
 - **Rollout**: Gradual
 
 ### ai_suggestions (Experimental)
+
 - **Description**: AI-powered task suggestions
 - **Type**: Experimental/Enterprise
 - **Screens**: TasksScreen, CreateTaskScreen, TaskDetailScreen
@@ -66,6 +73,7 @@ Features with performance implications
 - **Rollout**: Experimental (5% → 20% → 50%)
 
 ### analytics_export (Feature)
+
 - **Description**: Export analytics as CSV/PDF
 - **Type**: Standard tier feature
 - **Screen**: DashboardScreen
@@ -75,6 +83,7 @@ Features with performance implications
 - **Fallback**: Show "Export" button as disabled
 
 ### advanced_actions (Beta)
+
 - **Description**: Bulk task actions
 - **Type**: Beta
 - **Screen**: TasksScreen
@@ -84,6 +93,7 @@ Features with performance implications
 - **Rollout**: Gradual
 
 ### ar_mode (Beta)
+
 - **Description**: AR view of tasks/data
 - **Type**: Beta/Enterprise
 - **Screen**: ARViewScreen
@@ -94,6 +104,7 @@ Features with performance implications
 - **Rollout**: Early beta (2% → 5%)
 
 ### workflow_automation (Experimental)
+
 - **Description**: Automated task workflows
 - **Type**: Experimental/Enterprise
 - **Screen**: TaskDetailScreen
@@ -107,6 +118,7 @@ Features with performance implications
 ## FEATURE FLAG BY SCREEN
 
 ### DashboardScreen
+
 ```typescript
 {/* Base always visible */}
 <BasicDashboard />
@@ -133,6 +145,7 @@ Features with performance implications
 ```
 
 ### TasksScreen
+
 ```typescript
 {/* Base always visible */}
 <BasicTaskList />
@@ -156,6 +169,7 @@ Features with performance implications
 ```
 
 ### CreateTaskScreen
+
 ```typescript
 {/* Base always visible */}
 <BasicTaskForm />
@@ -169,6 +183,7 @@ Features with performance implications
 ```
 
 ### TaskDetailScreen
+
 ```typescript
 {/* Base always visible */}
 <TaskBasicInfo />
@@ -194,6 +209,7 @@ Features with performance implications
 ```
 
 ### LiveDashboardScreen
+
 ```typescript
 {/* Requires both flag and standard tier */}
 <FeatureFlagGuard flag="live_dashboard">
@@ -204,6 +220,7 @@ Features with performance implications
 ```
 
 ### ARViewScreen
+
 ```typescript
 {/* Requires both flag and enterprise tier */}
 <FeatureFlagGuard flag="ar_mode">
@@ -218,6 +235,7 @@ Features with performance implications
 ## ROLLOUT SCHEDULE
 
 ### Week 1 (Soft Launch)
+
 ```
 new_dashboard:       1% of users
 advanced_filtering:  1% of users
@@ -225,6 +243,7 @@ ar_mode:            0% (not launched yet)
 ```
 
 ### Week 2 (Gradual Rollout)
+
 ```
 new_dashboard:      10% of users
 advanced_filtering: 10% of users
@@ -233,6 +252,7 @@ ar_mode:            0% (still internal)
 ```
 
 ### Week 3 (Wider Availability)
+
 ```
 new_dashboard:      50% of users
 advanced_filtering: 50% of users
@@ -241,6 +261,7 @@ ar_mode:            5% of enterprise users
 ```
 
 ### Week 4 (Full Rollout)
+
 ```
 new_dashboard:      100% (or deprecate old)
 advanced_filtering: 100%
@@ -253,6 +274,7 @@ ar_mode:            20% of enterprise users
 ## FLAG ROLLOUT CONTROL
 
 ### Backend Configuration
+
 ```json
 {
   "new_dashboard": {
@@ -277,6 +299,7 @@ ar_mode:            20% of enterprise users
 ## FEATURE FLAG TESTING
 
 ### Test 1: Flag Disabled
+
 ```
 Expected: Feature should NOT appear
 - [x] new_dashboard disabled → show classic dashboard
@@ -286,6 +309,7 @@ Expected: Feature should NOT appear
 ```
 
 ### Test 2: Flag Enabled
+
 ```
 Expected: Feature should appear
 - [x] new_dashboard enabled → show new UI
@@ -295,6 +319,7 @@ Expected: Feature should appear
 ```
 
 ### Test 3: Tier + Flag Combined
+
 ```
 Expected: Both conditions must be true
 - [x] ai_suggestions enabled but free tier → hidden
@@ -308,6 +333,7 @@ Expected: Both conditions must be true
 ## IMPLEMENTATION CHECKLIST
 
 ### Phase 3.3: Feature Flag Wrapping
+
 - [ ] Wrap new_dashboard component
 - [ ] Wrap advanced_filtering component
 - [ ] Wrap ai_suggestions (with TierGuard)
@@ -318,6 +344,7 @@ Expected: Both conditions must be true
 - [ ] Test each flag enabled/disabled
 
 ### Phase 3.4: Combined Guard Testing
+
 - [ ] Test ai_suggestions: flag off → hidden
 - [ ] Test ai_suggestions: flag on, free tier → hidden
 - [ ] Test ai_suggestions: flag on, enterprise tier → visible
@@ -329,18 +356,21 @@ Expected: Both conditions must be true
 ## DEBUGGING FLAGS
 
 ### Check Backend Flags
+
 ```bash
 curl -H "Authorization: Bearer $TOKEN" \
   https://api.example.com/api/flags
 ```
 
 ### Check Mobile Cache
+
 ```bash
 # AsyncStorage contains feature flags
 adb shell content query --uri content://com.cerebral.mobile/flags
 ```
 
 ### Manual Override (Development)
+
 ```typescript
 // In development, override flags
 const DEV_FLAGS = {

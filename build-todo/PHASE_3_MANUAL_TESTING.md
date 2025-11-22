@@ -1,6 +1,7 @@
 # Phase 3.11: Manual Testing - Complete Testing Plan
 
 ## Overview
+
 Comprehensive manual testing plan for all tier-guarded and feature-flagged screens on iOS and Android simulators.
 
 **Status**: 🚀 IN PROGRESS
@@ -16,6 +17,7 @@ Comprehensive manual testing plan for all tier-guarded and feature-flagged scree
 ### Setup Requirements
 
 **Prerequisites**
+
 ```bash
 # Ensure you have the following installed:
 ✓ Node.js 16+ (npm or pnpm)
@@ -32,6 +34,7 @@ pnpm install
 ### Starting Simulators
 
 **iOS Simulator**
+
 ```bash
 # List available iOS simulators
 xcrun simctl list devices
@@ -48,6 +51,7 @@ npm run ios
 ```
 
 **Android Emulator**
+
 ```bash
 # List available Android emulators
 emulator -list-avds
@@ -69,18 +73,21 @@ npm run android
 **For Testing, Use Mock JWT Tokens:**
 
 **Free Tier Token**
+
 ```
 Payload: { "user_id": "user_free", "tier": "free", "exp": 9999999999 }
 Store in: AsyncStorage with key 'mock_jwt_token'
 ```
 
 **Standard Tier Token**
+
 ```
 Payload: { "user_id": "user_std", "tier": "standard", "exp": 9999999999 }
 Store in: AsyncStorage with key 'mock_jwt_token'
 ```
 
 **Enterprise Tier Token**
+
 ```
 Payload: { "user_id": "user_ent", "tier": "enterprise", "exp": 9999999999 }
 Store in: AsyncStorage with key 'mock_jwt_token'
@@ -93,14 +100,14 @@ Store in: AsyncStorage with key 'mock_jwt_token'
 ```typescript
 // Mock all flags in useFeatureFlags hook
 const testFlags = {
-  advanced_filtering: true,      // Beta feature
-  advanced_actions: true,        // Beta feature
-  ar_mode: true,                 // Beta feature
-  ai_suggestions: true,          // Experimental
-  workflow_automation: true,     // Experimental
-  new_dashboard: false,          // Can toggle
-  analytics_export: false,       // Can toggle
-  live_dashboard: true,          // Core feature
+  advanced_filtering: true, // Beta feature
+  advanced_actions: true, // Beta feature
+  ar_mode: true, // Beta feature
+  ai_suggestions: true, // Experimental
+  workflow_automation: true, // Experimental
+  new_dashboard: false, // Can toggle
+  analytics_export: false, // Can toggle
+  live_dashboard: true, // Core feature
 };
 ```
 
@@ -113,6 +120,7 @@ const testFlags = {
 #### 1.1 Screen Accessibility
 
 **Test Case: Login Screen**
+
 ```
 Tier: Free
 Expected: ✅ Visible and accessible
@@ -125,6 +133,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: Signup Screen**
+
 ```
 Tier: Free
 Expected: ✅ Visible and accessible
@@ -137,6 +146,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: Dashboard Screen (Base)**
+
 ```
 Tier: Free
 Expected: ✅ Base dashboard visible
@@ -155,6 +165,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: Tasks Screen (Base)**
+
 ```
 Tier: Free
 Expected: ✅ Base tasks list visible
@@ -172,6 +183,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: Create Task Screen**
+
 ```
 Tier: Free
 Expected: ✅ Basic form visible
@@ -186,6 +198,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: Task Detail Screen**
+
 ```
 Tier: Free
 Expected: ✅ Base task detail visible
@@ -202,6 +215,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: LiveDashboard Screen**
+
 ```
 Tier: Free
 Expected: ❌ NOT Visible (tier guard blocks)
@@ -215,6 +229,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: AR View Screen**
+
 ```
 Tier: Free
 Expected: ❌ NOT Visible (tier guard + flag)
@@ -230,6 +245,7 @@ Result: ✅ PASS / ❌ FAIL
 #### 1.2 Feature Flag Tests (Free Tier)
 
 **Test Case: Advanced Filtering Flag (OFF)**
+
 ```
 Flag: advanced_filtering = false
 Tier: Free
@@ -242,6 +258,7 @@ Result: ✅ NOT visible / ❌ visible (FAIL)
 ```
 
 **Test Case: Advanced Filtering Flag (ON)**
+
 ```
 Flag: advanced_filtering = true
 Tier: Free
@@ -260,6 +277,7 @@ Result: ✅ visible / ❌ NOT visible (FAIL)
 #### 2.1 Tier Inheritance Tests
 
 **Test Case: Standard Tier Has Free Features**
+
 ```
 Tier: Standard
 Expected: ✅ All free tier features visible + new features
@@ -274,6 +292,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: LiveDashboard Screen (Standard)**
+
 ```
 Tier: Standard
 Expected: ✅ Visible (tier guard passes)
@@ -289,6 +308,7 @@ Result: ✅ PASS / ❌ FAIL
 #### 2.2 Feature Isolation Tests
 
 **Test Case: Standard Tier Blocked from Enterprise Features**
+
 ```
 Tier: Standard
 Flag: ai_suggestions = true (enabled)
@@ -303,6 +323,7 @@ Result: ✅ NOT visible / ❌ visible (FAIL)
 ```
 
 **Test Case: ARView Screen (Standard)**
+
 ```
 Tier: Standard
 Flag: ar_mode = true
@@ -318,6 +339,7 @@ Result: ✅ PASS / ❌ FAIL
 #### 2.3 Standard Tier Exclusive Features
 
 **Test Case: Export Task Data**
+
 ```
 Tier: Standard
 Expected: ✅ Visible
@@ -337,6 +359,7 @@ Result: ✅ visible / ❌ NOT visible (FAIL)
 #### 3.1 Full Feature Access
 
 **Test Case: Enterprise Has All Features**
+
 ```
 Tier: Enterprise
 Expected: ✅ All screens and features visible
@@ -364,6 +387,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: LiveDashboard Screen**
+
 ```
 Tier: Enterprise
 Expected: ✅ Visible
@@ -377,6 +401,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: AR View Screen (With Flag)**
+
 ```
 Tier: Enterprise
 Flag: ar_mode = true
@@ -393,6 +418,7 @@ Result: ✅ PASS / ❌ FAIL
 #### 3.2 Combined Guard Tests
 
 **Test Case: AI Suggestions (Flag + Tier)**
+
 ```
 Tier: Enterprise
 Flag: ai_suggestions = true
@@ -406,6 +432,7 @@ Result: ✅ visible / ❌ NOT visible (FAIL)
 ```
 
 **Test Case: AI Suggestions Without Flag**
+
 ```
 Tier: Enterprise
 Flag: ai_suggestions = false
@@ -420,6 +447,7 @@ Result: ✅ NOT visible / ❌ visible (FAIL)
 ```
 
 **Test Case: Workflow Automation (Flag + Tier)**
+
 ```
 Tier: Enterprise
 Flag: workflow_automation = true
@@ -436,6 +464,7 @@ Result: ✅ visible / ❌ NOT visible (FAIL)
 #### 3.3 AR Mode Combined Guard
 
 **Test Case: AR View with Flag ON**
+
 ```
 Tier: Enterprise
 Flag: ar_mode = true
@@ -449,6 +478,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: AR View with Flag OFF**
+
 ```
 Tier: Enterprise
 Flag: ar_mode = false
@@ -468,6 +498,7 @@ Result: ✅ PASS / ❌ FAIL
 #### 4.1 Upgrade from Free to Standard
 
 **Test Case: Feature Appearance on Upgrade**
+
 ```
 Steps:
   1. Start as free tier user
@@ -480,6 +511,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: LiveDashboard Appears on Upgrade**
+
 ```
 Steps:
   1. Start as free tier user
@@ -494,6 +526,7 @@ Result: ✅ PASS / ❌ FAIL
 #### 4.2 Downgrade from Enterprise to Standard
 
 **Test Case: Features Disappear on Downgrade**
+
 ```
 Steps:
   1. Start as enterprise tier user
@@ -506,6 +539,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: AR View Disappears on Downgrade**
+
 ```
 Steps:
   1. Start as enterprise tier user
@@ -524,6 +558,7 @@ Result: ✅ PASS / ❌ FAIL
 #### 5.1 Progressive Rollout Simulation
 
 **Test Case: Flag Disabled (0% rollout)**
+
 ```
 Flag: advanced_filtering = false
 Tier: Standard (or Free)
@@ -537,6 +572,7 @@ Result: ✅ NOT visible / ❌ visible (FAIL)
 ```
 
 **Test Case: Flag Enabled (100% rollout)**
+
 ```
 Flag: advanced_filtering = true
 Tier: Standard (or Free)
@@ -552,6 +588,7 @@ Result: ✅ visible / ❌ NOT visible (FAIL)
 #### 5.2 Feature Killswitch Testing
 
 **Test Case: Kill Feature via Flag**
+
 ```
 Steps:
   1. Start with ai_suggestions = true
@@ -571,6 +608,7 @@ Result: ✅ PASS / ❌ FAIL
 #### 6.1 Offline Behavior
 
 **Test Case: App Works Offline (Free Tier)**
+
 ```
 Steps:
   1. Login as free user
@@ -585,6 +623,7 @@ Result: ✅ PASS / ❌ FAIL
 #### 6.2 Cache Behavior
 
 **Test Case: Feature Flags Cache Works**
+
 ```
 Steps:
   1. Go to Tasks screen with flags enabled
@@ -597,6 +636,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: Tier Cache Works**
+
 ```
 Steps:
   1. Login as enterprise user
@@ -611,6 +651,7 @@ Result: ✅ PASS / ❌ FAIL
 #### 6.3 Rapid State Changes
 
 **Test Case: Rapid Tier Changes**
+
 ```
 Steps:
   1. Start as free tier
@@ -624,6 +665,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: Rapid Flag Changes**
+
 ```
 Steps:
   1. Start with advanced_filtering = false
@@ -643,6 +685,7 @@ Result: ✅ PASS / ❌ FAIL
 ### iOS-Specific Tests
 
 **Test Case: Dark Mode**
+
 ```
 Steps:
   1. Enable Dark Mode in simulator settings
@@ -655,6 +698,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: Safe Area**
+
 ```
 Steps:
   1. View all screens
@@ -668,6 +712,7 @@ Result: ✅ PASS / ❌ FAIL
 ### Android-Specific Tests
 
 **Test Case: Back Button Navigation**
+
 ```
 Steps:
   1. Navigate to a premium screen
@@ -680,6 +725,7 @@ Result: ✅ PASS / ❌ FAIL
 ```
 
 **Test Case: Different Screen Sizes**
+
 ```
 Steps:
   1. Test on different emulator screen sizes
@@ -695,6 +741,7 @@ Result: ✅ PASS / ❌ FAIL
 ## Testing Checklist
 
 ### Pre-Testing
+
 - [ ] Install all dependencies
 - [ ] Clear app cache
 - [ ] Reset simulator/emulator
@@ -702,6 +749,7 @@ Result: ✅ PASS / ❌ FAIL
 - [ ] Verify test account credentials ready
 
 ### iOS Testing
+
 - [ ] Start iOS simulator
 - [ ] Run `npm run ios`
 - [ ] Test free tier (Test Suite 1)
@@ -714,6 +762,7 @@ Result: ✅ PASS / ❌ FAIL
 - [ ] Test safe area
 
 ### Android Testing
+
 - [ ] Start Android emulator
 - [ ] Run `npm run android`
 - [ ] Test free tier (Test Suite 1)
@@ -726,6 +775,7 @@ Result: ✅ PASS / ❌ FAIL
 - [ ] Test different screen sizes
 
 ### Post-Testing
+
 - [ ] Document any issues found
 - [ ] Fix critical bugs
 - [ ] Re-test fixed issues
@@ -737,6 +787,7 @@ Result: ✅ PASS / ❌ FAIL
 ## Issue Tracking
 
 ### Critical Issues (Block Release)
+
 - [ ] App crashes on tier change
 - [ ] App crashes on flag change
 - [ ] Screens inaccessible when should be
@@ -744,6 +795,7 @@ Result: ✅ PASS / ❌ FAIL
 - [ ] Major UI rendering issues
 
 ### Minor Issues (Nice to Fix)
+
 - [ ] UI alignment issues
 - [ ] Text truncation
 - [ ] Slow navigation
@@ -813,11 +865,13 @@ RECOMMENDATION:
 ## Next Steps After Testing
 
 ### If All Tests Pass ✅
+
 1. Document passing results
 2. Proceed to Phase 4: Build Automation
 3. Archive test results
 
 ### If Issues Found ❌
+
 1. Log all issues with severity
 2. Fix critical issues first
 3. Re-test fixed areas

@@ -9,11 +9,13 @@
 ## Quick Start
 
 Load the global Supabase configuration:
+
 ```bash
 source ~/.cursor/.env.supabase
 ```
 
 Then use any Supabase CLI command:
+
 ```bash
 # List tables
 supabase db ls --project-ref=$SUPABASE_PROJECT_REF
@@ -126,11 +128,13 @@ When agents need database access:
 ## Troubleshooting
 
 **Command not found: supabase**
+
 ```bash
 npm install -g supabase --force
 ```
 
 **Connection failed**
+
 ```bash
 # Verify token
 echo $SUPABASE_ACCESS_TOKEN
@@ -140,6 +144,7 @@ supabase projects list
 ```
 
 **Environment variables not set**
+
 ```bash
 # Verify file exists
 ls -la ~/.cursor/.env.supabase

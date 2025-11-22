@@ -95,11 +95,9 @@ describe('SignupScreen', () => {
       fireEvent.press(getByText('Create Account'));
 
       await waitFor(() => {
-        expect(AuthService.signUp).toHaveBeenCalledWith(
-          'test@example.com',
-          'Password123',
-          { full_name: 'Test User' }
-        );
+        expect(AuthService.signUp).toHaveBeenCalledWith('test@example.com', 'Password123', {
+          full_name: 'Test User',
+        });
       });
     });
 
@@ -148,9 +146,7 @@ describe('SignupScreen', () => {
 
   describe('Navigation', () => {
     it('should navigate to login when sign in link pressed', () => {
-      const { getByText } = render(
-        <SignupScreen onNavigateToLogin={mockOnNavigateToLogin} />
-      );
+      const { getByText } = render(<SignupScreen onNavigateToLogin={mockOnNavigateToLogin} />);
 
       fireEvent.press(getByText('Sign In'));
       expect(mockOnNavigateToLogin).toHaveBeenCalled();

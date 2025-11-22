@@ -4,6 +4,8 @@
  * Works on iOS, Android, and Web
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -174,9 +176,7 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
     return (
       <ScrollView style={{ flex: 1, padding: 16, backgroundColor: '#f5f5f5' }}>
         <View style={{ marginTop: 20 }}>
-          <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>
-            Welcome!
-          </Text>
+          <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>Welcome!</Text>
 
           <View
             style={{
@@ -187,9 +187,7 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
             }}
           >
             <Text style={{ fontSize: 14, color: '#666', marginBottom: 8 }}>Email</Text>
-            <Text style={{ fontSize: 16, fontWeight: '500', marginBottom: 16 }}>
-              {user.email}
-            </Text>
+            <Text style={{ fontSize: 16, fontWeight: '500', marginBottom: 16 }}>{user.email}</Text>
 
             <Text style={{ fontSize: 14, color: '#666', marginBottom: 8 }}>User ID</Text>
             <Text style={{ fontSize: 12, fontFamily: 'monospace', marginBottom: 16 }}>
@@ -367,9 +365,7 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setAuthMode('oauth')}>
-              <Text style={{ color: '#3b82f6', textAlign: 'center', fontWeight: '600' }}>
-                Back
-              </Text>
+              <Text style={{ color: '#3b82f6', textAlign: 'center', fontWeight: '600' }}>Back</Text>
             </TouchableOpacity>
           </View>
         )}

@@ -1,9 +1,9 @@
-# Pre-commit hooks for Cerebral Platform
+# Pre-commit hooks for Cerebral Mobile
 # Ensures code quality before commit
-# Date: October 10, 2025
+# Date: November 22, 2025
 
 repos:
-  # Ruff - Fast Python linter and formatter
+  # Ruff - Fast Python linter and formatter (for scripts/tools)
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.0
     hooks:
@@ -26,16 +26,12 @@ repos:
   #   hooks:
   #     - id: isort
 
-
-  # MyPy - Static type checking (disabled - types-all has dependency issues in Python 3.13)
-  # Re-enable after types-all supports Python 3.13
-  # - repo: https://github.com/pre-commit/mirrors-mypy
-  #   rev: v1.13.0
-  #   hooks:
-  #     - id: mypy
-  #       additional_dependencies: [types-requests, types-pyyaml]
-  #       args: [--ignore-missing-imports, --no-strict-optional]
-  #       exclude: ^(tests/|scripts/|supabase/)
+  # Prettier - Code formatter (JS/TS/JSON/MD)
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        types_or: [javascript, jsx, ts, tsx, json, css, scss, markdown]
 
   # Standard pre-commit hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -54,7 +50,7 @@ repos:
       - id: detect-private-key
       - id: mixed-line-ending
 
-  # Security scanning
+  # Security scanning (Python scripts)
   - repo: https://github.com/PyCQA/bandit
     rev: 1.8.6
     hooks:
@@ -72,23 +68,6 @@ repos:
       - id: python-no-log-warn
       - id: python-use-type-annotations
 
-  # YAML linting (disabled - .yamllint config missing)
-  # Re-enable after creating .yamllint config file
-  # - repo: https://github.com/adrienverge/yamllint
-  #   rev: v1.35.1
-  #   hooks:
-  #     - id: yamllint
-
-  # Dockerfile linting (disabled - requires Docker daemon running)
-  # Re-enable in CI/CD where Docker is available
-  # - repo: https://github.com/hadolint/hadolint
-  #   rev: v2.13.1-beta
-  #   hooks:
-  #     - id: hadolint-docker
-  #       entry: hadolint
-  #       language: docker_image
-  #       types: [dockerfile]
-
   # Documentation file placement enforcement (P0 rule)
   - repo: local
     hooks:
@@ -96,13 +75,42 @@ repos:
         name: Documentation File Placement (P0)
         entry: python3 scripts/validate-docs-placement.py
         language: python
-        stages: [commit]
+        pass_filenames: false
         types: [markdown]
-        always_run: false
         description: Enforce docs/ organization per 00_MASTER_DOCUMENTATION_STANDARDS.mdc
+
       - id: logging-metrics-enforcement
         name: Logging & Metrics Enforcement
         entry: python3 scripts/enforce_logging_metrics.py --paths
         language: python
         types: [python]
         pass_filenames: true
+
+      # Mobile Integration Checks
+      - id: forbid-direct-fetch
+        name: Forbid Direct Fetch/Axios
+        # Fail if grep finds matches in apps/native or frontend-react-native
+        # Excluding known legacy files to be refactored
+        entry: bash -c 'if grep -rE "fetch\(|axios\." apps/native frontend-react-native | grep -v "BackendClient.ts" | grep -v "frontend-react-native/src/services/featureFlags.ts" | grep -v "frontend-react-native/src/services/api.ts" | grep -v "frontend-react-native/src/services/api.enhanced.ts" | grep -v "frontend-react-native/src/services/iap.ts"; then echo "❌ Found forbidden direct fetch/axios calls. Use @cerebral/core BackendClient."; exit 1; fi'
+        language: system
+        types: [text]
+        pass_filenames: false
+        description: "Use @cerebral/core BackendClient instead of direct fetch/axios calls"
+
+      # TypeScript Compilation Check (Native App)
+      - id: tsc-check
+        name: TypeScript Check (Native)
+        entry: bash -c "cd apps/native && /opt/homebrew/bin/pnpm tsc --noEmit"
+        language: system
+        files: \.(ts|tsx)$
+        pass_filenames: false
+        description: "Ensure code compiles cleanly"
+
+      # ESLint Check
+      - id: eslint-check
+        name: ESLint Check
+        entry: bash -c "cd apps/native && /opt/homebrew/bin/pnpm lint"
+        language: system
+        files: \.(ts|tsx|js|jsx)$
+        pass_filenames: false
+        description: "Ensure code follows linting rules"

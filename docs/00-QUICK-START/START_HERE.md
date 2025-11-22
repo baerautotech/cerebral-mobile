@@ -7,18 +7,23 @@
 ## 📖 READ THESE IN ORDER (Takes 45 minutes)
 
 ### 1. This File (5 min)
+
 You're reading it! 📍
 
 ### 2. SETUP_COMPLETE.md (12 min)
+
 Quick overview of what's been set up and how to get started.
 
 ### 3. MOBILE_IMPLEMENTATION_PLAN.md (20 min)
+
 Complete roadmap for all 6 phases over 4-6 weeks.
 
 ### 4. build-todo/PHASE_1_FEATURE_FLAGS.md (8 min)
+
 Detailed checklist for Phase 1 (this week).
 
 ### 5. .cursor/rules/cerebral-mobile.mdc (Reference)
+
 Keep this open while coding. It has all the patterns and best practices.
 
 ---
@@ -41,6 +46,7 @@ Build the **Feature Flags + Tier System + In-App Purchases** system for the mobi
 **6 Phases**, **4-6 weeks**, **Starting Now**
 
 ### Phase 1 (This Week): Feature Flags SDK ← START HERE
+
 - Create feature flag service with AsyncStorage caching
 - Create useFeatureFlags hook
 - Create FeatureFlagGuard component
@@ -49,9 +55,13 @@ Build the **Feature Flags + Tier System + In-App Purchases** system for the mobi
 - Test on simulators and real devices
 
 ### Phase 2: Tier System & In-App Purchases
+
 ### Phase 3: Screen Wrapping (30+ screens)
+
 ### Phase 4: Build Automation (Tekton)
+
 ### Phase 5: App Store & Play Store Distribution
+
 ### Phase 6: Comprehensive Testing & QA
 
 ---
@@ -59,12 +69,14 @@ Build the **Feature Flags + Tier System + In-App Purchases** system for the mobi
 ## 🏃 GET STARTED RIGHT NOW
 
 ### Step 1: Verify App Works (2 min)
+
 ```bash
 cd /Users/bbaer/Development/cerebral-mobile-1
 npm start
 ```
 
 Then in another terminal:
+
 ```bash
 npm run ios    # Or npm run android
 ```
@@ -72,10 +84,13 @@ npm run ios    # Or npm run android
 You should see the app in your simulator!
 
 ### Step 2: Read the Documents (45 min)
+
 Follow the reading list above.
 
 ### Step 3: Start Phase 1 Tomorrow
+
 Create a feature branch and start coding:
+
 ```bash
 git checkout -b feature/feature-flags-sdk develop
 ```
@@ -85,6 +100,7 @@ git checkout -b feature/feature-flags-sdk develop
 ## 📁 KEY FILES TO KNOW
 
 ### Your Workspace Rules (Reference While Coding)
+
 ```
 .cursor/rules/
 ├── cerebral-mobile.mdc              ← Repository principles & patterns
@@ -92,6 +108,7 @@ git checkout -b feature/feature-flags-sdk develop
 ```
 
 ### Your Implementation Plan
+
 ```
 MOBILE_IMPLEMENTATION_PLAN.md        ← 4-6 week roadmap (21 KB)
 SETUP_COMPLETE.md                    ← Getting started guide (12 KB)
@@ -100,6 +117,7 @@ IMPLEMENTATION_CHECKLIST.md          ← Master checklist
 ```
 
 ### Phase 1 Details
+
 ```
 build-todo/PHASE_1_FEATURE_FLAGS.md  ← Phase 1 detailed breakdown
 ```
@@ -109,6 +127,7 @@ build-todo/PHASE_1_FEATURE_FLAGS.md  ← Phase 1 detailed breakdown
 ## 💡 KEY CONCEPTS
 
 ### Feature Flags (Phase 1)
+
 - Fetch flags from backend (GET /api/flags)
 - Cache in AsyncStorage (5 minute TTL)
 - Show/hide features based on flag state
@@ -116,18 +135,21 @@ build-todo/PHASE_1_FEATURE_FLAGS.md  ← Phase 1 detailed breakdown
 - Manual refresh via pull-to-refresh
 
 ### Tier System (Phase 2)
+
 - Extract tier from JWT token
 - Enforce tier restrictions at screen level
 - Show upgrade CTA for insufficient tier
 - Support: free, standard, enterprise tiers
 
 ### In-App Purchases (Phase 2)
+
 - Integrate RevenueCat
 - Handle purchases (monthly/yearly subscriptions)
 - Verify purchases with backend
 - Unlock features after purchase
 
 ### Screen Wrapping (Phase 3)
+
 - Wrap screens with tier guards
 - Wrap screens with feature flag guards
 - Combine both for premium features
@@ -151,6 +173,7 @@ build-todo/PHASE_1_FEATURE_FLAGS.md  ← Phase 1 detailed breakdown
 ## ✨ QUICK REFERENCE
 
 ### Commands
+
 ```bash
 npm start              # Start Metro bundler
 npm run ios            # Run on iOS simulator
@@ -162,6 +185,7 @@ npm run build          # Build app
 ```
 
 ### Important Directories
+
 ```
 frontend-react-native/src/
 ├── hooks/              ← Where useFeatureFlags will go
@@ -191,9 +215,7 @@ touch frontend-react-native/src/types/featureFlags.ts
 ## ❓ FAQ
 
 **Q: I'm stuck. Where do I look?**
-A: 1. Check .cursor/rules/cerebral-mobile.mdc for patterns
-   2. Check .cursor/rules/feature-flags-mobile.mdc for code examples
-   3. Check build-todo/PHASE_1_FEATURE_FLAGS.md for detailed checklist
+A: 1. Check .cursor/rules/cerebral-mobile.mdc for patterns 2. Check .cursor/rules/feature-flags-mobile.mdc for code examples 3. Check build-todo/PHASE_1_FEATURE_FLAGS.md for detailed checklist
 
 **Q: What if the backend isn't ready?**
 A: Use mock API returning hardcoded flags for testing
@@ -237,16 +259,19 @@ Phase 1 is done when ALL of these are true:
 ### Common Issues
 
 **Issue: App won't start after changes**
+
 - Check for TypeScript errors: npm run lint
 - Check console for errors: Look at Metro bundler output
 - Try clean rebuild: npm run clean && npm install && npm start
 
 **Issue: AsyncStorage not working**
+
 - Verify installed: npm list @react-native-async-storage/async-storage
 - Rebuild iOS: cd frontend-react-native && pod install && cd ..
 - Rebuild Android: npm run android (clean build)
 
 **Issue: Tests won't run**
+
 - Check Jest config: jest.config.js
 - Try running specific test: npm test -- useFeatureFlags
 - Check for mock setup in: jest.setup.js
@@ -256,24 +281,28 @@ Phase 1 is done when ALL of these are true:
 ## 🚀 YOUR TIMELINE
 
 ### This Week (Phase 1)
+
 - Mon: Read documentation, set up branch
 - Tue: Create types, service, hook
 - Wed: Create guard, provider, update App.tsx
 - Thu: Write tests, test on devices
 
 ### Next Week (Phase 2)
+
 - Mon: Tier system service, hook, guard
 - Tue: RevenueCat integration
 - Wed: IAP hook, components, update App.tsx
 - Thu: Tests, real device testing
 
 ### Following Weeks
+
 - Week 3: Screen wrapping (30+ screens)
 - Week 4: Build automation (Tekton)
 - Week 5: App Store distribution (Fastlane)
 - Week 6-7: Testing & QA
 
 ### Total
+
 **4-6 weeks to production-ready app** 🎉
 
 ---
@@ -281,11 +310,13 @@ Phase 1 is done when ALL of these are true:
 ## ✅ NEXT IMMEDIATE STEPS
 
 ### Today (Right Now)
+
 1. Verify app runs on simulator: npm run ios
 2. Read SETUP_COMPLETE.md (12 min)
 3. Read MOBILE_IMPLEMENTATION_PLAN.md (20 min)
 
 ### Tomorrow (Phase 1 Day 1)
+
 1. Create feature branch
 2. Create types file
 3. Create service file
@@ -327,6 +358,7 @@ When all boxes are checked, you're ready to code!
 ## 💪 YOU'VE GOT THIS
 
 You now have:
+
 - ✅ Complete implementation roadmap
 - ✅ Detailed phase breakdowns
 - ✅ Code patterns ready to use

@@ -161,9 +161,7 @@ describe('TasksScreen', () => {
       fireEvent.press(getByText('Completed'));
 
       await waitFor(() => {
-        expect(ApiClient.get).toHaveBeenCalledWith(
-          expect.stringContaining('status=completed')
-        );
+        expect(ApiClient.get).toHaveBeenCalledWith(expect.stringContaining('status=completed'));
       });
     });
 

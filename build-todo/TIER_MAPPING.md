@@ -17,10 +17,12 @@ Users with higher tiers can access all lower tier features.
 ## FREE TIER SCREENS (Default - No wrapping)
 
 ### Authentication
+
 - LoginScreen
 - SignupScreen
 
 ### Core Features
+
 - DashboardScreen (base version)
 - TasksScreen (base version)
 - CreateTaskScreen
@@ -33,6 +35,7 @@ Users with higher tiers can access all lower tier features.
 ## STANDARD TIER SCREENS
 
 ### Real-time Features
+
 - **LiveDashboardScreen**
   - Requires: Standard tier or higher
   - Description: Live updating dashboard with real-time metrics
@@ -41,6 +44,7 @@ Users with higher tiers can access all lower tier features.
   - Cost: $9.99/month
 
 ### Standard Tier Features (in Free Screens)
+
 - Advanced Analytics (in Dashboard)
 - Custom Reports (in Dashboard)
 - Advanced Task Filtering (in TasksScreen)
@@ -48,6 +52,7 @@ Users with higher tiers can access all lower tier features.
 - Team Collaboration (in CreateTaskScreen)
 
 **Implementation Pattern**:
+
 ```typescript
 <View>
   {/* Base feature - always visible */}
@@ -65,6 +70,7 @@ Users with higher tiers can access all lower tier features.
 ## ENTERPRISE TIER SCREENS
 
 ### Premium Features
+
 - **ARViewScreen** (Augmented Reality)
   - Requires: Enterprise tier
   - Description: AR visualization of data and tasks
@@ -73,6 +79,7 @@ Users with higher tiers can access all lower tier features.
   - Cost: $49.99/month
 
 ### Enterprise Tier Features (in Free Screens)
+
 - AI-Powered Insights
 - Custom Integrations
 - Team Management
@@ -83,6 +90,7 @@ Users with higher tiers can access all lower tier features.
 - Workflow Automation
 
 **Implementation Pattern**:
+
 ```typescript
 <View>
   {/* Base feature - always visible */}
@@ -99,22 +107,23 @@ Users with higher tiers can access all lower tier features.
 
 ## SCREEN-BY-SCREEN TIER REQUIREMENTS
 
-| Screen | Min Tier | Features | Wrapping |
-|--------|----------|----------|----------|
-| LoginScreen | Free | None | ❌ None |
-| SignupScreen | Free | None | ❌ None |
-| DashboardScreen | Free | Basic: ✅<br/>Advanced: Standard<br/>Insights: Enterprise | ⚠️ Partial (components) |
-| TasksScreen | Free | Basic: ✅<br/>Filtering: Standard<br/>Automation: Enterprise | ⚠️ Partial (components) |
-| CreateTaskScreen | Free | Basic: ✅<br/>AI: Enterprise | ⚠️ Partial (components) |
-| TaskDetailScreen | Free | Basic: ✅<br/>Export: Standard<br/>Workflow: Enterprise | ⚠️ Partial (components) |
-| LiveDashboardScreen | Standard | Real-time: ✅ | ✅ Full (screen) |
-| ARViewScreen | Enterprise | AR View: ✅ | ✅ Full (screen) |
+| Screen              | Min Tier   | Features                                                     | Wrapping                |
+| ------------------- | ---------- | ------------------------------------------------------------ | ----------------------- |
+| LoginScreen         | Free       | None                                                         | ❌ None                 |
+| SignupScreen        | Free       | None                                                         | ❌ None                 |
+| DashboardScreen     | Free       | Basic: ✅<br/>Advanced: Standard<br/>Insights: Enterprise    | ⚠️ Partial (components) |
+| TasksScreen         | Free       | Basic: ✅<br/>Filtering: Standard<br/>Automation: Enterprise | ⚠️ Partial (components) |
+| CreateTaskScreen    | Free       | Basic: ✅<br/>AI: Enterprise                                 | ⚠️ Partial (components) |
+| TaskDetailScreen    | Free       | Basic: ✅<br/>Export: Standard<br/>Workflow: Enterprise      | ⚠️ Partial (components) |
+| LiveDashboardScreen | Standard   | Real-time: ✅                                                | ✅ Full (screen)        |
+| ARViewScreen        | Enterprise | AR View: ✅                                                  | ✅ Full (screen)        |
 
 ---
 
 ## TIER GUARD WRAPPING LOCATIONS
 
 ### Full Screen Wrapping (Entire Screen)
+
 ```
 Location: src/screens/LiveDashboardScreen.tsx
 Guard: <TierGuard tier="standard">
@@ -128,6 +137,7 @@ Guard: <TierGuard tier="enterprise">
 ```
 
 ### Partial Component Wrapping (Feature within Screen)
+
 ```
 Location: src/screens/Dashboard/DashboardScreen.tsx
 Guard: <TierGuard tier="standard">
@@ -169,6 +179,7 @@ Guard: <TierGuard tier="enterprise">
 When user doesn't have required tier:
 
 ### Standard Tier Upgrade Path
+
 1. User clicks on Standard tier feature
 2. TierGuard shows upgrade prompt
 3. Prompt shows: "Requires Standard Tier - $9.99/month"
@@ -180,6 +191,7 @@ When user doesn't have required tier:
 9. Component re-renders showing feature
 
 ### Enterprise Tier Upgrade Path
+
 1. User clicks on Enterprise tier feature
 2. TierGuard shows upgrade prompt
 3. Prompt shows: "Requires Enterprise Tier - $49.99/month"
@@ -194,12 +206,12 @@ When user doesn't have required tier:
 
 ## PRICING STRUCTURE
 
-| Tier | Price | Features | SKU |
-|------|-------|----------|-----|
-| Free | Free | Basic dashboard, tasks, search | free_tier |
-| Standard | $9.99/mo | Live dashboard, analytics, export | standard_monthly |
-| Enterprise | $49.99/mo | AR view, AI, integrations, API | enterprise_monthly |
-| Family | $99.99/yr | Everything Standard + shared | family_annual |
+| Tier       | Price     | Features                          | SKU                |
+| ---------- | --------- | --------------------------------- | ------------------ |
+| Free       | Free      | Basic dashboard, tasks, search    | free_tier          |
+| Standard   | $9.99/mo  | Live dashboard, analytics, export | standard_monthly   |
+| Enterprise | $49.99/mo | AR view, AI, integrations, API    | enterprise_monthly |
+| Family     | $99.99/yr | Everything Standard + shared      | family_annual      |
 
 ---
 
@@ -235,6 +247,7 @@ Enterprise Tier (via In-App Purchase)
 ## TESTING TIER CHECKS
 
 ### Test 1: Free Tier User
+
 ```
 Expected Results:
 - [x] Can view DashboardScreen
@@ -246,6 +259,7 @@ Expected Results:
 ```
 
 ### Test 2: Standard Tier User
+
 ```
 Expected Results:
 - [x] Can view DashboardScreen + Advanced Analytics
@@ -257,6 +271,7 @@ Expected Results:
 ```
 
 ### Test 3: Enterprise Tier User
+
 ```
 Expected Results:
 - [x] Can view all Free features
@@ -272,17 +287,20 @@ Expected Results:
 ## MIGRATION NOTES
 
 ### For Existing Free Users
+
 - No changes to their access
 - New tier-gated features appear as "Upgrade" buttons
 - Smooth upgrade path to Standard or Enterprise
 
 ### For New Features
+
 - Always add tier requirement upfront
 - Use TierGuard to enforce
 - Show upgrade prompts clearly
 - Link to in-app purchase
 
 ### For Feature Removal
+
 - Deprecate with 30-day notice
 - Move to different tier if applicable
 - Provide migration path

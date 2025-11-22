@@ -7,11 +7,7 @@ export default {
     '<rootDir>/apps/tablet',
   ],
   testMatch: ['**/__tests__/**/*.test.[jt]s?(x)'],
-  collectCoverageFrom: [
-    'src/**/*.{js,jsx,ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/index.ts',
-  ],
+  collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}', '!src/**/*.d.ts', '!src/**/index.ts'],
   coverageThresholds: {
     global: {
       branches: 70,

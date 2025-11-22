@@ -15,7 +15,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Supabase configuration
 const SUPABASE_URL = 'https://txlzlhcrfippujcmnief.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bHpsaGNyZmlwcHVqY21uaWVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM4NTk3MzcsImV4cCI6MjA0OTQzNTczN30.YkZV-aqBT_F86PEhxW_9s48cTn-M16FZVWZlwkIPmek';
+const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bHpsaGNyZmlwcHVqY21uaWVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM4NTk3MzcsImV4cCI6MjA0OTQzNTczN30.YkZV-aqBT_F86PEhxW_9s48cTn-M16FZVWZlwkIPmek';
 
 // Detect if running on web or native
 const isWeb = typeof window !== 'undefined' && typeof document !== 'undefined';
@@ -57,18 +58,14 @@ const getStorageAdapter = () => {
 };
 
 // Create Supabase client with platform-specific configuration
-export const supabase: SupabaseClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY,
-  {
-    auth: {
-      storage: getStorageAdapter(),
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: isWeb, // Only detect session in URL on web
-    },
-  }
-);
+export const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    storage: getStorageAdapter(),
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: isWeb, // Only detect session in URL on web
+  },
+});
 
 /**
  * Authentication Service

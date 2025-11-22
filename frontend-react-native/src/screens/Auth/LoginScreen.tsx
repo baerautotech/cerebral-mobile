@@ -29,10 +29,7 @@ interface LoginScreenProps {
   onNavigateToSignup?: () => void;
 }
 
-export const LoginScreen: React.FC<LoginScreenProps> = ({
-  onLoginSuccess,
-  onNavigateToSignup,
-}) => {
+export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onNavigateToSignup }) => {
   const { width } = useWindowDimensions();
   const isWeb = Platform.OS === 'web';
   const _isMobile = width < 768;
@@ -66,24 +63,16 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
     } catch (err) {
       setError('An unexpected error occurred');
       if (__DEV__) {
-
         console.error('Login error:', err);
-
       }
     } finally {
       _setLoading(false);
     }
   };
 
-  const containerStyle = [
-    styles.container,
-    isWeb && !isMobile && styles.containerDesktop,
-  ];
+  const containerStyle = [styles.container, isWeb && !isMobile && styles.containerDesktop];
 
-  const formStyle = [
-    styles.form,
-    isWeb && !isMobile && styles.formDesktop,
-  ];
+  const formStyle = [styles.form, isWeb && !isMobile && styles.formDesktop];
 
   return (
     <KeyboardAvoidingView
@@ -148,7 +137,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
             {/* Footer Links */}
             <View style={styles.footer}>
-              <TouchableOpacity onPress={() => {/* TODO: Reset password */}}>
+              <TouchableOpacity
+                onPress={() => {
+                  /* TODO: Reset password */
+                }}
+              >
                 <Text style={styles.linkText}>Forgot password?</Text>
               </TouchableOpacity>
 
@@ -162,11 +155,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           </View>
 
           {/* Platform Badge */}
-          {isWeb && (
-            <Text style={styles.platformBadge}>
-              Web · Powered by React Native Web
-            </Text>
-          )}
+          {isWeb && <Text style={styles.platformBadge}>Web · Powered by React Native Web</Text>}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

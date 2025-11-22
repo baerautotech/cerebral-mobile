@@ -15,15 +15,15 @@ This guide optimizes the Cerebral Mobile monorepo across three platforms: Native
 
 ## 🎯 Performance Targets
 
-| Platform | Metric | Target |
-|----------|--------|--------|
-| **Native** | App startup | < 2s |
-| | Frame rate | 60 FPS (iOS), 60 FPS (Android) |
-| | Memory | < 200MB |
-| **Wearable** | App startup | < 1s |
-| | Battery drain | < 5%/hour |
-| **Tablet (Web)** | Time to Interactive | < 4s |
-| | LCP | < 2.5s |
+| Platform         | Metric              | Target                         |
+| ---------------- | ------------------- | ------------------------------ |
+| **Native**       | App startup         | < 2s                           |
+|                  | Frame rate          | 60 FPS (iOS), 60 FPS (Android) |
+|                  | Memory              | < 200MB                        |
+| **Wearable**     | App startup         | < 1s                           |
+|                  | Battery drain       | < 5%/hour                      |
+| **Tablet (Web)** | Time to Interactive | < 4s                           |
+|                  | LCP                 | < 2.5s                         |
 
 ---
 
@@ -146,12 +146,12 @@ adb pull /data/local/tmp/heap.bin
 // ✅ Good: Clean up listeners
 useEffect(() => {
   const subscription = eventEmitter.addListener('task-update', handler);
-  return () => subscription.remove();  // Cleanup
+  return () => subscription.remove(); // Cleanup
 }, []);
 
 // ❌ Bad: Leaked listener
 useEffect(() => {
-  eventEmitter.addListener('task-update', handler);  // No cleanup
+  eventEmitter.addListener('task-update', handler); // No cleanup
 }, []);
 ```
 
@@ -186,7 +186,7 @@ import { NativeModules } from 'react-native';
 const CryptoModule = NativeModules.CryptoModule;
 
 // In JS
-const encrypted = await CryptoModule.encrypt(data);  // Much faster
+const encrypted = await CryptoModule.encrypt(data); // Much faster
 ```
 
 ### Bridge Optimization
@@ -196,7 +196,7 @@ const encrypted = await CryptoModule.encrypt(data);  // Much faster
 NativeModule.batchOperation([
   { operation: 'read', key: 'a' },
   { operation: 'read', key: 'b' },
-  { operation: 'read', key: 'c' }
+  { operation: 'read', key: 'c' },
 ]);
 
 // ❌ Bad: Multiple bridge calls
@@ -215,10 +215,10 @@ NativeModule.read('c');
 import { useShallow } from 'zustand/react/shallow';
 
 // ✅ Good: Subscribe to specific fields
-const title = useTaskStore(useShallow(state => ({ title: state.title })));
+const title = useTaskStore(useShallow((state) => ({ title: state.title })));
 
 // ❌ Bad: Subscribe to entire store
-const store = useTaskStore();  // Re-renders on any state change
+const store = useTaskStore(); // Re-renders on any state change
 ```
 
 ### Separate Stores by Domain
@@ -230,8 +230,8 @@ export const useTaskStore = create(/* ... */);
 export const useUIStore = create(/* ... */);
 
 // Usage
-const user = useAuthStore(state => state.user);  // Only re-renders if auth changes
-const tasks = useTaskStore(state => state.tasks);  // Only re-renders if tasks change
+const user = useAuthStore((state) => state.user); // Only re-renders if auth changes
+const tasks = useTaskStore((state) => state.tasks); // Only re-renders if tasks change
 ```
 
 ---
@@ -244,7 +244,7 @@ const tasks = useTaskStore(state => state.tasks);  // Only re-renders if tasks c
 import { PerformanceObserver, performance } from 'react-native';
 
 const observer = new PerformanceObserver((list) => {
-  list.getEntries().forEach(entry => {
+  list.getEntries().forEach((entry) => {
     console.log(`${entry.name}: ${entry.duration}ms`);
   });
 });
@@ -279,7 +279,7 @@ export const DebugMenu = () => {
 ### Sentry for Error Tracking
 
 ```typescript
-import * as Sentry from "@sentry/react-native";
+import * as Sentry from '@sentry/react-native';
 
 Sentry.init({
   dsn: 'https://your-sentry-dsn@sentry.io/project-id',
@@ -341,9 +341,9 @@ if (Platform.OS === 'android' && Platform.Version >= 30) {
 
 // Reduce update frequency on watches
 const updateInterval = Platform.select({
-  web: 1000,      // Every 1s
-  android: 5000,  // Every 5s
-  ios: 5000       // Every 5s
+  web: 1000, // Every 1s
+  android: 5000, // Every 5s
+  ios: 5000, // Every 5s
 });
 ```
 
@@ -361,8 +361,8 @@ BackgroundTask.define(async () => {
 
 // Schedule efficiently
 BackgroundTask.schedule({
-  period: 900,  // 15 minutes
-  flex: 300     // 5 minute flex window
+  period: 900, // 15 minutes
+  flex: 300, // 5 minute flex window
 });
 ```
 
@@ -376,7 +376,7 @@ BackgroundTask.schedule({
 import NetInfo from '@react-native-community/netinfo';
 
 // Adjust behavior based on connection
-NetInfo.fetch().then(state => {
+NetInfo.fetch().then((state) => {
   if (state.type === 'cellular') {
     // Reduce quality/size on cellular
     setImageQuality('low');
@@ -396,11 +396,7 @@ const batchRequests = async (endpoints: string[]) => {
 };
 
 // Usage
-const [users, tasks, projects] = await batchRequests([
-  '/users/1',
-  '/tasks/1',
-  '/projects/1'
-]);
+const [users, tasks, projects] = await batchRequests(['/users/1', '/tasks/1', '/projects/1']);
 ```
 
 ---

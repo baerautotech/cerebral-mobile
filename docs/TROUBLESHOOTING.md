@@ -7,6 +7,7 @@
 **Symptoms**: Build fails for iOS or Android
 
 **Diagnosis**:
+
 ```bash
 # Android
 npm run build:android 2>&1 | tail -100
@@ -18,12 +19,14 @@ npm run build:ios 2>&1 | tail -100
 **Common Fixes**:
 
 - **Gradle errors (Android)**: Update Gradle
+
   ```bash
   cd android && ./gradlew clean && cd ..
   npm run build:android
   ```
 
 - **Pod issues (iOS)**: Reset CocoaPods
+
   ```bash
   cd ios && pod deintegrate && pod install && cd ..
   npm run build:ios
@@ -40,6 +43,7 @@ npm run build:ios 2>&1 | tail -100
 **Symptoms**: App crashes on startup, crashes when using feature
 
 **Diagnosis**:
+
 ```bash
 # iOS logs
 xcrun simctl spawn booted log stream --predicate 'process == "Cerebral"'
@@ -67,6 +71,7 @@ adb logcat | grep "Cerebral\|ReactNative\|Error"
 **Symptoms**: Slow startup, frame drops, high memory
 
 **Diagnosis**:
+
 ```bash
 # Frame drops
 adb shell dumpsys gfxinfo | grep "Janky frames"
@@ -94,6 +99,7 @@ adb shell dumpsys meminfo | grep "Cerebral"
 **Symptoms**: API calls fail, timeout, no connectivity
 
 **Diagnosis**:
+
 ```bash
 # Test network connectivity
 curl https://api.dev.cerebral.baerautotech.com/health
@@ -121,6 +127,7 @@ adb logcat | grep "OkHttp"
 **Symptoms**: UI doesn't update, offline changes don't sync
 
 **Diagnosis**:
+
 ```bash
 # Check Zustand store (React Native DevTools)
 # Use React Native Debugger
@@ -159,6 +166,7 @@ adb shell "run-as com.cerebral cat /data/data/com.cerebral/shared_prefs/MMKV.xml
 ## Performance Monitoring
 
 Monitor with:
+
 - Xcode Instruments (iOS)
 - Android Studio Profiler (Android)
 - React Native DevTools
@@ -167,6 +175,7 @@ Monitor with:
 ## Escalation
 
 Collect before escalating:
+
 ```bash
 # Device info
 adb shell "getprop | grep model"

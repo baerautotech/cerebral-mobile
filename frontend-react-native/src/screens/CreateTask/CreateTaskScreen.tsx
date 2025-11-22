@@ -24,10 +24,7 @@ interface CreateTaskScreenProps {
   onCancel?: () => void;
 }
 
-export const CreateTaskScreen: React.FC<CreateTaskScreenProps> = ({
-  onTaskCreated,
-  onCancel,
-}) => {
+export const CreateTaskScreen: React.FC<CreateTaskScreenProps> = ({ onTaskCreated, onCancel }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
@@ -117,9 +114,15 @@ export const CreateTaskScreen: React.FC<CreateTaskScreenProps> = ({
         {/* Enterprise: AI Suggestions */}
         <FeatureFlagGuard flag="ai_suggestions">
           <TierGuard tier="enterprise">
-            <View style={{ padding: 16, backgroundColor: '#2a1a3a', borderRadius: 8, marginBottom: 16 }}>
-              <Text style={{ color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 8 }}>🤖 AI Suggestions</Text>
-              <Text style={{ color: '#ccc', fontSize: 12 }}>Get AI-powered title and description suggestions</Text>
+            <View
+              style={{ padding: 16, backgroundColor: '#2a1a3a', borderRadius: 8, marginBottom: 16 }}
+            >
+              <Text style={{ color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 8 }}>
+                🤖 AI Suggestions
+              </Text>
+              <Text style={{ color: '#ccc', fontSize: 12 }}>
+                Get AI-powered title and description suggestions
+              </Text>
             </View>
           </TierGuard>
         </FeatureFlagGuard>

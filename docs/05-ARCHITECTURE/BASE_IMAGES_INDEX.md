@@ -10,26 +10,28 @@
 
 ### I Need To...
 
-| Task | Location | Document | Section |
-|------|----------|----------|---------|
-| **Understand what base images are** | Any repo | CI_CD_COMPLETE_GUIDE.md | "Base Images - Fast Build Foundation" |
-| **Use base images in my Dockerfile** | Any repo | BASE_IMAGES_DOCUMENTATION.md | "Building ON Base Images" |
-| **Add a new ML dependency** | cerebral repo | BASE_IMAGES_DOCUMENTATION.md | "Maintaining & Updating Base Images" → Step 1 |
-| **Update base images** | cerebral repo | BASE_IMAGES_DOCUMENTATION.md | "Complete 7-Step Procedure" |
-| **Check if dependency is in base image** | Any repo | BASE_IMAGES_DOCUMENTATION.md | "Troubleshooting" |
-| **Verify images in registry** | Any repo | .cursor/rules.md | "Base Images - Quick Commands" |
-| **Understand build dependencies** | Any repo | BASE_IMAGES_DOCUMENTATION.md | "Build Dependencies Reference" |
-| **See what's included** | Any repo | BASE_IMAGES_DOCUMENTATION.md | "What's Included in Base Images" |
-| **Fix a build failure** | Any repo | .cursor/rules.md | "Troubleshooting" table |
+| Task                                     | Location      | Document                     | Section                                       |
+| ---------------------------------------- | ------------- | ---------------------------- | --------------------------------------------- |
+| **Understand what base images are**      | Any repo      | CI_CD_COMPLETE_GUIDE.md      | "Base Images - Fast Build Foundation"         |
+| **Use base images in my Dockerfile**     | Any repo      | BASE_IMAGES_DOCUMENTATION.md | "Building ON Base Images"                     |
+| **Add a new ML dependency**              | cerebral repo | BASE_IMAGES_DOCUMENTATION.md | "Maintaining & Updating Base Images" → Step 1 |
+| **Update base images**                   | cerebral repo | BASE_IMAGES_DOCUMENTATION.md | "Complete 7-Step Procedure"                   |
+| **Check if dependency is in base image** | Any repo      | BASE_IMAGES_DOCUMENTATION.md | "Troubleshooting"                             |
+| **Verify images in registry**            | Any repo      | .cursor/rules.md             | "Base Images - Quick Commands"                |
+| **Understand build dependencies**        | Any repo      | BASE_IMAGES_DOCUMENTATION.md | "Build Dependencies Reference"                |
+| **See what's included**                  | Any repo      | BASE_IMAGES_DOCUMENTATION.md | "What's Included in Base Images"              |
+| **Fix a build failure**                  | Any repo      | .cursor/rules.md             | "Troubleshooting" table                       |
 
 ---
 
 ## 📚 Documentation Structure
 
 ### Layer 1: Quick Reference (.cursor/rules.md)
+
 **For**: AI agents, quick lookups
 **When**: You need fast answers
 **Content**:
+
 - What are base images (1 paragraph)
 - Where to find them (registry URL)
 - How services use them (code snippet)
@@ -40,9 +42,11 @@
 **In Every Repo**: ✅ YES
 
 ### Layer 2: Implementation Guide (CI_CD_COMPLETE_GUIDE.md)
+
 **For**: Understanding context & integration
 **When**: You need to understand how they fit into the system
 **Content**:
+
 - Overview & impact (30min → 3min)
 - Table of available images
 - How to use in Dockerfiles
@@ -55,9 +59,11 @@
 **In Every Repo**: ✅ YES
 
 ### Layer 3: Complete Reference (BASE_IMAGES_DOCUMENTATION.md)
+
 **For**: Complete understanding & detailed procedures
 **When**: You need all the details
 **Content**:
+
 - Complete architecture
 - Registry operations
 - Full Dockerfile patterns
@@ -77,6 +83,7 @@
 ### Two Images Available
 
 **Image 1: cerebral/ai-base:cuda**
+
 - Purpose: GPU-accelerated services
 - Base: `nvidia/cuda:12.4.1-runtime-ubuntu22.04`
 - Size: ~7.5GB
@@ -87,6 +94,7 @@
 - Services: ai-services, bmad-services, data-services, knowledge-services, +8 more
 
 **Image 2: cerebral/ai-base:cpu**
+
 - Purpose: CPU-only services
 - Base: `python:3.11-slim`
 - Size: ~2.8GB
@@ -280,29 +288,31 @@ START
 
 ## ✅ What This Documentation Guarantees
 
-| Guarantee | How It's Met |
-|-----------|------------|
-| **Zero ambiguity about location** | Registry URL explicit in 3 docs + quick reference |
-| **Clear usage patterns** | Dockerfile templates in 2 docs + real examples |
-| **Complete maintenance process** | 7-step procedure in BASE_IMAGES_DOCUMENTATION.md |
-| **Troubleshooting coverage** | Troubleshooting sections in all 3 docs |
-| **Build dependency explanation** | Complete reference in BASE_IMAGES_DOCUMENTATION.md |
-| **Quick access for agents** | .cursor/rules.md in every repo |
-| **Context within CI/CD** | Integrated into CI_CD_COMPLETE_GUIDE.md |
-| **Comprehensive reference** | BASE_IMAGES_DOCUMENTATION.md (500+ lines) |
-| **Synced across repos** | Same docs deployed to all 4 repos |
-| **Future-proof procedures** | Step-by-step process documented for all scenarios |
+| Guarantee                         | How It's Met                                       |
+| --------------------------------- | -------------------------------------------------- |
+| **Zero ambiguity about location** | Registry URL explicit in 3 docs + quick reference  |
+| **Clear usage patterns**          | Dockerfile templates in 2 docs + real examples     |
+| **Complete maintenance process**  | 7-step procedure in BASE_IMAGES_DOCUMENTATION.md   |
+| **Troubleshooting coverage**      | Troubleshooting sections in all 3 docs             |
+| **Build dependency explanation**  | Complete reference in BASE_IMAGES_DOCUMENTATION.md |
+| **Quick access for agents**       | .cursor/rules.md in every repo                     |
+| **Context within CI/CD**          | Integrated into CI_CD_COMPLETE_GUIDE.md            |
+| **Comprehensive reference**       | BASE_IMAGES_DOCUMENTATION.md (500+ lines)          |
+| **Synced across repos**           | Same docs deployed to all 4 repos                  |
+| **Future-proof procedures**       | Step-by-step process documented for all scenarios  |
 
 ---
 
 ## 🎯 Quick Reference Commands
 
 ### Verify Images
+
 ```bash
 curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
 ```
 
 ### Build & Push
+
 ```bash
 cd ~/Development/cerebral
 docker build -f docker/Dockerfile.ai-base.cuda -t cerebral/ai-base:cuda .
@@ -314,11 +324,13 @@ docker push 10.34.0.202:5000/cerebral/ai-base:cpu
 ```
 
 ### Test Dependency
+
 ```bash
 docker run --rm 10.34.0.202:5000/cerebral/ai-base:cuda python -c "import package"
 ```
 
 ### Pull for Caching
+
 ```bash
 docker pull 10.34.0.202:5000/cerebral/ai-base:cuda
 docker pull 10.34.0.202:5000/cerebral/ai-base:cpu
@@ -328,27 +340,27 @@ docker pull 10.34.0.202:5000/cerebral/ai-base:cpu
 
 ## 📊 Documentation Statistics
 
-| Metric | Value |
-|--------|-------|
-| New documents created | 1 (BASE_IMAGES_DOCUMENTATION.md) |
-| Existing docs updated | 2 (CI_CD_COMPLETE_GUIDE.md, .cursor/rules.md) |
-| Repositories deployed to | 4 (all) |
-| Total new lines | ~850 lines |
-| Code examples | 15+ ready-to-use |
-| Quick commands | 20+ copy-paste ready |
-| Troubleshooting scenarios | 10+ covered |
-| Build procedures | 7-step documented |
+| Metric                    | Value                                         |
+| ------------------------- | --------------------------------------------- |
+| New documents created     | 1 (BASE_IMAGES_DOCUMENTATION.md)              |
+| Existing docs updated     | 2 (CI_CD_COMPLETE_GUIDE.md, .cursor/rules.md) |
+| Repositories deployed to  | 4 (all)                                       |
+| Total new lines           | ~850 lines                                    |
+| Code examples             | 15+ ready-to-use                              |
+| Quick commands            | 20+ copy-paste ready                          |
+| Troubleshooting scenarios | 10+ covered                                   |
+| Build procedures          | 7-step documented                             |
 
 ---
 
 ## 📅 Version History
 
-| Date | Change | Impact |
-|------|--------|--------|
-| 2025-10-25 | Initial creation | All base image docs created & deployed |
-| 2025-10-25 | CUDA Dockerfile fix | Added gcc, g++, python3-dev |
-| 2025-10-25 | CPU Dockerfile fix | Added gcc, g++, python3-dev |
-| | | Both images now available in registry |
+| Date       | Change              | Impact                                 |
+| ---------- | ------------------- | -------------------------------------- |
+| 2025-10-25 | Initial creation    | All base image docs created & deployed |
+| 2025-10-25 | CUDA Dockerfile fix | Added gcc, g++, python3-dev            |
+| 2025-10-25 | CPU Dockerfile fix  | Added gcc, g++, python3-dev            |
+|            |                     | Both images now available in registry  |
 
 ---
 
@@ -365,6 +377,7 @@ docker pull 10.34.0.202:5000/cerebral/ai-base:cpu
 ## 📞 Support
 
 **For questions about**:
+
 - Base image usage → Read: BASE_IMAGES_DOCUMENTATION.md
 - Build failures → Check: .cursor/rules.md Troubleshooting
 - CI/CD integration → See: CI_CD_COMPLETE_GUIDE.md

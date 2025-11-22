@@ -90,6 +90,7 @@ Agents have been confused about the CI/CD system. This document ends that confus
 ## 🔑 KEY COMPONENTS (Must Know)
 
 ### 0. **GitHub Webhook Configuration** ⚠️ CRITICAL
+
 - **Level**: **ORGANIZATION-LEVEL** (NOT repo-level)
 - **Organization**: `baerautotech`
 - **Endpoint**: `https://webhook.dev.cerebral.baerautotech.com/`
@@ -99,6 +100,7 @@ Agents have been confused about the CI/CD system. This document ends that confus
 - **Events**: `push` and `pull_request` (but only `push` to `main` triggers builds)
 
 ### 1. **GitHub Webhook Endpoint**
+
 - **URL**: `https://webhook.dev.cerebral.baerautotech.com/`
 - **Protocol**: HTTPS (TLS required)
 - **Port**: 443
@@ -106,6 +108,7 @@ Agents have been confused about the CI/CD system. This document ends that confus
 - **Secret**: Stored in GitHub org settings, validated by Rust receiver
 
 ### 2. **Rust Webhook Receiver** (Custom Component)
+
 - **Image**: `10.34.0.202:5000/webhook-receiver:latest`
 - **Pod**: `github-webhook-receiver` (2/2 replicas)
 - **Namespace**: `tekton-pipelines`
@@ -114,17 +117,19 @@ Agents have been confused about the CI/CD system. This document ends that confus
 - **Status**: ✅ RUNNING (verified Oct 25, 2025)
 
 ### 3. **Traefik IngressRoute** (github-webhook-traefik)
+
 - **Namespace**: `cerebral-development`
 - **Entry Point**: `websecure` (HTTPS/443)
 - **Host Match**: `webhook.dev.cerebral.baerautotech.com`
 - **Backend**: `github-webhook-receiver` service on port 3000 (in `tekton-pipelines` namespace)
-- **TLS Certificate**: `dev-wildcard-tls` (covers *.dev.cerebral.baerautotech.com)
+- **TLS Certificate**: `dev-wildcard-tls` (covers \*.dev.cerebral.baerautotech.com)
 - **✅ CRITICAL FIX (Oct 25, 2025)**: Traefik DaemonSet has flag `--providers.kubernetescrd.allowCrossNamespace=true`
   - This allows IngressRoute in `cerebral-development` to reference services in `tekton-pipelines` namespace
   - Without this flag: 404 Not Found (Traefik blocks cross-namespace references by default)
   - With this flag: Webhooks route correctly to webhook receiver pods
 
 ### 4. **Tekton Pipeline**
+
 - **Name**: `cerebral-microservice-pipeline`
 - **Namespace**: `tekton-pipelines`
 - **Tasks**: git-clone → kaniko-build → deploy
@@ -132,6 +137,7 @@ Agents have been confused about the CI/CD system. This document ends that confus
 - **Status**: ✅ DEPLOYED
 
 ### 5. **Kaniko Build Execution**
+
 - **Namespace**: `build-system`
 - **Registry**: `internal-registry.registry.svc.cluster.local:5000`
 - **Image Tag Format**: `cerebral/<service>:<commit-hash>`
@@ -142,26 +148,31 @@ Agents have been confused about the CI/CD system. This document ends that confus
 ## ❌ WHAT IS NOT THE SYSTEM
 
 ### ❌ NO GitHub Actions Runners
+
 - **NOT IN USE**: `actions-runner-system` namespace
 - **Reason**: We use Rust webhook receiver + Tekton instead
 - **What to do**: Delete if still exists, not needed
 
 ### ❌ NO GitHub Actions Workflows
+
 - **NOT IN USE**: `.github/workflows/build-*.yml` patterns
 - **Reason**: Tekton PipelineRuns handle builds automatically
 - **What to do**: Do NOT create build workflows in application repos
 
 ### ❌ NO EventListener (Tekton)
+
 - **NOT IN USE**: Tekton EventListener component
 - **Reason**: Rust receiver replaces it (better for custom logic)
 - **What to do**: Not needed, can be deleted
 
 ### ❌ NO Manual Kaniko Jobs
+
 - **NOT IN USE**: Manual `kubectl create job` for Kaniko
 - **Reason**: Tekton pipeline handles this automatically
 - **What to do**: Never run Kaniko jobs manually
 
 ### ❌ NO ArgoCD or GitOps
+
 - **NOT IN USE**: ArgoCD for deployment management
 - **Reason**: Tekton deploy-task updates Kubernetes directly
 - **What to do**: Do NOT add deployment syncs to ArgoCD
@@ -173,6 +184,7 @@ Agents have been confused about the CI/CD system. This document ends that confus
 ### **Example**: Pushing to `microservices/api-gateway/`
 
 **Step 1: Developer Pushes Code**
+
 ```bash
 cd /Users/bbaer/Development/cerebral
 git add microservices/api-gateway/main.py
@@ -181,6 +193,7 @@ git push origin main
 ```
 
 **Step 2: GitHub Sends Webhook**
+
 ```
 POST https://webhook.dev.cerebral.baerautotech.com/
 Headers:
@@ -198,6 +211,7 @@ Body:
 ```
 
 **Step 3: Rust Receiver Processes Webhook**
+
 1. Receives POST on port 3000
 2. Validates HMAC using GitHub secret
 3. Parses JSON payload
@@ -214,16 +228,17 @@ Body:
      pipelineRef:
        name: cerebral-microservice-pipeline
      params:
-     - name: repo-url
-       value: https://github.com/baerautotech/cerebral.git
-     - name: image-name
-       value: cerebral/api-gateway
-     - name: service-name
-       value: api-gateway
+       - name: repo-url
+         value: https://github.com/baerautotech/cerebral.git
+       - name: image-name
+         value: cerebral/api-gateway
+       - name: service-name
+         value: api-gateway
    ```
 7. Returns 200 OK to GitHub
 
 **Step 4: Tekton Pipeline Executes**
+
 1. `git-clone-task`: Clones cerebral repo to workspace
 2. `kaniko-build-task`: Builds `microservices/api-gateway/Dockerfile`
 3. Pushes image to: `internal-registry.registry.svc.cluster.local:5000/cerebral/api-gateway:abc123`
@@ -235,6 +250,7 @@ Body:
    ```
 
 **Step 5: Pod Restarts**
+
 - Kubernetes pulls new image
 - Pod rolling update begins
 - New pod starts with new code
@@ -249,6 +265,7 @@ Body:
 ### When: "Why didn't my code deploy?"
 
 **Check 1: Did webhook fire?**
+
 ```bash
 # Check if Rust receiver received the webhook
 kubectl logs -n tekton-pipelines -l app=github-webhook-receiver --tail=50
@@ -256,6 +273,7 @@ kubectl logs -n tekton-pipelines -l app=github-webhook-receiver --tail=50
 ```
 
 **Check 2: Did PipelineRun get created?**
+
 ```bash
 # List recent PipelineRuns
 kubectl get pipelineruns -n tekton-pipelines --sort-by='.metadata.creationTimestamp' | tail -10
@@ -263,6 +281,7 @@ kubectl get pipelineruns -n tekton-pipelines --sort-by='.metadata.creationTimest
 ```
 
 **Check 3: What's the build error?**
+
 ```bash
 # Get detailed PipelineRun status
 kubectl describe pipelinerun <name> -n tekton-pipelines
@@ -270,6 +289,7 @@ kubectl describe pipelinerun <name> -n tekton-pipelines
 ```
 
 **Check 4: Did Kaniko push the image?**
+
 ```bash
 # Check registry for image
 kubectl port-forward -n registry svc/internal-registry 5000:5000
@@ -277,6 +297,7 @@ curl http://localhost:5000/v2/<service>/tags/list
 ```
 
 **Check 5: Did deployment update?**
+
 ```bash
 # Check deployment image
 kubectl describe deployment <service> -n cerebral-platform | grep Image:
@@ -284,6 +305,7 @@ kubectl describe deployment <service> -n cerebral-platform | grep Image:
 ```
 
 **Check 6: Is pod running?**
+
 ```bash
 # Check pod status
 kubectl get pods -n cerebral-platform -l app=<service>
@@ -326,12 +348,14 @@ kubectl get deployment -n cerebral-platform | grep -E "api-gateway|bmad|data|int
 ## 📚 RELATED DOCUMENTATION
 
 **Must Read**:
+
 1. This file (you are here)
 2. `WEBHOOK_RECEIVER_CONFIGURATION.md` - Webhook receiver setup
 3. `TRAEFIK_MIGRATION_COMPLETE_VERIFICATION.md` - Traefik routing
 4. `CI_CD_COMPLETE_GUIDE.md` - Step-by-step guide
 
 **Reference**:
+
 - `FIREWALL_TRAEFIK_MAPPING.md` - Firewall rules
 - `ENTERPRISE_BUILD_SYSTEM_REDESIGN.md` - Architecture details
 - `BUILD_FRAMEWORK_UNIFIED.md` - Base image configuration
@@ -379,6 +403,7 @@ kubectl describe deployment <service> -n cerebral-platform | grep -A5 Containers
 ## 🚨 FOR FUTURE AGENTS
 
 **Before making changes to CI/CD**:
+
 1. Read this file FIRST
 2. Read `WEBHOOK_RECEIVER_CONFIGURATION.md` SECOND
 3. Read ONE line of code to verify

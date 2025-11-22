@@ -19,6 +19,7 @@ This document explains how GitHub organization-level webhooks are configured for
 ## Organization-Level Webhook Configuration
 
 ### Location
+
 - **GitHub UI**: Organization Settings → Webhooks
 - **Configured By**: Organization owners/admins (requires `admin:org_hook` scope)
 - **Scope**: Applies to ALL repositories in the organization
@@ -30,11 +31,13 @@ This document explains how GitHub organization-level webhooks are configured for
 **Content Type**: `application/json`
 
 **Secret**: Must match the Kubernetes secret in the cluster
+
 ```bash
 kubectl get secret -n tekton-pipelines github-webhook-secret -o jsonpath='{.data.secretToken}' | base64 -d
 ```
 
 **Events to trigger on**:
+
 - ✅ `push`
 - ✅ `pull_request`
 - (Only `push` to `main` branch actually triggers builds)
@@ -75,12 +78,14 @@ kubectl get secret -n tekton-pipelines github-webhook-secret -o jsonpath='{.data
 ### Why Organization-Level?
 
 **Advantages**:
+
 - ✅ Single webhook configuration for ALL repos
 - ✅ No per-repo duplicates or conflicts
 - ✅ Consistent secret management across all repos
 - ✅ Easy to enable new repositories
 
 **Disadvantages of repo-level** (what we DON'T do):
+
 - ❌ Requires webhook setup in each repo separately
 - ❌ Multiple webhook attempts to same endpoint causes 404 errors
 - ❌ Harder to maintain consistent secret across repos
@@ -93,6 +98,7 @@ kubectl get secret -n tekton-pipelines github-webhook-secret -o jsonpath='{.data
 ### Receiving End
 
 **Deployment**: `github-webhook-receiver`
+
 - **Namespace**: `tekton-pipelines`
 - **Replicas**: 2 (for HA)
 - **Port**: 3000
@@ -244,6 +250,7 @@ kubectl logs -n tekton-pipelines <pipelinerun-name>
 **Cause**: GitHub is sending to wrong endpoint or route not configured
 
 **Solution**:
+
 1. Verify org webhook URL is exactly: `https://webhook.dev.cerebral.baerautotech.com/`
 2. Check Traefik IngressRoute exists: `kubectl get ingressroute github-webhook-receiver -n cerebral-development`
 3. Test endpoint: `curl -I https://webhook.dev.cerebral.baerautotech.com/health`
@@ -253,6 +260,7 @@ kubectl logs -n tekton-pipelines <pipelinerun-name>
 **Cause**: HMAC signature validation failed
 
 **Solution**:
+
 1. Verify org webhook secret matches cluster secret
 2. Check if secret was recently rotated
 3. Regenerate if mismatch: `kubectl delete secret github-webhook-secret -n tekton-pipelines` (will be recreated from org setting)
@@ -262,6 +270,7 @@ kubectl logs -n tekton-pipelines <pipelinerun-name>
 **Cause**: No code changes in microservices/ (only docs)
 
 **Solution**: This is NORMAL and EXPECTED
+
 - Check receiver logs: `kubectl logs -n tekton-pipelines -l app.kubernetes.io/name=github-webhook-receiver`
 - Look for message: "No buildable changes detected"
 - Only commits modifying files in `microservices/*/` create PipelineRuns
@@ -271,6 +280,7 @@ kubectl logs -n tekton-pipelines <pipelinerun-name>
 **Cause**: Org webhook not configured or GitHub not sending
 
 **Solution**:
+
 1. Ask org admin to verify webhook is configured in GitHub
 2. Check webhook delivery history in GitHub UI (Settings → Webhooks → Recent Deliveries)
 3. Verify endpoint is reachable: test with manual POST

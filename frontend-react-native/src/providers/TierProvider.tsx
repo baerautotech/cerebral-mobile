@@ -33,11 +33,7 @@ export function TierProvider({ children }: TierProviderProps): JSX.Element {
     hasTier,
   };
 
-  return (
-    <TierContext.Provider value={value}>
-      {children}
-    </TierContext.Provider>
-  );
+  return <TierContext.Provider value={value}>{children}</TierContext.Provider>;
 }
 
 /**

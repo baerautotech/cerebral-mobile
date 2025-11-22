@@ -85,11 +85,7 @@ export function UpgradeCTA({
 
         <Text style={styles.message}>{displayMessage}</Text>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={onPress}
-          activeOpacity={0.7}
-        >
+        <TouchableOpacity style={styles.button} onPress={onPress} activeOpacity={0.7}>
           <Text style={styles.buttonText}>{buttonText}</Text>
         </TouchableOpacity>
 

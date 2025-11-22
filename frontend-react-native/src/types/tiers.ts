@@ -114,12 +114,7 @@ export const TIER_CONFIGS: Record<TierLevel, TierConfig> = {
     description: 'Get started with basic features',
     price: 'Free',
     level: 0,
-    features: [
-      'Dashboard access',
-      'Basic task management',
-      'Search',
-      'Community support',
-    ],
+    features: ['Dashboard access', 'Basic task management', 'Search', 'Community support'],
   },
   standard: {
     id: 'standard',

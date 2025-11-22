@@ -35,6 +35,7 @@ NPM_TOKEN                 (use GITHUB_TOKEN as fallback)
 ```
 
 **How to add**:
+
 1. Go to https://github.com/baerautotech/cerebral-mobile/settings/secrets/actions
 2. Click "New repository secret"
 3. Name: `NPM_TOKEN`
@@ -52,6 +53,7 @@ NPM_TOKEN                 (use GITHUB_TOKEN as fallback)
 **Create 3 environments**:
 
 #### 2a. `development` Environment
+
 1. Go to https://github.com/baerautotech/cerebral-mobile/settings/environments
 2. Click "New environment"
 3. Name: `development`
@@ -60,9 +62,11 @@ NPM_TOKEN                 (use GITHUB_TOKEN as fallback)
 6. Click "Save protection rules"
 
 **Secrets for this environment** (optional):
+
 - Add any environment-specific variables
 
 #### 2b. `staging` Environment
+
 1. Click "New environment"
 2. Name: `staging`
 3. Click "Configure environment"
@@ -71,6 +75,7 @@ NPM_TOKEN                 (use GITHUB_TOKEN as fallback)
 6. Click "Save protection rules"
 
 #### 2c. `production` Environment
+
 1. Click "New environment"
 2. Name: `production`
 3. Click "Configure environment"
@@ -252,6 +257,7 @@ gh run watch --repo baerautotech/cerebral-mobile
 ### Workflow not triggering?
 
 **Check**:
+
 1. Verify secrets are configured: Settings > Secrets
 2. Verify environments exist: Settings > Environments
 3. Check branch protection rules: Settings > Branches
@@ -260,6 +266,7 @@ gh run watch --repo baerautotech/cerebral-mobile
 ### Release failed?
 
 **Check logs**:
+
 ```bash
 gh run view --repo baerautotech/cerebral-mobile <run-id> --log
 ```
@@ -267,6 +274,7 @@ gh run view --repo baerautotech/cerebral-mobile <run-id> --log
 ### Version not bumping?
 
 **Verify commit message format**:
+
 - Must start with `feat:` or `fix:` or `BREAKING CHANGE:`
 - Example: `feat(native): add push notifications`
 - NOT: `Feature: add push notifications` (wrong format!)
@@ -274,6 +282,7 @@ gh run view --repo baerautotech/cerebral-mobile <run-id> --log
 ### Docker images not tagged with version?
 
 **Check**:
+
 1. Verify `.releaserc.js` is in repo
 2. Verify build workflows use `${{ steps.version.outputs.version }}`
 3. Run: `docker image ls` to see current tags
@@ -318,4 +327,4 @@ Your repository now has:
 
 ---
 
-*Phase 1 GitHub Setup Guide - October 19, 2025*
+_Phase 1 GitHub Setup Guide - October 19, 2025_

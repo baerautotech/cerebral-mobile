@@ -29,26 +29,26 @@ You got `ParameterMissing` because:
 
 ### REQUIRED Parameters (No default - must provide)
 
-| Parameter | Type | Description |
-|---|---|---|
-| `repo-url` | string | Git repository URL |
-| `image-name` | string | Image name (e.g., cerebral/ai-services) |
-| `deployment-name` | string | Kubernetes deployment name |
-| `deployment-namespace` | string | Kubernetes namespace for deployment |
+| Parameter              | Type   | Description                             |
+| ---------------------- | ------ | --------------------------------------- |
+| `repo-url`             | string | Git repository URL                      |
+| `image-name`           | string | Image name (e.g., cerebral/ai-services) |
+| `deployment-name`      | string | Kubernetes deployment name              |
+| `deployment-namespace` | string | Kubernetes namespace for deployment     |
 
 ### OPTIONAL Parameters (Have defaults)
 
-| Parameter | Type | Default | Description |
-|---|---|---|---|
-| `repo-branch` | string | `main` | Git branch to clone |
-| `image-tag` | string | `main` | Image tag |
-| `registry-url` | string | `10.34.0.202:5000` | Container registry URL |
-| `container-name` | string | `app` | Container name in deployment |
-| `dockerfile` | string | `Dockerfile` | Path to Dockerfile (relative to repo root) |
-| `build-context` | string | `./` | Build context path |
-| `apply-namespaces` | string | `true` | Whether to apply namespaces (true/false) |
-| `namespace-registry-path` | string | `k8s/NAMESPACE_REGISTRY.yaml` | Path to namespace registry |
-| `namespaces-dir` | string | `k8s/namespaces/` | Directory containing namespace YAMLs |
+| Parameter                 | Type   | Default                       | Description                                |
+| ------------------------- | ------ | ----------------------------- | ------------------------------------------ |
+| `repo-branch`             | string | `main`                        | Git branch to clone                        |
+| `image-tag`               | string | `main`                        | Image tag                                  |
+| `registry-url`            | string | `10.34.0.202:5000`            | Container registry URL                     |
+| `container-name`          | string | `app`                         | Container name in deployment               |
+| `dockerfile`              | string | `Dockerfile`                  | Path to Dockerfile (relative to repo root) |
+| `build-context`           | string | `./`                          | Build context path                         |
+| `apply-namespaces`        | string | `true`                        | Whether to apply namespaces (true/false)   |
+| `namespace-registry-path` | string | `k8s/NAMESPACE_REGISTRY.yaml` | Path to namespace registry                 |
+| `namespaces-dir`          | string | `k8s/namespaces/`             | Directory containing namespace YAMLs       |
 
 ---
 
@@ -66,35 +66,35 @@ spec:
   pipelineRef:
     name: cerebral-microservice-pipeline
   params:
-  # REQUIRED PARAMETERS
-  - name: repo-url
-    value: https://github.com/baerautotech/cerebral
-  - name: image-name
-    value: cerebral/ai-services
-  - name: deployment-name
-    value: ai-services
-  - name: deployment-namespace
-    value: cerebral-platform
+    # REQUIRED PARAMETERS
+    - name: repo-url
+      value: https://github.com/baerautotech/cerebral
+    - name: image-name
+      value: cerebral/ai-services
+    - name: deployment-name
+      value: ai-services
+    - name: deployment-namespace
+      value: cerebral-platform
 
-  # OPTIONAL (using non-defaults)
-  - name: dockerfile
-    value: microservices/ai-services/Dockerfile
-  - name: build-context
-    value: ./microservices/ai-services/
-  - name: repo-branch
-    value: main
-  - name: image-tag
-    value: main
+    # OPTIONAL (using non-defaults)
+    - name: dockerfile
+      value: microservices/ai-services/Dockerfile
+    - name: build-context
+      value: ./microservices/ai-services/
+    - name: repo-branch
+      value: main
+    - name: image-tag
+      value: main
 ```
 
 ---
 
 ## 🎯 KEY DIFFERENCES FROM YOUR ATTEMPT
 
-| What You Did | Actual Parameter | Why It Failed |
-|---|---|---|
-| `dockerfile-path` | `dockerfile` | Wrong parameter name |
-| Missing: `deployment-namespace` | REQUIRED | Pipeline needs namespace to deploy to |
+| What You Did                    | Actual Parameter | Why It Failed                         |
+| ------------------------------- | ---------------- | ------------------------------------- |
+| `dockerfile-path`               | `dockerfile`     | Wrong parameter name                  |
+| Missing: `deployment-namespace` | REQUIRED         | Pipeline needs namespace to deploy to |
 
 ---
 
@@ -103,6 +103,7 @@ spec:
 **YES - Keep it for infrastructure team to review**
 
 It shows:
+
 - ✅ Exact error (ParameterMissing)
 - ✅ Which parameters were provided
 - ✅ Proof documentation was incomplete

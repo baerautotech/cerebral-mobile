@@ -11,6 +11,7 @@
 ## EXECUTIVE SUMMARY
 
 ### Current State
+
 - ✅ React Native codebase with iOS & Android platforms
 - ✅ Basic app structure with screens and navigation
 - ✅ Authentication service in place
@@ -21,6 +22,7 @@
 - ⚠️ No automated TestFlight/Play Store deployment
 
 ### Vision
+
 Build a complete feature management and monetization system for the mobile app:
 
 **Layer 1**: Implement feature flags SDK for React Native with offline caching
@@ -107,6 +109,7 @@ cerebral-mobile-1/
 **Goal**: Implement feature flag service with offline caching
 
 **Deliverables**:
+
 1. ✅ `frontend-react-native/src/types/featureFlags.ts` - Type definitions
 2. ✅ `frontend-react-native/src/services/featureFlags.ts` - Feature flag client
 3. ✅ `frontend-react-native/src/hooks/useFeatureFlags.ts` - React hook with caching
@@ -117,6 +120,7 @@ cerebral-mobile-1/
 8. ✅ `docs/FEATURE_FLAGS.md` - Implementation documentation
 
 **Key Points**:
+
 - Cache flags in AsyncStorage with 5-minute TTL
 - Fallback to cached flags if backend unavailable
 - Support pull-to-refresh to manually update
@@ -124,6 +128,7 @@ cerebral-mobile-1/
 - No errors on offline scenarios
 
 **Success Criteria**:
+
 - [ ] Flags fetched from backend on startup
 - [ ] Flags cached in AsyncStorage
 - [ ] FeatureFlagGuard hides components correctly
@@ -139,6 +144,7 @@ cerebral-mobile-1/
 **Goal**: Implement tier system and In-App Purchase integration
 
 **Deliverables**:
+
 1. ✅ `frontend-react-native/src/types/tiers.ts` - Tier type definitions
 2. ✅ `frontend-react-native/src/services/tiers.ts` - Tier extraction from JWT
 3. ✅ `frontend-react-native/src/hooks/useUserTier.ts` - Tier hook
@@ -157,18 +163,21 @@ cerebral-mobile-1/
 16. ✅ `docs/IN_APP_PURCHASES.md` - RevenueCat setup
 
 **Tier Structure**:
+
 - `free`: No purchase required (default)
 - `standard`: $9.99/month subscription
 - `enterprise`: $49.99/month subscription
 - `family`: $99.99/year subscription
 
 **SKU Definitions**:
+
 - `free_tier`: Free tier (no purchase)
 - `standard_monthly`: $9.99/month
 - `enterprise_monthly`: $49.99/month
 - `family_annual`: $99.99/year
 
 **Key Points**:
+
 - Extract tier from JWT (decode token in secure storage)
 - Validate tier hierarchy (free < standard < enterprise)
 - Show upgrade CTA for insufficient tier
@@ -177,6 +186,7 @@ cerebral-mobile-1/
 - Persist purchase state
 
 **Success Criteria**:
+
 - [ ] User tier extracted correctly from JWT
 - [ ] Tier hierarchy enforced
 - [ ] TierGuard blocks insufficient tiers
@@ -193,6 +203,7 @@ cerebral-mobile-1/
 **Goal**: Audit and wrap 30+ screens with feature flags and tier guards
 
 **Deliverables**:
+
 1. ✅ Screen audit document (`build-todo/PHASE_3_SCREEN_AUDIT.md`)
 2. ✅ Tier mapping document (`build-todo/TIER_MAPPING.md`)
 3. ✅ Feature flag mapping document (`build-todo/FEATURE_FLAG_MAPPING.md`)
@@ -208,23 +219,28 @@ cerebral-mobile-1/
 **Screen Categories**:
 
 **Free Tier Screens**:
+
 - LoginScreen, SignupScreen, DashboardScreen
 - TasksScreen, CreateTaskScreen, TaskDetailScreen
 - SettingsScreen, ProfileScreen
 
 **Standard Tier Screens** (show upgrade):
+
 - AdvancedAnalytics, CustomReports, DataExport
 - CollaborationFeatures, TeamManagement
 
 **Enterprise Tier Screens** (premium):
+
 - AIFeatures, AIAnalytics, CustomBranding
 - APIAccess, AdminPanel, AuditLogs
 
 **Feature-Flagged Screens** (behind flags):
+
 - NewDashboardBeta, AIFeatures, ExperimentalUI
 - AdvancedSearch, IntelligentSync
 
 **Key Points**:
+
 - Most screens: tier-based or no wrap
 - New features: feature flag only
 - Premium features: flag + tier combined
@@ -233,6 +249,7 @@ cerebral-mobile-1/
 - Verify no dead code paths
 
 **Success Criteria**:
+
 - [ ] All 30+ screens categorized
 - [ ] Tier-gated screens wrapped
 - [ ] Feature-flagged screens wrapped
@@ -248,6 +265,7 @@ cerebral-mobile-1/
 **Goal**: Automate iOS and Android builds via Tekton
 
 **Deliverables**:
+
 1. ✅ `scripts/build-ios.sh` - iOS build wrapper
 2. ✅ `scripts/build-android.sh` - Android build wrapper
 3. ✅ `k8s/secret-app-signing.yaml` - K8s secrets for signing certificates
@@ -261,18 +279,22 @@ cerebral-mobile-1/
 **Build Flows**:
 
 **develop branch** → Debug builds
+
 - iOS: Debug build (not distributed)
 - Android: Debug APK (installable)
 
 **staging branch** → TestFlight builds
+
 - iOS: Release build → TestFlight
 - Android: Release bundle → Play Store internal
 
 **main branch** → Production releases
+
 - iOS: Release build → App Store
 - Android: Release bundle → Play Store production
 
 **Key Points**:
+
 - Parallel iOS + Android builds
 - Signing certificates from K8s secrets
 - Build artifacts uploaded to storage
@@ -281,6 +303,7 @@ cerebral-mobile-1/
 - Complete in < 30 min (iOS) + < 20 min (Android)
 
 **Success Criteria**:
+
 - [ ] develop branch triggers builds
 - [ ] staging branch triggers builds
 - [ ] main branch triggers builds
@@ -297,6 +320,7 @@ cerebral-mobile-1/
 **Goal**: Automate distribution to TestFlight and app stores
 
 **Deliverables**:
+
 1. ✅ `fastlane/Fastfile` - Fastlane lanes for iOS & Android
 2. ✅ `fastlane/Appfile` - App Store Connect credentials
 3. ✅ `fastlane/certificates/` - Certificate configurations
@@ -313,14 +337,17 @@ cerebral-mobile-1/
 **Distribution Flows**:
 
 **TestFlight (iOS)**:
+
 - staging → External testers
 - main → Production review
 
 **Play Store (Android)**:
+
 - staging → Internal testing track
 - main → Production track
 
 **Key Points**:
+
 - Fastlane automates signing and uploads
 - TestFlight setup for QA testing
 - Play Store internal testing before release
@@ -328,6 +355,7 @@ cerebral-mobile-1/
 - No manual App Store/Play Store uploads
 
 **Success Criteria**:
+
 - [ ] Fastlane lanes working
 - [ ] TestFlight receives builds automatically
 - [ ] Play Store receives builds automatically
@@ -342,6 +370,7 @@ cerebral-mobile-1/
 **Goal**: Comprehensive testing and QA validation
 
 **Deliverables**:
+
 1. ✅ Feature flags test suite
    - [ ] Flag fetching on startup
    - [ ] Caching in AsyncStorage
@@ -389,6 +418,7 @@ cerebral-mobile-1/
    - [ ] Sign-off confirmation
 
 **Key Points**:
+
 - 90%+ unit test coverage
 - Integration tests for all guards
 - E2E tests on real devices
@@ -396,6 +426,7 @@ cerebral-mobile-1/
 - Crash metric monitoring
 
 **Success Criteria**:
+
 - [ ] All unit tests passing
 - [ ] All integration tests passing
 - [ ] Manual testing on iOS + Android
@@ -409,6 +440,7 @@ cerebral-mobile-1/
 ## IMPLEMENTATION WORKFLOW
 
 ### Branch Strategy
+
 ```bash
 # Main branches
 develop     # Latest development
@@ -425,6 +457,7 @@ feature/comprehensive-testing     # Phase 6
 ```
 
 ### Daily Workflow
+
 1. **9:00 AM** - Start work on current phase
 2. **Hourly** - Commit progress (small commits)
 3. **4:00 PM** - Update todo list with progress
@@ -432,6 +465,7 @@ feature/comprehensive-testing     # Phase 6
 5. **End of day** - Document blockers
 
 ### Phase Completion Checklist
+
 - [ ] All code written and tested locally
 - [ ] All tests passing (unit, integration)
 - [ ] Manual testing on simulator completed
@@ -448,6 +482,7 @@ feature/comprehensive-testing     # Phase 6
 ## DEPENDENCIES & BLOCKERS
 
 ### External Dependencies
+
 - ✅ Backend feature flags endpoint (`GET /api/flags`)
 - ✅ Backend JWT with tier field
 - ✅ Backend IAP verification endpoint (`POST /api/iap/verify-receipt`)
@@ -458,6 +493,7 @@ feature/comprehensive-testing     # Phase 6
 - ⏳ Android keystore and signing key
 
 ### Internal Dependencies
+
 - Phase 1 → Phase 2 (flags needed before tier system)
 - Phase 2 → Phase 3 (need guards before wrapping screens)
 - Phase 3 → Phase 4 (need final code before build automation)
@@ -465,19 +501,21 @@ feature/comprehensive-testing     # Phase 6
 - Phase 5 → Phase 6 (need distribution before full QA)
 
 ### Potential Blockers & Mitigations
-| Blocker | Mitigation |
-|---------|-----------|
-| Backend not ready | Use mock API endpoints for testing |
-| RevenueCat setup delay | Implement native iOS/Android IAP as fallback |
+
+| Blocker                    | Mitigation                                         |
+| -------------------------- | -------------------------------------------------- |
+| Backend not ready          | Use mock API endpoints for testing                 |
+| RevenueCat setup delay     | Implement native iOS/Android IAP as fallback       |
 | Signing certificate issues | Verify certificate not expired, check provisioning |
-| Tekton webhook not working | Manually trigger builds for testing |
-| TestFlight upload fails | Check bundle ID, signing certificate, API key |
+| Tekton webhook not working | Manually trigger builds for testing                |
+| TestFlight upload fails    | Check bundle ID, signing certificate, API key      |
 
 ---
 
 ## TESTING STRATEGY
 
 ### Unit Tests (90%+ coverage)
+
 - Feature flag service and hook
 - Tier service and hook
 - IAP service and hook
@@ -485,6 +523,7 @@ feature/comprehensive-testing     # Phase 6
 - Utility functions
 
 ### Integration Tests
+
 - Feature flag guard with different flags
 - Tier guard with different tiers
 - IAP feature with different purchases
@@ -492,6 +531,7 @@ feature/comprehensive-testing     # Phase 6
 - Navigation between guarded screens
 
 ### E2E Tests (Real Devices)
+
 - Feature flag fetching and caching
 - Tier extraction from JWT
 - IAP purchase flow end-to-end
@@ -500,6 +540,7 @@ feature/comprehensive-testing     # Phase 6
 - Deep linking with guards
 
 ### Performance Tests
+
 - App startup time
 - Flag evaluation latency
 - IAP flow duration
@@ -511,16 +552,19 @@ feature/comprehensive-testing     # Phase 6
 ## RESOURCES & REFERENCES
 
 ### Documentation Files (To Be Created)
+
 - `docs/FEATURE_FLAGS.md` - Feature flag SDK guide
 - `docs/TIER_SYSTEM.md` - Tier system architecture
 - `docs/IN_APP_PURCHASES.md` - RevenueCat integration
 - `docs/APP_STORE_DISTRIBUTION.md` - Build and distribution
 
 ### Cursor Rules (Already Created)
+
 - `.cursor/rules/cerebral-mobile.mdc` - Main workspace rules
 - `.cursor/rules/feature-flags-mobile.mdc` - Feature flags implementation guide
 
 ### Build Todo Docs (To Be Created)
+
 - `build-todo/PHASE_1_FEATURE_FLAGS.md`
 - `build-todo/PHASE_2_TIER_SYSTEM.md`
 - `build-todo/PHASE_3_SCREEN_WRAPPING.md`
@@ -529,6 +573,7 @@ feature/comprehensive-testing     # Phase 6
 - `build-todo/PHASE_6_TESTING_QA.md`
 
 ### External Resources
+
 - [RevenueCat React Native Docs](https://www.revenuecat.com/docs/reactnative)
 - [React Native AsyncStorage](https://react-native-async-storage.github.io/async-storage/)
 - [React Navigation](https://reactnavigation.org/)
@@ -539,14 +584,14 @@ feature/comprehensive-testing     # Phase 6
 
 ## TIMELINE
 
-| Week | Phase | Tasks | Status |
-|------|-------|-------|--------|
-| Week 1 | Phase 1 | Feature flags SDK, tests, docs | ⏳ Pending |
-| Week 2 | Phase 2 | Tier system, IAP, providers | ⏳ Pending |
-| Week 2-3 | Phase 3 | Screen audit, wrapping, testing | ⏳ Pending |
-| Week 3 | Phase 4 | Build scripts, Tekton, webhooks | ⏳ Pending |
+| Week     | Phase   | Tasks                            | Status     |
+| -------- | ------- | -------------------------------- | ---------- |
+| Week 1   | Phase 1 | Feature flags SDK, tests, docs   | ⏳ Pending |
+| Week 2   | Phase 2 | Tier system, IAP, providers      | ⏳ Pending |
+| Week 2-3 | Phase 3 | Screen audit, wrapping, testing  | ⏳ Pending |
+| Week 3   | Phase 4 | Build scripts, Tekton, webhooks  | ⏳ Pending |
 | Week 3-4 | Phase 5 | Fastlane, TestFlight, Play Store | ⏳ Pending |
-| Week 4 | Phase 6 | Comprehensive testing, QA | ⏳ Pending |
+| Week 4   | Phase 6 | Comprehensive testing, QA        | ⏳ Pending |
 
 **Total Duration**: 4-6 weeks (depending on blockers)
 
@@ -557,12 +602,14 @@ feature/comprehensive-testing     # Phase 6
 After 4-6 weeks:
 
 **Code Quality**:
+
 - ✅ 90%+ unit test coverage
 - ✅ Zero critical security vulnerabilities
 - ✅ Zero console errors in production build
 - ✅ TypeScript strict mode passing
 
 **Functionality**:
+
 - ✅ Feature flags fetched and cached
 - ✅ Tier system enforced at screen level
 - ✅ In-App Purchases working end-to-end
@@ -571,6 +618,7 @@ After 4-6 weeks:
 - ✅ Distribution to TestFlight/Play Store working
 
 **Device Testing**:
+
 - ✅ Tested on iOS 14+ devices
 - ✅ Tested on Android 9+ devices
 - ✅ Tested with WiFi + cellular
@@ -578,6 +626,7 @@ After 4-6 weeks:
 - ✅ Tested app backgrounding
 
 **Platform Alignment**:
+
 - ✅ Mobile app aligned with backend feature flags
 - ✅ Mobile app aligned with frontend tier system
 - ✅ Platform-wide feature flag management
@@ -588,6 +637,7 @@ After 4-6 weeks:
 ## GETTING STARTED
 
 ### Prerequisites
+
 - Node.js >= 18.0.0
 - pnpm >= 9.0.0
 - React Native CLI
@@ -596,6 +646,7 @@ After 4-6 weeks:
 - Git
 
 ### Initial Setup
+
 ```bash
 # Install dependencies
 cd /Users/bbaer/Development/cerebral-mobile-1
@@ -615,6 +666,7 @@ npm run android
 ```
 
 ### First Phase (Today)
+
 1. ✅ Cursor rules created (DONE)
 2. ⏳ Create Phase 1 documentation
 3. ⏳ Create feature flags types and service

@@ -60,6 +60,7 @@ Create project intake document:
 # PROJECT INTAKE FORM
 
 ## Project Basics
+
 - **Name**: [Project Name]
 - **Duration**: [Weeks] weeks / [Epics] epics / [Stories] stories / [SP] story points
 - **Tech Stack**: [Languages, frameworks, databases, platforms]
@@ -67,23 +68,27 @@ Create project intake document:
 - **Success Criteria**: [Business objectives]
 
 ## Scope Breakdown
+
 - **Phases**: [Number of phases/milestones]
 - **Phase Duration**: [Weeks per phase]
 - **Critical Path**: [Dependencies]
 - **Risk Areas**: [What could go wrong]
 
 ## Known Unknowns
+
 - **Architecture Unknowns**: [Architectural risks]
 - **Integration Unknowns**: [External API/system risks]
 - **Performance Unknowns**: [Scalability concerns]
 - **Operational Unknowns**: [Deployment/infra concerns]
 
 ## Team Expertise
+
 - **Strengths**: [What team knows well]
 - **Gaps**: [What team doesn't know]
 - **Training Needed**: [Skills to develop]
 
 ## Previous Lessons Learned
+
 - **What Worked**: [Successful practices]
 - **What Failed**: [Past project failures]
 - **Best Practices**: [Organizational standards]
@@ -228,6 +233,7 @@ Hour 7-8:   Commit work
 
 **Input**: `PROJECT_ERROR_SCENARIOS.yaml`
 **Output**:
+
 - Error scenario handlers (code)
 - Integration test suite (code + YAML)
 - Test framework setup
@@ -244,6 +250,7 @@ Hour 14-16: Commit work
 
 **Input**: `PROJECT_PHASE_GATES.yaml`, `PROJECT_PHASE_MAP.yaml`
 **Output**:
+
 - Gate validator (code)
 - Edge case handlers (code)
 - Phase executor (code)
@@ -260,6 +267,7 @@ Hour 22-24: Commit work + validation
 
 **Input**: All previous deliverables
 **Output**:
+
 - Complete test framework
 - CI/CD pipeline
 - Auto-generated sprint prompts
@@ -287,6 +295,7 @@ Hour 62-65: Final validation + CI/CD integration
 ```
 
 **Output**:
+
 - Cross-phase dependency graph
 - Global optimization recommendations
 - Complete CI/CD automation
@@ -304,6 +313,7 @@ Hour 62-65: Final validation + CI/CD integration
 # Complete YOLO: [PROJECT] [Hours]-Hour Blueprint
 
 ## Executive Summary
+
 - Total hours: [X]
 - Total phases: [Y]
 - Total stories: [Z]
@@ -312,15 +322,19 @@ Hour 62-65: Final validation + CI/CD integration
 - Target accuracy: 99%+
 
 ## Phase-by-Phase Breakdown
+
 [Each phase with full details]
 
 ## Accuracy Projections
+
 [Table showing accuracy by phase]
 
 ## Deliverables Checklist
+
 [All outputs listed]
 
 ## Timeline & ROI
+
 [Implementation timeline + financial analysis]
 ```
 
@@ -332,18 +346,22 @@ Hour 62-65: Final validation + CI/CD integration
 # YOLO Mode Engineering Blueprint: [PROJECT]
 
 ## Perfect Prompt Architecture
+
 [Error scenario layer design]
 [Integration test matrix design]
 [Architecture gate design]
 [Edge case handling design]
 
 ## Phase-Specific Implementations
+
 [Templates for each phase]
 
 ## Code Examples
+
 [Complete code samples]
 
 ## Testing Strategy
+
 [Full testing approach]
 ```
 
@@ -355,15 +373,19 @@ Hour 62-65: Final validation + CI/CD integration
 # YOLO Mode: Go/No-Go Decision Framework
 
 ## Options Comparison
+
 [Pure YOLO vs. Guided YOLO vs. Complete YOLO]
 
 ## ROI Analysis
+
 [Financial comparison]
 
 ## Risk Assessment
+
 [Risk analysis for each option]
 
 ## Recommendation
+
 [Clear recommendation with justification]
 ```
 
@@ -375,15 +397,19 @@ Hour 62-65: Final validation + CI/CD integration
 # [PROJECT]: YOLO Mode Summary
 
 ## What You Have
+
 [Complete system overview]
 
 ## Accuracy Path
+
 [Accuracy by phase table]
 
 ## How to Use
+
 [Implementation instructions]
 
 ## Success Criteria
+
 [Definition of done]
 ```
 
@@ -428,6 +454,7 @@ You are preparing [PROJECT_NAME] for YOLO-mode autonomous execution with 99%+ ac
 ## MANDATORY CONTEXT TO EXTRACT
 
 ### 1. PROJECT FUNDAMENTALS (Required)
+
 - [ ] Project scope: [N] stories, [M] epics, [P] story points
 - [ ] Timeline: [W] weeks / [D] days
 - [ ] Tech stack: [Technologies used]
@@ -435,6 +462,7 @@ You are preparing [PROJECT_NAME] for YOLO-mode autonomous execution with 99%+ ac
 - [ ] Success definition: [Business objectives]
 
 ### 2. ARCHITECTURE DECISIONS (Required)
+
 - [ ] Technology choices and WHY
 - [ ] Database architecture
 - [ ] API/integration points
@@ -442,14 +470,17 @@ You are preparing [PROJECT_NAME] for YOLO-mode autonomous execution with 99%+ ac
 - [ ] Scaling approach
 
 ### 3. PHASE BREAKDOWN (Required)
+
 For EACH phase:
-  - [ ] Phase name and duration
-  - [ ] Story count and total SP
-  - [ ] Critical dependencies
-  - [ ] Risk areas
-  - [ ] Success metrics
+
+- [ ] Phase name and duration
+- [ ] Story count and total SP
+- [ ] Critical dependencies
+- [ ] Risk areas
+- [ ] Success metrics
 
 ### 4. KNOWN UNKNOWNS (Required)
+
 - [ ] What could fail and why
 - [ ] External dependencies
 - [ ] Technical risks
@@ -457,14 +488,17 @@ For EACH phase:
 - [ ] Performance unknowns
 
 ### 5. ERROR SCENARIOS (Critical)
+
 For EACH story/component:
-  - [ ] 3-5 likely error scenarios
-  - [ ] Root cause for each
-  - [ ] Automatic handler approach
-  - [ ] Edge cases related to errors
-  - [ ] Failure impact
+
+- [ ] 3-5 likely error scenarios
+- [ ] Root cause for each
+- [ ] Automatic handler approach
+- [ ] Edge cases related to errors
+- [ ] Failure impact
 
 ### 6. INTEGRATION POINTS (Critical)
+
 - [ ] External APIs used
   - [ ] Fallback behavior
   - [ ] Timeout handling
@@ -476,6 +510,7 @@ For EACH story/component:
   - [ ] State management
 
 ### 7. TESTING REQUIREMENTS (Critical)
+
 - [ ] Happy path tests per story
 - [ ] Error path tests per scenario
 - [ ] Concurrency test scenarios
@@ -484,14 +519,17 @@ For EACH story/component:
 - [ ] Regression test baselines
 
 ### 8. GATES & CHECKPOINTS (Critical)
+
 For EACH phase:
-  - [ ] Go/no-go criteria
-  - [ ] Validation metrics
-  - [ ] SLO targets
-  - [ ] Remediation procedures
-  - [ ] Escalation paths
+
+- [ ] Go/no-go criteria
+- [ ] Validation metrics
+- [ ] SLO targets
+- [ ] Remediation procedures
+- [ ] Escalation paths
 
 ### 9. CROSS-PHASE DEPENDENCIES (Required)
+
 - [ ] Phase-to-phase data flow
 - [ ] Circular dependency detection
 - [ ] Shared resources
@@ -499,6 +537,7 @@ For EACH phase:
 - [ ] Rollback procedures
 
 ### 10. OPERATIONAL CONCERNS (Important)
+
 - [ ] Monitoring & observability
 - [ ] Alerting strategy
 - [ ] Disaster recovery
@@ -508,6 +547,7 @@ For EACH phase:
 ## VERIFICATION CHECKLIST
 
 Before proceeding, confirm:
+
 - [ ] All 10 context categories above are documented
 - [ ] No gaps identified in error scenarios
 - [ ] All phase gates clearly defined
@@ -534,6 +574,7 @@ Extract COMPLETE context into:
 Do NOT proceed with implementation if ANY of the 10 context categories above is incomplete.
 
 If gap found:
+
 1. Identify which categories are incomplete
 2. Document specific missing information
 3. Return to architecture team
@@ -543,6 +584,7 @@ If gap found:
 ## SUCCESS INDICATOR
 
 Extraction is COMPLETE when:
+
 - ✅ All 10 categories have detailed information
 - ✅ Every story has 3-5 error scenarios
 - ✅ Every phase has go/no-go criteria
@@ -662,24 +704,28 @@ Result: READY FOR 65-HOUR IMPLEMENTATION
 ## DAYS 1-7: IMPLEMENTATION SCHEDULE
 
 ### OPTION A: Intensive 4-Day Sprint
+
 - Day 1: Phases 1-3 prep (24h cumulative)
 - Day 2-3: Phases 4-6 prep (24h more)
 - Day 4: Phases 7-9 + cross-phase (17h more)
 - Result: 65h complete, all phases ready
 
 ### OPTION B: Weekly Implementation
+
 - Week 1: Phases 1-3 prep (24h)
 - Week 2: Phases 4-6 prep (24h)
 - Week 3: Phases 7-9 + cross-phase (17h)
 - Result: 65h spread, all phases ready
 
 ### OPTION C: Concurrent Execution + Prep
+
 - Week 1-2: Phases 1-3 prep + execute Phase 1-2
 - Week 3-4: Phases 4-6 prep + execute Phase 3
 - Week 5-6: Phases 7-9 prep + execute Phase 4-5
 - Result: Rolling implementation
 
 ### Deliverables Each Day:
+
 - Error scenario YAML files
 - Integration test suites
 - Phase gate definitions
@@ -688,6 +734,7 @@ Result: READY FOR 65-HOUR IMPLEMENTATION
 - Commit to git (audit trail)
 
 ### Daily Validation:
+
 - [ ] All files committed to git
 - [ ] Tests passing
 - [ ] No "TODO" sections
@@ -700,6 +747,7 @@ Result: READY FOR 65-HOUR IMPLEMENTATION
 ## DAY 8+: EXECUTION PHASE
 
 ### Pre-Execution (1 day)
+
 - [ ] Review complete YOLO blueprint
 - [ ] Validate all gate criteria
 - [ ] Confirm test framework working
@@ -707,6 +755,7 @@ Result: READY FOR 65-HOUR IMPLEMENTATION
 - [ ] Team training complete
 
 ### Execution (Days 9 onwards)
+
 - [ ] Load sprint prompt
 - [ ] Execute stories per plan
 - [ ] Tests run automatically
@@ -716,6 +765,7 @@ Result: READY FOR 65-HOUR IMPLEMENTATION
 - [ ] Accuracy maintained 99%+
 
 ### Success Indicators:
+
 - ✅ All stories executed
 - ✅ All tests passing
 - ✅ All gates passing
@@ -733,6 +783,7 @@ Result: READY FOR 65-HOUR IMPLEMENTATION
 # BMAD YOLO PREPARATION: FILE DELIVERABLES CHECKLIST
 
 ## Documentation Files (Must Create)
+
 - [ ] PROJECT_INTAKE.md (2-3 KB)
 - [ ] PROJECT_ERROR_SCENARIOS.yaml (3-5 KB per story)
 - [ ] PROJECT_PHASE_MAP.yaml (1-2 KB per phase)
@@ -742,6 +793,7 @@ Result: READY FOR 65-HOUR IMPLEMENTATION
 - [ ] PROJECT_RISKS.md (2-3 KB)
 
 ## Implementation Files (Must Create)
+
 - [ ] Complete YOLO blueprint MD (500+ lines)
 - [ ] Engineering blueprint MD (300+ lines)
 - [ ] Decision framework MD (200+ lines)
@@ -755,11 +807,13 @@ Result: READY FOR 65-HOUR IMPLEMENTATION
 - [ ] Repair findings system (code)
 
 ## Total Output
+
 - Documentation: 2000+ lines
 - Code: 3000+ lines
 - Total: 5000+ lines production-ready
 
 ## Commit Strategy
+
 - Commit after each phase (not one big commit)
 - Commit message must include phase summary
 - Full git audit trail required

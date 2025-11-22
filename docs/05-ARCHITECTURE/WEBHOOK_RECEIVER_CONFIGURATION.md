@@ -74,6 +74,7 @@ Set in GitHub repository settings → Webhooks:
 **Cause**: Someone ran `kubectl apply` with old configuration that had port 80.
 
 **Fix**:
+
 1. Edit `k8s/ci-cd/webhook-receiver-ingress.yaml` (ensure port is 3000)
 2. Commit to git
 3. Run: `kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml`
@@ -104,6 +105,7 @@ kubectl run -it --rm test-curl --image=curlimages/curl --restart=Never -- \
 **Cause**: Ingress routing to wrong port (probably 80 instead of 3000)
 
 **Fix**: Regenerate the ingress
+
 ```bash
 kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml
 ```

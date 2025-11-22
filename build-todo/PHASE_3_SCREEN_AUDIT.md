@@ -9,12 +9,14 @@
 ## SCREEN INVENTORY
 
 ### Authentication Screens (Free Access)
+
 ```
 ✅ LoginScreen.tsx                      TIER: free          FLAGS: none
 ✅ SignupScreen.tsx                     TIER: free          FLAGS: none
 ```
 
 ### Core Dashboard Screens
+
 ```
 ✅ DashboardScreen.tsx                  TIER: free (base)   FLAGS: new_dashboard (optional)
    ├─ QuickActions.tsx                 TIER: free
@@ -23,6 +25,7 @@
 ```
 
 ### Task Management Screens
+
 ```
 ✅ TasksScreen.tsx                      TIER: free          FLAGS: none
    ├─ FilterBar.tsx                    TIER: free
@@ -39,6 +42,7 @@
 ```
 
 ### Premium Screens
+
 ```
 ✅ LiveDashboardScreen.tsx              TIER: standard      FLAGS: live_dashboard
 ✅ ARViewScreen.tsx                     TIER: enterprise    FLAGS: ar_mode (beta)
@@ -49,6 +53,7 @@
 ## TIER CATEGORIZATION
 
 ### FREE TIER (5 screens - No wrapping needed)
+
 1. LoginScreen - Authentication (pre-login)
 2. SignupScreen - Authentication (pre-login)
 3. DashboardScreen - Main dashboard with basic stats
@@ -60,12 +65,14 @@
 **Add FeatureFlagGuard**: For feature-flagged versions only
 
 ### STANDARD TIER (1 screen)
+
 1. LiveDashboardScreen - Real-time dashboard analytics
 
 **Wrapping Strategy**: Wrap with `<TierGuard tier="standard">`
 **Fallback**: Show upgrade prompt or link to free dashboard
 
 ### ENTERPRISE TIER (1 screen)
+
 1. ARViewScreen - Augmented reality view
 
 **Wrapping Strategy**: Wrap with `<TierGuard tier="enterprise">`
@@ -78,11 +85,13 @@
 ### FEATURE-FLAGGED SCREENS/FEATURES
 
 #### Beta Features (Behind Flags)
+
 - `new_dashboard` flag → Enhanced DashboardScreen (optional redesign)
 - `live_dashboard` flag → LiveDashboardScreen (real-time updates)
 - `ar_mode` flag → ARViewScreen additional features (beta)
 
 #### Experimental Features
+
 - `advanced_filtering` → Enhanced TasksScreen FilterBar
 - `ai_suggestions` → AI-powered task suggestions in CreateTaskScreen
 - `analytics_export` → Data export functionality
@@ -92,6 +101,7 @@
 ## WRAPPING STRATEGY
 
 ### Step 1: Free Tier Screens (No wrapping)
+
 ```
 DashboardScreen ✅
 TasksScreen ✅
@@ -100,12 +110,14 @@ TaskDetailScreen ✅
 ```
 
 ### Step 2: Authentication (No wrapping)
+
 ```
 LoginScreen ✅
 SignupScreen ✅
 ```
 
 ### Step 3: Standard Tier Screens (Add TierGuard)
+
 ```
 <TierGuard tier="standard">
   <LiveDashboardScreen />
@@ -113,6 +125,7 @@ SignupScreen ✅
 ```
 
 ### Step 4: Enterprise Tier Screens (Add TierGuard)
+
 ```
 <TierGuard tier="enterprise">
   <ARViewScreen />
@@ -120,6 +133,7 @@ SignupScreen ✅
 ```
 
 ### Step 5: Feature-Flagged Content (Add FeatureFlagGuard)
+
 ```
 <FeatureFlagGuard flag="new_dashboard">
   <EnhancedDashboard />
@@ -127,6 +141,7 @@ SignupScreen ✅
 ```
 
 ### Step 6: Combined Guards (Feature + Tier)
+
 ```
 <FeatureFlagGuard flag="ar_mode">
   <TierGuard tier="enterprise">
@@ -140,6 +155,7 @@ SignupScreen ✅
 ## DETAILED SCREEN BREAKDOWN
 
 ### Screen 1: LoginScreen.tsx
+
 - **Current Tier**: Free (public)
 - **Required Tier**: Free
 - **Feature Flags**: None
@@ -148,6 +164,7 @@ SignupScreen ✅
 - **Notes**: Authentication screen, always accessible
 
 ### Screen 2: SignupScreen.tsx
+
 - **Current Tier**: Free (public)
 - **Required Tier**: Free
 - **Feature Flags**: None
@@ -156,12 +173,14 @@ SignupScreen ✅
 - **Notes**: Authentication screen, always accessible
 
 ### Screen 3: DashboardScreen.tsx
+
 - **Current Tier**: Free
 - **Required Tier**: Free (base), Standard (advanced stats)
 - **Feature Flags**: `new_dashboard` (redesign), `advanced_analytics`
 - **Wrapping Needed**: PARTIAL
 - **Status**: ⏳ Wrap advanced components
 - **Pattern**:
+
   ```typescript
   <View>
     {/* Base dashboard (always visible) */}
@@ -180,6 +199,7 @@ SignupScreen ✅
   ```
 
 ### Screen 4: TasksScreen.tsx
+
 - **Current Tier**: Free
 - **Required Tier**: Free
 - **Feature Flags**: `advanced_filtering`, `ai_suggestions`
@@ -196,6 +216,7 @@ SignupScreen ✅
   ```
 
 ### Screen 5: CreateTaskScreen.tsx
+
 - **Current Tier**: Free
 - **Required Tier**: Free
 - **Feature Flags**: `ai_suggestions`
@@ -212,6 +233,7 @@ SignupScreen ✅
   ```
 
 ### Screen 6: TaskDetailScreen.tsx
+
 - **Current Tier**: Free
 - **Required Tier**: Free
 - **Feature Flags**: `ai_suggestions`, `advanced_actions`
@@ -229,6 +251,7 @@ SignupScreen ✅
   ```
 
 ### Screen 7: LiveDashboardScreen.tsx
+
 - **Current Tier**: Standard minimum
 - **Required Tier**: Standard
 - **Feature Flags**: `live_dashboard`
@@ -244,6 +267,7 @@ SignupScreen ✅
   ```
 
 ### Screen 8: ARViewScreen.tsx
+
 - **Current Tier**: Enterprise only
 - **Required Tier**: Enterprise
 - **Feature Flags**: `ar_mode` (beta)
@@ -263,6 +287,7 @@ SignupScreen ✅
 ## WRAPPING CHECKLIST
 
 ### Free Tier Base Screens (No wrapping)
+
 - [x] LoginScreen
 - [x] SignupScreen
 - [x] DashboardScreen (base)
@@ -271,10 +296,12 @@ SignupScreen ✅
 - [x] TaskDetailScreen (base)
 
 ### Tier-Guarded Screens (Wrap with TierGuard)
+
 - [ ] LiveDashboardScreen (tier: "standard")
 - [ ] ARViewScreen (tier: "enterprise")
 
 ### Feature-Flagged Components (Wrap with FeatureFlagGuard)
+
 - [ ] Enhanced Dashboard layout (flag: "new_dashboard")
 - [ ] Advanced Analytics (flag: "advanced_analytics")
 - [ ] Advanced Filtering (flag: "advanced_filtering")
@@ -284,6 +311,7 @@ SignupScreen ✅
 - [ ] AR Mode (flag: "ar_mode")
 
 ### Combined Guards (Both Tier & Flag)
+
 - [ ] Enhanced Dashboard + Advanced Analytics
 - [ ] Live Dashboard + Feature Flag
 - [ ] AR View + Feature Flag
@@ -293,6 +321,7 @@ SignupScreen ✅
 ## FILES TO MODIFY
 
 ### Immediate (Core Screens)
+
 1. `src/screens/Dashboard/DashboardScreen.tsx` - Add feature flags for enhanced features
 2. `src/screens/Tasks/TasksScreen.tsx` - Add feature flag for advanced filtering
 3. `src/screens/CreateTask/CreateTaskScreen.tsx` - Add feature flag for AI
@@ -301,6 +330,7 @@ SignupScreen ✅
 6. `src/screens/ARViewScreen.tsx` - Add TierGuard wrapper
 
 ### Components to Update
+
 - Dashboard components (QuickActions, RecentActivity, StatsCard)
 - Task components (FilterBar, TaskCard)
 - TaskDetail components (TaskHeader, TaskField, TaskDetailStates)
@@ -310,6 +340,7 @@ SignupScreen ✅
 ## IMPLEMENTATION SEQUENCE
 
 ### Phase 3.1: Prepare (This doc)
+
 - [x] Audit screens
 - [x] Categorize by tier
 - [x] Map feature flags
@@ -317,22 +348,26 @@ SignupScreen ✅
 - [ ] Create feature flag mapping doc
 
 ### Phase 3.2: Wrap Tier-Gated Screens
+
 - [ ] Wrap LiveDashboardScreen with TierGuard
 - [ ] Wrap ARViewScreen with TierGuard
 - [ ] Test on simulator
 
 ### Phase 3.3: Wrap Feature-Flagged Components
+
 - [ ] Add FeatureFlagGuard to Dashboard enhancements
 - [ ] Add FeatureFlagGuard to Tasks advanced filters
 - [ ] Add FeatureFlagGuard to AI suggestions
 - [ ] Test on simulator
 
 ### Phase 3.4: Combined Wrapping
+
 - [ ] Wrap features with both guards where needed
 - [ ] Test tier + flag combinations
 - [ ] Verify fallbacks work
 
 ### Phase 3.5: Testing
+
 - [ ] Unit tests for wrapped screens
 - [ ] Integration tests
 - [ ] Manual testing on iOS
@@ -342,16 +377,16 @@ SignupScreen ✅
 
 ## TESTING MATRIX
 
-| Screen | Free Tier | Standard Tier | Enterprise | With Flag | Without Flag |
-|--------|-----------|---------------|-----------|-----------|--------------|
-| Login | ✅ | ✅ | ✅ | N/A | N/A |
-| Signup | ✅ | ✅ | ✅ | N/A | N/A |
-| Dashboard | ✅ | ✅ | ✅ | ✅ Show enhanced | ✅ Show basic |
-| Tasks | ✅ | ✅ | ✅ | ✅ Show filters | ✅ Show basic |
-| Create | ✅ | ✅ | ✅ | ✅ Show AI | ✅ Show basic |
-| Details | ✅ | ✅ | ✅ | ✅ Show advanced | ✅ Show basic |
-| Live | ❌ | ✅ | ✅ | ✅ Show | ❌ Hide |
-| AR View | ❌ | ❌ | ✅ | ✅ Show | ❌ Hide |
+| Screen    | Free Tier | Standard Tier | Enterprise | With Flag        | Without Flag  |
+| --------- | --------- | ------------- | ---------- | ---------------- | ------------- |
+| Login     | ✅        | ✅            | ✅         | N/A              | N/A           |
+| Signup    | ✅        | ✅            | ✅         | N/A              | N/A           |
+| Dashboard | ✅        | ✅            | ✅         | ✅ Show enhanced | ✅ Show basic |
+| Tasks     | ✅        | ✅            | ✅         | ✅ Show filters  | ✅ Show basic |
+| Create    | ✅        | ✅            | ✅         | ✅ Show AI       | ✅ Show basic |
+| Details   | ✅        | ✅            | ✅         | ✅ Show advanced | ✅ Show basic |
+| Live      | ❌        | ✅            | ✅         | ✅ Show          | ❌ Hide       |
+| AR View   | ❌        | ❌            | ✅         | ✅ Show          | ❌ Hide       |
 
 ---
 

@@ -117,9 +117,7 @@ export const validateMaxLength = (
 /**
  * Compose multiple validators
  */
-export const composeValidators = (
-  ...validators: Array<(value: string) => ValidationResult>
-) => {
+export const composeValidators = (...validators: Array<(value: string) => ValidationResult>) => {
   return (value: string): ValidationResult => {
     for (const validator of validators) {
       const result = validator(value);

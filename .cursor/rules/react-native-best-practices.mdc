@@ -1,0 +1,85 @@
+---
+description: React Native Best Practices and Performance Standards
+globs: ["apps/native/**/*.tsx", "apps/native/**/*.ts", "packages/ui/**/*.tsx"]
+---
+
+# ⚛️ React Native Best Practices
+
+**MANDATORY**: Follow these patterns to ensure high performance, smooth animations, and cross-platform compatibility.
+
+## 🚀 Performance
+
+### 1. Memoization
+Always memoize complex calculations and callbacks passed to child components.
+
+```typescript
+// ✅ Correct
+const handledValue = useMemo(() => expensiveCalc(prop), [prop]);
+const handlePress = useCallback(() => doSomething(prop), [prop]);
+```
+
+### 2. List Rendering
+Use `FlashList` (if available) or optimized `FlatList` props.
+
+```typescript
+// ✅ Correct
+<FlatList
+  data={data}
+  renderItem={renderItem}
+  keyExtractor={keyExtractor}
+  initialNumToRender={10}
+  maxToRenderPerBatch={5}
+  windowSize={5}
+  removeClippedSubviews={true}
+/>
+```
+
+### 3. Image Optimization
+Use proper caching and sizing.
+
+```typescript
+// ✅ Correct
+<FastImage source={{ uri: url, priority: FastImage.priority.normal }} />
+```
+
+## 📱 Platform Specifics
+
+### 1. Platform Extensions
+Use `.ios.tsx` and `.android.tsx` for platform-specific implementations rather than runtime checks where possible.
+
+### 2. Safe Area
+Always use `SafeAreaView` or `useSafeAreaInsets` from `react-native-safe-area-context`.
+
+```typescript
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+const Component = () => {
+  const insets = useSafeAreaInsets();
+  return <View style={{ paddingTop: insets.top }} />;
+};
+```
+
+## 🧩 Component Structure
+
+### 1. Atomic Design
+- `atoms/`: Basic UI elements (Text, Button)
+- `molecules/`: Simple combinations (FormInput)
+- `organisms/`: Complex sections (Header, TaskList)
+- `templates/`: Page layouts
+- `screens/`: Route handlers (connected to store/navigation)
+
+### 2. Styles
+Use `StyleSheet.create` always. Avoid inline objects.
+
+```typescript
+// ✅ Correct
+const styles = StyleSheet.create({
+  container: { flex: 1 }
+});
+```
+
+## 🌐 Web Compatibility (React Native Web)
+
+- Avoid using native modules that don't have web support without a platform check or shim.
+- Use `Pressable` instead of `TouchableOpacity` for better web interaction state handling.
+- Ensure accessible props (`accessibilityLabel`, `accessibilityRole`) are present.

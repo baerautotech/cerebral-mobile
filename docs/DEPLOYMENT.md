@@ -3,6 +3,7 @@
 ## Automated Deployment (GitHub Actions)
 
 ### How It Works
+
 1. Push code to `main` branch
 2. GitHub Actions workflow triggers automatically
 3. Workflow runs:
@@ -14,6 +15,7 @@
 5. Service available within seconds
 
 ### View Deployment Status
+
 ```bash
 # List recent workflow runs
 gh run list --repo baerautotech/[repo]
@@ -29,6 +31,7 @@ kubectl rollout status deployment/[app-name] -n cerebral-platform
 ## Manual Deployment (If Needed)
 
 ### Local Build & Test
+
 ```bash
 # Install dependencies
 npm install
@@ -46,11 +49,13 @@ npm run build
 ### Versioning (Semantic Release)
 
 Commits automatically trigger version bumps:
+
 - `feat: ...` → Minor version (e.g., 1.0.0 → 1.1.0)
 - `fix: ...` → Patch version (e.g., 1.0.0 → 1.0.1)
 - `BREAKING CHANGE: ...` → Major version (e.g., 1.0.0 → 2.0.0)
 
 ### Docker Build (Manual)
+
 ```bash
 # Build Docker image locally
 docker build -t [repo]:[version] .
@@ -63,6 +68,7 @@ docker push registry.dev.cerebral.baerautotech.com/[repo]:[version]
 ```
 
 ### Deploy to Kubernetes
+
 ```bash
 # Update deployment image
 kubectl set image deployment/[app-name] \
@@ -76,6 +82,7 @@ kubectl rollout status deployment/[app-name] -n cerebral-platform
 ## Rollback Procedures
 
 ### If Deployment Fails
+
 ```bash
 # Check pod status
 kubectl get pods -n cerebral-platform -l app=[app-name]
@@ -91,6 +98,7 @@ kubectl rollout status deployment/[app-name] -n cerebral-platform
 ```
 
 ### Manual Rollback
+
 ```bash
 # Get deployment history
 kubectl rollout history deployment/[app-name] -n cerebral-platform
@@ -102,18 +110,21 @@ kubectl rollout undo deployment/[app-name] --to-revision=2 -n cerebral-platform
 ## Troubleshooting
 
 ### Build Fails
+
 1. Check GitHub Actions logs: `gh run view [run-id]`
 2. Run linting locally: `npm run lint`
 3. Run tests locally: `npm run test`
 4. Check for secrets: Ensure all required environment variables are set
 
 ### Tests Fail
+
 1. Run tests locally: `npm run test`
 2. Check coverage: `npm run test:coverage`
 3. Review test output for specific failures
 4. Fix issues and push to trigger workflow again
 
 ### Deployment Fails
+
 1. Check Kubernetes events: `kubectl describe pod [pod-name] -n cerebral-platform`
 2. View pod logs: `kubectl logs [pod-name] -n cerebral-platform`
 3. Verify image exists: `docker pull registry.dev.cerebral.baerautotech.com/[repo]:[version]`
@@ -122,11 +133,13 @@ kubectl rollout undo deployment/[app-name] --to-revision=2 -n cerebral-platform
 ## Environment Variables
 
 ### Required for Deployment
+
 - `REGISTRY_URL` - Container registry URL
 - `KUBE_CONFIG` - Kubernetes cluster config
 - `GITHUB_TOKEN` - GitHub access token
 
 ### Optional
+
 - `LOG_LEVEL` - Logging verbosity
 - `DEBUG` - Debug mode flag
 

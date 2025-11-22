@@ -23,10 +23,10 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@cerebral/core": ["packages/core"],
-      "@cerebral/core/*": ["packages/core/*"],
-      "@cerebral/design-system": ["packages/design-system"],
-      "@cerebral/design-system/*": ["packages/design-system/*"]
+      "@cerebral/core": ["packages/core/src/index.ts"],
+      "@cerebral/core/*": ["packages/core/src/*"],
+      "@cerebral/design-system": ["packages/design-system/src/index.ts"],
+      "@cerebral/design-system/*": ["packages/design-system/src/*"]
     }
   },
   "include": ["packages/*/", "apps/*/"],

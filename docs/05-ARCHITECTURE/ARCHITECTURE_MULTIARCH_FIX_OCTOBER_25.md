@@ -51,6 +51,7 @@ Mac's `docker build` command produces ARM64 images by default (Apple Silicon). T
 ### Step 1: Identified Solution
 
 Used `docker buildx` instead of `docker build`:
+
 - `docker buildx` can build for multiple architectures simultaneously
 - Supports creating manifest lists (OCI Index)
 - Automatically resolves correct image by architecture
@@ -68,6 +69,7 @@ docker buildx build \
 ```
 
 **Result**:
+
 - Built for AMD64 (2 minutes)
 - Built for ARM64 (0.7 minutes, cached)
 - Total time: ~2.7 minutes
@@ -84,6 +86,7 @@ docker buildx build \
 ```
 
 **Result**:
+
 - Built for AMD64 (depends on pip packages)
 - Built for ARM64 (0.7 minutes, cached)
 - Total time: ~14 minutes (pip install dependencies)
@@ -159,18 +162,18 @@ Result:
 
 ### Images in Registry
 
-| Image | Before | After | Status |
-|-------|--------|-------|--------|
-| `cerebral/ai-base:cuda` | ARM64 only ❌ | ARM64 + AMD64 ✅ | FIXED |
-| `cerebral/ai-base:cpu` | ARM64 only ❌ | ARM64 + AMD64 ✅ | FIXED |
+| Image                   | Before        | After            | Status |
+| ----------------------- | ------------- | ---------------- | ------ |
+| `cerebral/ai-base:cuda` | ARM64 only ❌ | ARM64 + AMD64 ✅ | FIXED  |
+| `cerebral/ai-base:cpu`  | ARM64 only ❌ | ARM64 + AMD64 ✅ | FIXED  |
 
 ### Build Status
 
-| Component | Before | After | Status |
-|-----------|--------|-------|--------|
-| Kaniko builds | Blocked 🔴 | Working ✅ | UNBLOCKED |
-| Mac development | Works | Works | UNCHANGED |
-| Cluster deployments | Blocked 🔴 | Ready ✅ | UNBLOCKED |
+| Component           | Before     | After      | Status    |
+| ------------------- | ---------- | ---------- | --------- |
+| Kaniko builds       | Blocked 🔴 | Working ✅ | UNBLOCKED |
+| Mac development     | Works      | Works      | UNCHANGED |
+| Cluster deployments | Blocked 🔴 | Ready ✅   | UNBLOCKED |
 
 ---
 
@@ -210,6 +213,7 @@ Result:
 ### Best Practices
 
 ✅ **ALWAYS use multi-platform builds:**
+
 ```bash
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
@@ -219,6 +223,7 @@ docker buildx build \
 ```
 
 ❌ **NEVER use single-architecture docker build:**
+
 ```bash
 # This only builds for Mac's architecture!
 docker build -f Dockerfile -t registry/image:tag .
@@ -229,11 +234,13 @@ docker build -f Dockerfile -t registry/image:tag .
 **If updating base images:**
 
 1. Edit shared dependencies:
+
    ```bash
    vim ~/Development/cerebral/docker/requirements-unified.txt
    ```
 
 2. Build BOTH architectures:
+
    ```bash
    docker buildx build --platform linux/amd64,linux/arm64 \
      -f docker/Dockerfile.ai-base.cuda \
@@ -241,6 +248,7 @@ docker build -f Dockerfile -t registry/image:tag .
    ```
 
 3. Verify both architectures:
+
    ```bash
    curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cuda \
      -H "Accept: application/vnd.oci.image.index.v1+json" | \
@@ -272,15 +280,15 @@ docker build -f Dockerfile -t registry/image:tag .
 
 ## Session Statistics
 
-| Metric | Value |
-|--------|-------|
-| Issue severity | 🔴 BLOCKING |
-| Time to identify root cause | ~2 minutes |
-| Time to rebuild base images | ~17 minutes |
-| Time to verify in registry | ~5 minutes |
+| Metric                       | Value       |
+| ---------------------------- | ----------- |
+| Issue severity               | 🔴 BLOCKING |
+| Time to identify root cause  | ~2 minutes  |
+| Time to rebuild base images  | ~17 minutes |
+| Time to verify in registry   | ~5 minutes  |
 | Time to update documentation | ~20 minutes |
-| Time to deploy to 4 repos | ~5 minutes |
-| Total session time | ~49 minutes |
+| Time to deploy to 4 repos    | ~5 minutes  |
+| Total session time           | ~49 minutes |
 
 ---
 

@@ -15,6 +15,7 @@ Build the **Feature Flags + Tier System + In-App Purchases** system for the Cere
 ## ✅ WHAT'S BEEN SET UP
 
 ### 1. Cursor Workspace Rules
+
 ```
 .cursor/rules/
 ├── cerebral-mobile.mdc              ✅ General workspace rules
@@ -22,6 +23,7 @@ Build the **Feature Flags + Tier System + In-App Purchases** system for the Cere
 ```
 
 **What's in them:**
+
 - Repository context and key principles
 - Screen wrapping patterns (FeatureFlagGuard, TierGuard, IAPFeature)
 - Development branches and CI/CD overview
@@ -35,11 +37,13 @@ Build the **Feature Flags + Tier System + In-App Purchases** system for the Cere
 ---
 
 ### 2. Implementation Plan
+
 ```
 MOBILE_IMPLEMENTATION_PLAN.md       ✅ Complete 4-6 week roadmap
 ```
 
 **What's included:**
+
 - Executive summary (current state → vision)
 - 6 implementation phases (Phase 1-6)
 - For each phase:
@@ -56,11 +60,13 @@ MOBILE_IMPLEMENTATION_PLAN.md       ✅ Complete 4-6 week roadmap
 ---
 
 ### 3. Phase 1 Checklist
+
 ```
 build-todo/PHASE_1_FEATURE_FLAGS.md  ✅ Detailed Phase 1 breakdown
 ```
 
 **What's included:**
+
 - 8 detailed deliverables:
   1. Type definitions
   2. Feature flag service
@@ -145,6 +151,7 @@ cerebral-mobile-1/
 ## 🚀 GETTING STARTED (TODAY)
 
 ### Step 1: Install Dependencies
+
 ```bash
 cd /Users/bbaer/Development/cerebral-mobile-1
 pnpm install
@@ -152,6 +159,7 @@ cd frontend-react-native && pod install && cd ..
 ```
 
 ### Step 2: Understand the Current State
+
 ```bash
 # Check current package.json
 cat frontend-react-native/package.json
@@ -164,11 +172,13 @@ ls frontend-react-native/src/services/
 ```
 
 ### Step 3: Start Metro Bundler
+
 ```bash
 npm start
 ```
 
 ### Step 4: Run on Simulator (Try It!)
+
 ```bash
 # iOS
 npm run ios
@@ -178,6 +188,7 @@ npm run android
 ```
 
 ### Step 5: Read the Plan
+
 1. Read `MOBILE_IMPLEMENTATION_PLAN.md` (main plan)
 2. Read `build-todo/PHASE_1_FEATURE_FLAGS.md` (today's phase)
 3. Skim `.cursor/rules/cerebral-mobile.mdc` (your rules)
@@ -188,6 +199,7 @@ npm run android
 ## 📋 YOUR 6-PHASE ROADMAP
 
 ### Phase 1: Feature Flags SDK (Days 1-4)
+
 - [ ] Create feature flag service with AsyncStorage caching
 - [ ] Create useFeatureFlags hook
 - [ ] Create FeatureFlagGuard component
@@ -199,6 +211,7 @@ npm run android
 **See**: `build-todo/PHASE_1_FEATURE_FLAGS.md` (detailed)
 
 ### Phase 2: Tier System & In-App Purchases (Days 5-8)
+
 - [ ] Create tier service (extract from JWT)
 - [ ] Create useUserTier hook
 - [ ] Create TierGuard component
@@ -211,6 +224,7 @@ npm run android
 **See**: `build-todo/PHASE_2_TIER_SYSTEM.md` (create this phase)
 
 ### Phase 3: Screen Wrapping (Days 9-12)
+
 - [ ] Audit all 30+ screens
 - [ ] Map tier and feature flag requirements
 - [ ] Wrap screens with guards
@@ -219,6 +233,7 @@ npm run android
 **See**: `build-todo/PHASE_3_SCREEN_WRAPPING.md` (create this phase)
 
 ### Phase 4: Build Automation (Days 13-15)
+
 - [ ] Create build scripts (iOS + Android)
 - [ ] Setup K8s secrets for signing
 - [ ] Create Tekton tasks
@@ -227,6 +242,7 @@ npm run android
 **See**: `build-todo/PHASE_4_BUILD_AUTOMATION.md` (create this phase)
 
 ### Phase 5: App Store Distribution (Days 16-17)
+
 - [ ] Setup Fastlane
 - [ ] Configure TestFlight uploads
 - [ ] Configure Play Store uploads
@@ -235,6 +251,7 @@ npm run android
 **See**: `build-todo/PHASE_5_DISTRIBUTION.md` (create this phase)
 
 ### Phase 6: Testing & QA (Days 18-20)
+
 - [ ] Write comprehensive tests (unit, integration, E2E)
 - [ ] Test on real iOS and Android devices
 - [ ] Performance benchmarking
@@ -247,14 +264,17 @@ npm run android
 ## 📚 KEY RESOURCES
 
 ### Your Workspace Rules (Read These!)
+
 - `.cursor/rules/cerebral-mobile.mdc` - Principles, patterns, tasks
 - `.cursor/rules/feature-flags-mobile.mdc` - Implementation guide with code
 
 ### Your Implementation Plan
+
 - `MOBILE_IMPLEMENTATION_PLAN.md` - Complete roadmap (4-6 weeks)
 - `build-todo/PHASE_1_FEATURE_FLAGS.md` - Phase 1 details
 
 ### Backend API Contract (You'll Need)
+
 ```typescript
 // GET /api/flags
 // Returns: { flag_name: boolean, ... }
@@ -269,6 +289,7 @@ npm run android
 ```
 
 ### External Docs
+
 - [React Native AsyncStorage](https://react-native-async-storage.github.io/async-storage/)
 - [RevenueCat React Native](https://www.revenuecat.com/docs/reactnative)
 - [React Navigation](https://reactnavigation.org/)
@@ -280,6 +301,7 @@ npm run android
 ## 🎬 STARTING PHASE 1 TODAY
 
 ### What to Do First
+
 1. ✅ Read `MOBILE_IMPLEMENTATION_PLAN.md`
 2. ✅ Read `build-todo/PHASE_1_FEATURE_FLAGS.md`
 3. ⏳ Create feature flag types: `frontend-react-native/src/types/featureFlags.ts`
@@ -292,6 +314,7 @@ npm run android
 10. ⏳ Test on simulator
 
 ### Success for Phase 1
+
 - [ ] All code written and tested
 - [ ] Unit tests > 90% coverage
 - [ ] Flags cached in AsyncStorage
@@ -334,6 +357,7 @@ A: After Phase 1 complete and tested on real devices
 ## 📞 GETTING HELP
 
 ### If You're Stuck
+
 1. Check the workspace rules: `.cursor/rules/cerebral-mobile.mdc`
 2. Check the code patterns: `.cursor/rules/feature-flags-mobile.mdc`
 3. Check the phase checklist: `build-todo/PHASE_1_FEATURE_FLAGS.md`
@@ -341,6 +365,7 @@ A: After Phase 1 complete and tested on real devices
 5. Try mock API if backend not ready
 
 ### Common Blockers
+
 - **Backend not ready**: Use hardcoded mock flags
 - **AsyncStorage issues**: Add logging, check installation
 - **Network errors**: Mock with fake fetch

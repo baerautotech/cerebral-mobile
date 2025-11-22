@@ -10,6 +10,7 @@
 ## 🏗️ SYSTEM ARCHITECTURE (MUST UNDERSTAND)
 
 ### The Stack
+
 ```
 GitHub Code Push
     ↓
@@ -36,6 +37,7 @@ Deployment rolls out new pods
 ```
 
 ### NOT IN THIS SYSTEM
+
 - ❌ Knative EventListener (REMOVED Oct 24)
 - ❌ Knative Broker (REMOVED Oct 24)
 - ❌ ArgoCD (not used)
@@ -44,6 +46,7 @@ Deployment rolls out new pods
 - ❌ nginx ingress (REPLACED with Traefik Oct 24)
 
 ### COMPONENTS THAT EXIST
+
 - ✅ Custom Rust webhook receiver (listen on port 3000)
 - ✅ Tekton Pipelines (build orchestration)
 - ✅ Kaniko (container build in Kubernetes)
@@ -59,22 +62,24 @@ Deployment rolls out new pods
 
 **Base Images**: Pre-built Docker images with ML/AI dependencies. Reduces build time from 30min → 3min.
 
-| Image | Purpose | Size | Location |
-|---|---|---|---|
+| Image                   | Purpose      | Size   | Location                                 |
+| ----------------------- | ------------ | ------ | ---------------------------------------- |
 | `cerebral/ai-base:cuda` | GPU services | ~7.5GB | `10.34.0.202:5000/cerebral/ai-base:cuda` |
-| `cerebral/ai-base:cpu` | CPU services | ~2.8GB | `10.34.0.202:5000/cerebral/ai-base:cpu` |
+| `cerebral/ai-base:cpu`  | CPU services | ~2.8GB | `10.34.0.202:5000/cerebral/ai-base:cpu`  |
 
 ### Where Are They?
 
 **Registry**: `10.34.0.202:5000` (internal Kubernetes registry)
 
 **Verify they exist:**
+
 ```bash
 curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
 # {"name":"cerebral/ai-base","tags":["cuda","cpu"]}
 ```
 
 **Source in Git**: `~/Development/cerebral/docker/`
+
 - `Dockerfile.ai-base.cuda` - GPU version
 - `Dockerfile.ai-base.cpu` - CPU version
 - `requirements-unified.txt` - All ML/AI dependencies
@@ -84,6 +89,7 @@ curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
 **Cluster = AMD64 (x86_64). Mac = ARM64 (Apple Silicon). MUST USE BOTH!**
 
 ✅ **Current Status**: Both base images are multi-architecture
+
 ```bash
 cerebral/ai-base:cuda
   ├─ amd64 (linux/amd64) → Kubernetes cluster ✅
@@ -95,6 +101,7 @@ cerebral/ai-base:cpu
 ```
 
 **If rebuilding, MUST use multi-platform build:**
+
 ```bash
 # ✅ CORRECT - Both architectures
 docker buildx build --platform linux/amd64,linux/arm64 \
@@ -107,6 +114,7 @@ docker build -f docker/Dockerfile.ai-base.cuda \
 ```
 
 **Why?**
+
 - Mac builds ARM64-only images by default
 - Kubernetes cluster (AMD64) cannot run ARM64 images
 - Kaniko fails: "no matching manifest for linux/amd64"
@@ -132,22 +140,26 @@ Kaniko automatically pulls the base → adds code → builds → done!
 ### When to Update Base Images
 
 ✅ **DO update** when:
+
 - Adding shared dependencies (needed by 2+ services)
 - Security patches
 - Python/CUDA version upgrades
 
 ❌ **DON'T update** for:
+
 - Single-service dependencies (add to service's `requirements.txt`)
 - Experimental packages
 
 ### How to Update (7-Step Process - Multi-Architecture)
 
 **1. Edit shared dependencies:**
+
 ```bash
 vim ~/Development/cerebral/docker/requirements-unified.txt
 ```
 
 **2. Test locally:**
+
 ```bash
 cd ~/Development/cerebral
 docker build -f docker/Dockerfile.ai-base.cuda -t test-cuda .
@@ -155,6 +167,7 @@ docker run --rm test-cuda python -c "import torch; print(torch.__version__)"
 ```
 
 **3. Update Dockerfile (if build deps needed):**
+
 ```bash
 # Add to RUN apt-get install:
 # gcc, g++, python3-dev (for C extensions)
@@ -163,6 +176,7 @@ vim ~/Development/cerebral/docker/Dockerfile.ai-base.cpu
 ```
 
 **4. Build both images (MULTI-ARCHITECTURE - CRITICAL!):**
+
 ```bash
 # Build for BOTH amd64 (cluster) and arm64 (Mac)
 docker buildx build --platform linux/amd64,linux/arm64 \
@@ -175,6 +189,7 @@ docker buildx build --platform linux/amd64,linux/arm64 \
 ```
 
 **5. Verify both architectures in registry:**
+
 ```bash
 curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cuda \
   -H "Accept: application/vnd.oci.image.index.v1+json" | \
@@ -186,6 +201,7 @@ curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cuda \
 ```
 
 **6. Commit to git:**
+
 ```bash
 git add docker/requirements-unified.txt docker/Dockerfile.ai-base.*
 git commit -m "chore: Update base images - torch 2.5.0, added xyz (multi-arch)"
@@ -193,6 +209,7 @@ git push origin main
 ```
 
 **7. Verify builds succeed:**
+
 ```bash
 # Push code and check PipelineRun
 git commit --allow-empty -m "test: trigger build with new base images"
@@ -204,24 +221,26 @@ kubectl get pipelineruns -n tekton-pipelines -w
 
 ### Base Image Troubleshooting
 
-| Issue | Cause | Fix |
-|-------|-------|-----|
-| `exec format error` | Wrong architecture | Rebuild with `--platform linux/amd64,linux/arm64` |
-| `no matching manifest for linux/amd64` | ARM64-only image in cluster | Use multi-platform build |
-| Build takes 30+ min | Layer cache miss | Ensure base images exist in registry |
-| `Python.h: No such file` | Missing `python3-dev` | Add to `apt-get install` in Dockerfile |
-| Import errors | Package missing | Add to `requirements-unified.txt` |
+| Issue                                  | Cause                       | Fix                                               |
+| -------------------------------------- | --------------------------- | ------------------------------------------------- |
+| `exec format error`                    | Wrong architecture          | Rebuild with `--platform linux/amd64,linux/arm64` |
+| `no matching manifest for linux/amd64` | ARM64-only image in cluster | Use multi-platform build                          |
+| Build takes 30+ min                    | Layer cache miss            | Ensure base images exist in registry              |
+| `Python.h: No such file`               | Missing `python3-dev`       | Add to `apt-get install` in Dockerfile            |
+| Import errors                          | Package missing             | Add to `requirements-unified.txt`                 |
 
 ---
 
 ### How to Update (7-Step Process)
 
 **1. Edit shared dependencies:**
+
 ```bash
 vim ~/Development/cerebral/docker/requirements-unified.txt
 ```
 
 **2. Test locally:**
+
 ```bash
 cd ~/Development/cerebral
 docker build -f docker/Dockerfile.ai-base.cuda -t test-cuda .
@@ -229,6 +248,7 @@ docker run --rm test-cuda python -c "import torch; print(torch.__version__)"
 ```
 
 **3. Update Dockerfile (if build deps needed):**
+
 ```bash
 # Add to RUN apt-get install:
 # gcc, g++, python3-dev (for C extensions)
@@ -237,12 +257,14 @@ vim ~/Development/cerebral/docker/Dockerfile.ai-base.cpu
 ```
 
 **4. Build both images:**
+
 ```bash
 docker build -f docker/Dockerfile.ai-base.cuda -t cerebral/ai-base:cuda .
 docker build -f docker/Dockerfile.ai-base.cpu -t cerebral/ai-base:cpu .
 ```
 
 **5. Push to registry:**
+
 ```bash
 docker tag cerebral/ai-base:cuda 10.34.0.202:5000/cerebral/ai-base:cuda
 docker tag cerebral/ai-base:cpu 10.34.0.202:5000/cerebral/ai-base:cpu
@@ -251,6 +273,7 @@ docker push 10.34.0.202:5000/cerebral/ai-base:cpu
 ```
 
 **6. Commit to git:**
+
 ```bash
 git add docker/requirements-unified.txt docker/Dockerfile.ai-base.*
 git commit -m "chore: Update base images - torch 2.5.0, added xyz"
@@ -258,6 +281,7 @@ git push origin main
 ```
 
 **7. Trigger rebuilds:**
+
 ```bash
 # All services rebuild automatically on next push
 git commit --allow-empty -m "rebuild: new base images available"
@@ -279,6 +303,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ### What's Included?
 
 **All packages from**: `docker/requirements-unified.txt`
+
 - ML: torch, transformers, scikit-learn, pandas, numpy
 - API: FastAPI, Pydantic, SQLAlchemy
 - Data: Redis, Supabase, chromadb
@@ -287,11 +312,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ### Troubleshooting
 
-| Problem | Solution |
-|---------|----------|
+| Problem                                     | Solution                                                                                               |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | Build fails: "Failed to resolve base image" | `curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list` → if missing, rebuild locally and push |
-| Service: "No module named 'X'" | Check if in base image: `docker run 10.34.0.202:5000/cerebral/ai-base:cuda python -c "import X"` |
-| Build slow | Base image may not be cached locally - pull it: `docker pull 10.34.0.202:5000/cerebral/ai-base:cuda` |
+| Service: "No module named 'X'"              | Check if in base image: `docker run 10.34.0.202:5000/cerebral/ai-base:cuda python -c "import X"`       |
+| Build slow                                  | Base image may not be cached locally - pull it: `docker pull 10.34.0.202:5000/cerebral/ai-base:cuda`   |
 
 ### Key Files for Agents
 
@@ -306,33 +331,37 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ## 📋 CONFIGURATION FILES (SOURCE OF TRUTH)
 
 ### INFRASTRUCTURE
-| File | Purpose | Location |
-|------|---------|----------|
-| `k8s/ci-cd/webhook-receiver-ingress.yaml` | DEPRECATED - use IngressRoute instead | - |
-| `k8s/ci-cd/webhook-receiver-ingressroute.yaml` | Traefik route for webhook | cerebral-deployment |
-| `k8s/ci-cd/webhook-receiver-service.yaml` | ClusterIP service on port 3000 | cerebral-deployment |
-| `k8s/ci-cd/webhook-receiver-deployment.yaml` | Rust service (2 replicas) | cerebral-deployment |
-| `.github/workflows/trigger-tekton-build.yml` | Manual build trigger (fallback) | Each repo |
+
+| File                                           | Purpose                               | Location            |
+| ---------------------------------------------- | ------------------------------------- | ------------------- |
+| `k8s/ci-cd/webhook-receiver-ingress.yaml`      | DEPRECATED - use IngressRoute instead | -                   |
+| `k8s/ci-cd/webhook-receiver-ingressroute.yaml` | Traefik route for webhook             | cerebral-deployment |
+| `k8s/ci-cd/webhook-receiver-service.yaml`      | ClusterIP service on port 3000        | cerebral-deployment |
+| `k8s/ci-cd/webhook-receiver-deployment.yaml`   | Rust service (2 replicas)             | cerebral-deployment |
+| `.github/workflows/trigger-tekton-build.yml`   | Manual build trigger (fallback)       | Each repo           |
 
 ### INGRESS & TLS
-| File | Purpose | Location |
-|------|---------|----------|
-| `k8s/ci-cd/webhook-receiver-ingressroute.yaml` | Route webhook requests to port 3000 | cerebral-deployment |
-| `k8s/cert-manager/dev-wildcard-certificate.yaml` | *.dev.cerebral.baerautotech.com TLS | cerebral-deployment |
-| `traefik/traefik-values.yaml` | Traefik config (websecure entry point) | cerebral-deployment |
+
+| File                                             | Purpose                                | Location            |
+| ------------------------------------------------ | -------------------------------------- | ------------------- |
+| `k8s/ci-cd/webhook-receiver-ingressroute.yaml`   | Route webhook requests to port 3000    | cerebral-deployment |
+| `k8s/cert-manager/dev-wildcard-certificate.yaml` | \*.dev.cerebral.baerautotech.com TLS   | cerebral-deployment |
+| `traefik/traefik-values.yaml`                    | Traefik config (websecure entry point) | cerebral-deployment |
 
 ### TEKTON CONFIGURATION
-| File | Purpose | Location |
-|------|---------|----------|
-| `k8s/ci-cd/tekton-tasks.yaml` | Reusable Tekton tasks | cerebral-deployment |
-| `k8s/ci-cd/tekton-pipeline.yaml` | Pipeline definition (git → build → deploy) | cerebral-deployment |
-| `k8s/ci-cd/tekton-webhook-config.yaml` | Secret for GitHub webhook validation | cerebral-deployment |
+
+| File                                   | Purpose                                    | Location            |
+| -------------------------------------- | ------------------------------------------ | ------------------- |
+| `k8s/ci-cd/tekton-tasks.yaml`          | Reusable Tekton tasks                      | cerebral-deployment |
+| `k8s/ci-cd/tekton-pipeline.yaml`       | Pipeline definition (git → build → deploy) | cerebral-deployment |
+| `k8s/ci-cd/tekton-webhook-config.yaml` | Secret for GitHub webhook validation       | cerebral-deployment |
 
 ---
 
 ## 🎯 HOW TO TRIGGER A BUILD (3 METHODS)
 
 ### METHOD 1: Push Code to Main Branch (Automatic)
+
 ```bash
 # In your repo (cerebral, cerebral-frontend, cerebral-mobile)
 git add .
@@ -348,6 +377,7 @@ git push origin main
 ```
 
 ### METHOD 2: Pull Request (Automatic)
+
 ```bash
 # Create PR against main branch
 # Webhook triggers same pipeline automatically
@@ -355,6 +385,7 @@ git push origin main
 ```
 
 ### METHOD 3: Manual Trigger (Fallback)
+
 ```bash
 # From repo with gh CLI installed:
 gh workflow run trigger-tekton-build.yml --ref main
@@ -386,6 +417,7 @@ EOF
 ## 📊 MONITORING (CRITICAL FOR AGENTS)
 
 ### Is the Webhook Listener Running?
+
 ```bash
 # Check Rust service pods
 kubectl get pods -n tekton-pipelines -l app=github-webhook-receiver
@@ -398,6 +430,7 @@ kubectl logs -n tekton-pipelines -l app=github-webhook-receiver -c webhook-recei
 ```
 
 ### Did Webhook Trigger a Build?
+
 ```bash
 # Check for recent PipelineRuns
 kubectl get pipelineruns -n tekton-pipelines --sort-by=.metadata.creationTimestamp | tail -5
@@ -406,6 +439,7 @@ kubectl get pipelineruns -n tekton-pipelines --sort-by=.metadata.creationTimesta
 ```
 
 ### Is Build Running?
+
 ```bash
 # Watch build progress
 kubectl logs -n tekton-pipelines <pipelinerun-name> -f
@@ -419,6 +453,7 @@ tkn pipelinerun logs -n tekton-pipelines <pipelinerun-name> -f
 ```
 
 ### Did Build Complete Successfully?
+
 ```bash
 # Check PipelineRun status
 kubectl get pipelinerun -n tekton-pipelines <pipelinerun-name> -o yaml | grep "conditions:"
@@ -433,6 +468,7 @@ kubectl get images -n cerebral-platform | grep cerebral/backend
 ```
 
 ### Did Pods Deploy Successfully?
+
 ```bash
 # Check deployment status
 kubectl get deployment cerebral-backend -n cerebral-platform
@@ -450,7 +486,9 @@ kubectl get pods -n cerebral-platform -l app=cerebral-backend
 ## 🔍 TROUBLESHOOTING GUIDE
 
 ### Problem: "No PipelineRun created after push"
+
 **Diagnosis**:
+
 ```bash
 # 1. Check webhook receiver is running
 kubectl get pods -n tekton-pipelines -l app=github-webhook-receiver
@@ -467,13 +505,16 @@ kubectl logs -n cerebral-development -l app=traefik --tail=20 | grep webhook
 ```
 
 **Common Causes**:
+
 - ❌ Webhook receiver pods are not running → `kubectl rollout restart deployment/github-webhook-receiver -n tekton-pipelines`
 - ❌ Service port wrong → Should be 3000, check `kubectl get svc github-webhook-receiver -n tekton-pipelines`
 - ❌ IngressRoute wrong → Check `kubectl get ingressroute github-webhook-receiver -n cerebral-development`
 - ❌ TLS certificate invalid → Check `kubectl get certificate dev-wildcard-tls -n cerebral-development`
 
 ### Problem: "Build created but PipelineRun failed"
+
 **Diagnosis**:
+
 ```bash
 # Check PipelineRun details
 kubectl describe pipelinerun <name> -n tekton-pipelines
@@ -486,13 +527,16 @@ kubectl logs -n tekton-pipelines <taskrun-name> -c <container-name>
 ```
 
 **Common Causes**:
+
 - ❌ Code has errors → Fix code, push again
 - ❌ Dockerfile missing → Create `Dockerfile` in repo root
 - ❌ Registry credentials invalid → Check `kubectl get secret -n build-system | grep docker`
 - ❌ Deployment manifest missing → Create `k8s/deployment.yaml` in repo
 
 ### Problem: "Build succeeded but pods not running"
+
 **Diagnosis**:
+
 ```bash
 # Check deployment status
 kubectl get deployment <service-name> -n cerebral-platform
@@ -506,13 +550,16 @@ kubectl logs <pod-name> -n cerebral-platform
 ```
 
 **Common Causes**:
+
 - ❌ Image not found → Check registry: `kubectl get pods -n registry`
 - ❌ Resource requests too high → Edit deployment, reduce CPU/memory
 - ❌ Secret/config missing → Check ConfigMaps and Secrets in namespace
 - ❌ Health checks failing → Check `livenessProbe` and `readinessProbe`
 
 ### Problem: "Webhook signature validation failed"
+
 **Diagnosis**:
+
 ```bash
 # Check webhook secret exists
 kubectl get secret github-webhook-secret -n tekton-pipelines
@@ -575,6 +622,7 @@ echo "✅ All checks complete!"
 ## 🚫 CRITICAL: DO NOT DO THIS
 
 ### ❌ DO NOT kubectl patch ingress
+
 ```bash
 # WRONG:
 kubectl patch ingress cerebral-github-listener ...
@@ -586,6 +634,7 @@ kubectl patch ingress cerebral-github-listener ...
 ```
 
 ### ❌ DO NOT change webhook receiver port to 80
+
 ```bash
 # WRONG:
 # service.spec.ports[0].port: 80
@@ -597,6 +646,7 @@ kubectl patch ingress cerebral-github-listener ...
 ```
 
 ### ❌ DO NOT bypass Traefik
+
 ```bash
 # WRONG: Firewall rule directly to webhook receiver
 # Firewall: 3000 → 10.34.0.206:3000
@@ -607,6 +657,7 @@ kubectl patch ingress cerebral-github-listener ...
 ```
 
 ### ❌ DO NOT create EventListener or Broker
+
 ```bash
 # WRONG: kubectl apply -f eventlistener.yaml
 # Tekton EventListener removed Oct 24, 2025
@@ -617,6 +668,7 @@ kubectl patch ingress cerebral-github-listener ...
 ```
 
 ### ❌ DO NOT assume GitHub Actions builds code
+
 ```bash
 # WRONG: Checking GitHub Actions logs for build status
 # GitHub Actions may run tests, but Tekton does the BUILD
@@ -631,6 +683,7 @@ kubectl patch ingress cerebral-github-listener ...
 ## 📚 KEY COMMANDS (Copy-Paste Ready)
 
 ### Build Monitoring
+
 ```bash
 # Watch latest build
 watch kubectl get pipelineruns -n tekton-pipelines --sort-by=.metadata.creationTimestamp | tail -3
@@ -646,6 +699,7 @@ kubectl get events -n cerebral-platform --sort-by='.lastTimestamp'
 ```
 
 ### Webhook Receiver Debugging
+
 ```bash
 # Restart webhook receiver
 kubectl rollout restart deployment/github-webhook-receiver -n tekton-pipelines
@@ -664,6 +718,7 @@ curl -X POST http://localhost:3000/ \
 ```
 
 ### Manual Build Trigger
+
 ```bash
 # If webhook fails, trigger manually
 kubectl apply -f - <<'EOF'
@@ -758,11 +813,13 @@ EOF
 4. Share with team
 
 **DO NOT ASSUME**:
+
 - ❌ "EventListener should exist"
 - ❌ "Check GitHub Actions logs"
 - ❌ "Knative should be configured"
 
 **KNOW**:
+
 - ✅ Custom Rust webhook receiver
 - ✅ Tekton Pipelines
 - ✅ Kaniko builds

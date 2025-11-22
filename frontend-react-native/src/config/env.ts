@@ -3,7 +3,6 @@
  * Validates and exposes environment variables with type safety
  */
 
-
 interface EnvironmentConfig {
   API_BASE_URL: string;
   SUPABASE_URL: string;
@@ -23,9 +22,7 @@ const validateEnv = (): void => {
   const missing = required.filter((key) => !process.env[key]);
 
   if (missing.length > 0) {
-    throw new Error(
-      `Missing required environment variables: ${missing.join(', ')}`
-    );
+    throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
   }
 };
 
@@ -61,7 +58,7 @@ export const env: EnvironmentConfig = {
   API_BASE_URL: getApiUrl(),
   SUPABASE_URL: process.env.SUPABASE_URL ?? 'https://txlzlhcrfippujcmnief.supabase.co',
   SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY ?? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-  ENVIRONMENT: (process.env.NODE_ENV as "development" | "staging" | "production") || 'development',
+  ENVIRONMENT: (process.env.NODE_ENV as 'development' | 'staging' | 'production') || 'development',
   ENABLE_ANALYTICS: process.env.ENABLE_ANALYTICS === 'true',
   SENTRY_DSN: process.env.SENTRY_DSN,
 };

@@ -11,6 +11,7 @@
 ## PROBLEM SUMMARY
 
 GitHub webhook was returning **404 Not Found** even though:
+
 - ✅ DNS resolution worked
 - ✅ TLS certificate was valid
 - ✅ Request reached Traefik firewall
@@ -20,6 +21,7 @@ GitHub webhook was returning **404 Not Found** even though:
 **But**: Traefik's IngressRoute couldn't route to a service in a different namespace.
 
 ### Error Message
+
 ```
 error="kubernetes service not found: cerebral-development/cerebral-backend"
 error="service tekton-pipelines/github-webhook-receiver not in the parent resource namespace cerebral-development"
@@ -32,14 +34,15 @@ error="service tekton-pipelines/github-webhook-receiver not in the parent resour
 The IngressRoute was defined in namespace `cerebral-development` but referenced the service in namespace `tekton-pipelines`:
 
 **File**: `k8s/ci-cd/webhook-receiver-ingressroute.yaml` (line 19, 39)
+
 ```yaml
 metadata:
-  namespace: cerebral-development  # ← IngressRoute is HERE
+  namespace: cerebral-development # ← IngressRoute is HERE
 spec:
   services:
-  - name: github-webhook-receiver
-    namespace: tekton-pipelines     # ← Service is HERE (different namespace!)
-    port: 3000
+    - name: github-webhook-receiver
+      namespace: tekton-pipelines # ← Service is HERE (different namespace!)
+      port: 3000
 ```
 
 Traefik v3.5.3 by default does NOT allow cross-namespace service references for security reasons.
@@ -51,32 +54,34 @@ Traefik v3.5.3 by default does NOT allow cross-namespace service references for 
 ### Step 1: Enable Cross-Namespace Routing in Traefik
 
 Added flag to Traefik DaemonSet:
+
 ```bash
 kubectl patch daemonset traefik -n traefik-production \
   -p '{"spec":{"template":{"spec":{"containers":[{"name":"traefik","args":["--global.checkNewVersion=true","--global.sendAnonymousUsage=false","--entryPoints.web.address=:8000","--entryPoints.websecure.address=:8443","--entryPoints.metrics.address=:9090","--entryPoints.web.http.redirections.entryPoint.to=websecure","--entryPoints.web.http.redirections.entryPoint.scheme=https","--providers.kubernetescrd","--providers.kubernetescrd.allowCrossNamespace=true","--providers.kubernetesingress","--metrics.prometheus.addEntryPointsLabels=true","--metrics.prometheus.addServicesLabels=true","--log.level=INFO","--accesslog=true","--api.dashboard=true","--api.insecure=false"]}]}}}}'
 ```
 
 Or directly applied the updated DaemonSet YAML:
+
 ```yaml
 spec:
   containers:
-  - args:
-    - --global.checkNewVersion=true
-    - --global.sendAnonymousUsage=false
-    - --entryPoints.web.address=:8000
-    - --entryPoints.websecure.address=:8443
-    - --entryPoints.metrics.address=:9090
-    - --entryPoints.web.http.redirections.entryPoint.to=websecure
-    - --entryPoints.web.http.redirections.entryPoint.scheme=https
-    - --providers.kubernetescrd
-    - --providers.kubernetescrd.allowCrossNamespace=true  # ← ADDED THIS
-    - --providers.kubernetesingress
-    - --metrics.prometheus.addEntryPointsLabels=true
-    - --metrics.prometheus.addServicesLabels=true
-    - --log.level=INFO
-    - --accesslog=true
-    - --api.dashboard=true
-    - --api.insecure=false
+    - args:
+        - --global.checkNewVersion=true
+        - --global.sendAnonymousUsage=false
+        - --entryPoints.web.address=:8000
+        - --entryPoints.websecure.address=:8443
+        - --entryPoints.metrics.address=:9090
+        - --entryPoints.web.http.redirections.entryPoint.to=websecure
+        - --entryPoints.web.http.redirections.entryPoint.scheme=https
+        - --providers.kubernetescrd
+        - --providers.kubernetescrd.allowCrossNamespace=true # ← ADDED THIS
+        - --providers.kubernetesingress
+        - --metrics.prometheus.addEntryPointsLabels=true
+        - --metrics.prometheus.addServicesLabels=true
+        - --log.level=INFO
+        - --accesslog=true
+        - --api.dashboard=true
+        - --api.insecure=false
 ```
 
 ### Step 2: Verify Traefik Rollout
@@ -92,6 +97,7 @@ All 7 pods successfully restarted with the new configuration.
 ## VERIFICATION
 
 ### Before Fix
+
 ```bash
 curl -s -w "HTTP Status: %{http_code}\n" \
   https://webhook.dev.cerebral.baerautotech.com/ \
@@ -105,6 +111,7 @@ curl -s -w "HTTP Status: %{http_code}\n" \
 ```
 
 ### After Fix
+
 ```bash
 curl -s -w "HTTP Status: %{http_code}\n" \
   https://webhook.dev.cerebral.baerautotech.com/ \
@@ -118,6 +125,7 @@ curl -s -w "HTTP Status: %{http_code}\n" \
 ```
 
 ### PipelineRuns Created
+
 ```bash
 $ kubectl get pipelineruns -n tekton-pipelines --sort-by='.metadata.creationTimestamp' | tail -3
 
@@ -126,6 +134,7 @@ webhook-api-gateway-1761414312                  Unknown     PipelineRunPending
 ```
 
 ### Webhook Receiver Logs
+
 ```
 [2m2025-10-25T17:45:12.742987Z[0m [32m INFO[0m Processing webhook event_id=89702a43-9b96-474d-8ff0-23c6f69f4d54 service=api-gateway
 [2m2025-10-25T17:45:13.265862Z[0m [32m INFO[0m PipelineRun created event_id=89702a43-9b96-474d-8ff0-23c6f69f4d54 pipeline_run=webhook-api-gateway-1761414312
@@ -137,15 +146,16 @@ webhook-api-gateway-1761414312                  Unknown     PipelineRunPending
 
 ### Traefik Configuration Flag Meanings
 
-| Flag | Purpose |
-|------|---------|
-| `--providers.kubernetescrd` | Enable Traefik CRDs (IngressRoute, Middleware, etc.) |
-| `--providers.kubernetescrd.allowCrossNamespace=true` | Allow referencing services in different namespaces |
-| `--providers.kubernetesingress` | Enable traditional Kubernetes Ingress resources |
+| Flag                                                 | Purpose                                              |
+| ---------------------------------------------------- | ---------------------------------------------------- |
+| `--providers.kubernetescrd`                          | Enable Traefik CRDs (IngressRoute, Middleware, etc.) |
+| `--providers.kubernetescrd.allowCrossNamespace=true` | Allow referencing services in different namespaces   |
+| `--providers.kubernetesingress`                      | Enable traditional Kubernetes Ingress resources      |
 
 ### Security Implications
 
 With `allowCrossNamespace=true`:
+
 - ✅ IngressRoutes can reference services in ANY namespace
 - ✅ Enables multi-team deployments with shared ingress
 - ⚠️ Requires careful RBAC to prevent unauthorized access
@@ -174,6 +184,7 @@ The Traefik service account has limited permissions (only watches Ingress/Ingres
 ## NEXT STEPS FOR FULL CI/CD VALIDATION
 
 1. **Test with Real GitHub Webhook**
+
    ```bash
    cd /Users/bbaer/Development/cerebral
    echo "test" > microservices/api-gateway/webhook-test.txt
@@ -186,6 +197,7 @@ The Traefik service account has limited permissions (only watches Ingress/Ingres
    ```
 
 2. **Watch Pipeline Execution**
+
    ```bash
    kubectl describe pipelinerun webhook-api-gateway-<timestamp> -n tekton-pipelines
    ```
@@ -201,6 +213,7 @@ The Traefik service account has limited permissions (only watches Ingress/Ingres
 ## DOCUMENTATION UPDATES
 
 **Files to Update**:
+
 - `🚨_READ_THIS_FIRST_CI_CD_SYSTEM.md` - Add Traefik cross-namespace info
 - `WEBHOOK_RECEIVER_CONFIGURATION.md` - Document the fix
 - `CI_CD_COMPLETE_GUIDE.md` - Update routing section
@@ -210,12 +223,12 @@ The Traefik service account has limited permissions (only watches Ingress/Ingres
 
 ## COMPARISON: OTHER SOLUTIONS CONSIDERED
 
-| Solution | Pros | Cons | Status |
-|----------|------|------|--------|
-| Move IngressRoute to `tekton-pipelines` ns | No flag needed | Breaks namespace isolation | ❌ Rejected |
-| Create proxy service in `cerebral-development` | Extra abstraction layer | Added complexity | ❌ Rejected |
-| Enable cross-namespace in Traefik | ✅ Solves all routing issues, ✅ Enables multi-namespace deployments, ✅ 1-line fix | ⚠️ Requires careful RBAC | ✅ **CHOSEN** |
-| Use EventListener instead of receiver | Tekton-native | Doesn't support signing, Limited to Tekton events | ❌ Incompatible |
+| Solution                                       | Pros                                                                                | Cons                                              | Status          |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------- | --------------- |
+| Move IngressRoute to `tekton-pipelines` ns     | No flag needed                                                                      | Breaks namespace isolation                        | ❌ Rejected     |
+| Create proxy service in `cerebral-development` | Extra abstraction layer                                                             | Added complexity                                  | ❌ Rejected     |
+| Enable cross-namespace in Traefik              | ✅ Solves all routing issues, ✅ Enables multi-namespace deployments, ✅ 1-line fix | ⚠️ Requires careful RBAC                          | ✅ **CHOSEN**   |
+| Use EventListener instead of receiver          | Tekton-native                                                                       | Doesn't support signing, Limited to Tekton events | ❌ Incompatible |
 
 ---
 
@@ -226,6 +239,7 @@ The Traefik service account has limited permissions (only watches Ingress/Ingres
 **What Fixed It**: One flag in Traefik: `--providers.kubernetescrd.allowCrossNamespace=true`
 
 **Result**:
+
 - ✅ GitHub webhooks now return 202 ACCEPTED
 - ✅ PipelineRuns are created automatically
 - ✅ CI/CD pipeline is fully functional

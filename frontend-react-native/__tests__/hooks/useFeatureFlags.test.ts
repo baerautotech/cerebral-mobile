@@ -138,9 +138,7 @@ describe('useFeatureFlags', () => {
       return Promise.resolve(null);
     });
 
-    (global.fetch as jest.Mock).mockRejectedValueOnce(
-      new Error('Network error')
-    );
+    (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
 
     const { result } = renderHook(() => useFeatureFlags());
 
