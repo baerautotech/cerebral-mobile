@@ -1,0 +1,63 @@
+# Pre-commit hooks for Cerebral Mobile (React Native/TypeScript)
+# Date: November 9, 2025
+# Ensures code quality for mobile application before commit
+
+repos:
+  # ESLint - JavaScript/TypeScript linting
+  - repo: local
+    hooks:
+      - id: eslint
+        name: ESLint
+        entry: npx eslint --fix
+        language: system
+        types: [javascript, jsx]
+        pass_filenames: true
+        exclude: ^(node_modules/|dist/|build/)
+
+  # Prettier - Code formatting
+  - repo: local
+    hooks:
+      - id: prettier
+        name: Prettier
+        entry: npx prettier --write
+        language: system
+        types: [javascript, json, markdown, yaml]
+        pass_filenames: true
+        exclude: ^(node_modules/|dist/|build/)
+
+  # Standard pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: detect-private-key
+      - id: mixed-line-ending
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+
+  # Security scanning
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.2
+    hooks:
+      - id: gitleaks
+        stages: [commit]
+
+  # YAML linting
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        args: [--strict, -d, "{extends: relaxed, rules: {line-length: {max: 120}}}"]
+        exclude: ^(node_modules/|dist/|build/)
+
+  # Markdown linting
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.41.0
+    hooks:
+      - id: markdownlint
+        args: [--fix, --ignore, node_modules]
