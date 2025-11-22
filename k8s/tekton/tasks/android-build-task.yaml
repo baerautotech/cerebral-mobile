@@ -1,0 +1,175 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: android-build-task
+  namespace: tekton-pipelines
+  labels:
+    app: cerebral-mobile
+    component: android-build
+spec:
+  description: Build and sign Android app for Play Store deployment
+  params:
+    - name: repo-url
+      type: string
+      description: Git repository URL
+    - name: repo-branch
+      type: string
+      default: main
+      description: Git branch to clone
+    - name: android-keystore-secret
+      type: string
+      default: android-keystore
+      description: Kubernetes secret containing Android keystore
+  workspaces:
+    - name: shared-data
+      description: Shared workspace for repository and build artifacts
+  
+  steps:
+    - name: clone-repo
+      image: alpine/git:latest
+      script: |
+        #!/bin/sh
+        set -e
+        
+        echo "🔄 Cloning repository..."
+        cd $(workspaces.shared-data.path)
+        git clone -b $(params.repo-branch) $(params.repo-url) repo
+        cd repo
+        
+        echo "✅ Repository cloned successfully"
+        git log --oneline -1
+    
+    - name: setup-android-environment
+      image: mcr.microsoft.com/devcontainers/android:latest
+      env:
+        - name: ANDROID_SDK_ROOT
+          value: /opt/android-sdk-linux
+        - name: PATH
+          value: /opt/android-sdk-linux/platform-tools:/opt/android-sdk-linux/tools:/opt/android-sdk-linux/tools/bin:$PATH
+      script: |
+        #!/bin/bash
+        set -e
+        
+        cd $(workspaces.shared-data.path)/repo/frontend-react-native
+        
+        echo "🔄 Setting up Android environment..."
+        
+        # Install Node dependencies
+        echo "📦 Installing Node dependencies..."
+        npm install -g pnpm
+        pnpm install --frozen-lockfile
+        
+        # Accept Android licenses
+        echo "📋 Accepting Android SDK licenses..."
+        yes | sdkmanager --licenses 2>/dev/null || true
+        
+        echo "✅ Android environment setup complete"
+    
+    - name: build-android-bundle
+      image: mcr.microsoft.com/devcontainers/android:latest
+      env:
+        - name: ANDROID_SDK_ROOT
+          value: /opt/android-sdk-linux
+        - name: PATH
+          value: /opt/android-sdk-linux/platform-tools:/opt/android-sdk-linux/tools:/opt/android-sdk-linux/tools/bin:$PATH
+        - name: KEYSTORE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: $(params.android-keystore-secret)
+              key: keystore-password
+        - name: KEY_ALIAS
+          valueFrom:
+            secretKeyRef:
+              name: $(params.android-keystore-secret)
+              key: keystore-alias
+        - name: KEY_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: $(params.android-keystore-secret)
+              key: alias-password
+      script: |
+        #!/bin/bash
+        set -e
+        
+        cd $(workspaces.shared-data.path)/repo/frontend-react-native
+        
+        echo "🏗️  Building Android App Bundle..."
+        
+        # Copy keystore to workspace
+        echo "🔐 Setting up signing keystore..."
+        cp /var/run/secrets/android-keystore/keystore.jks android/
+        
+        cd android
+        
+        # Build release bundle
+        ./gradlew bundleRelease \
+          -Dorg.gradle.project.android.keystorePath=keystore.jks \
+          -Dorg.gradle.project.android.keystorePassword="$KEYSTORE_PASSWORD" \
+          -Dorg.gradle.project.android.keyAlias="$KEY_ALIAS" \
+          -Dorg.gradle.project.android.keyPassword="$KEY_PASSWORD"
+        
+        cd ..
+        
+        echo "✅ Android App Bundle created successfully"
+        ls -lh android/app/build/outputs/bundle/release/app-release.aab
+    
+    - name: build-android-apk
+      image: mcr.microsoft.com/devcontainers/android:latest
+      env:
+        - name: ANDROID_SDK_ROOT
+          value: /opt/android-sdk-linux
+        - name: PATH
+          value: /opt/android-sdk-linux/platform-tools:/opt/android-sdk-linux/tools:/opt/android-sdk-linux/tools/bin:$PATH
+        - name: KEYSTORE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: $(params.android-keystore-secret)
+              key: keystore-password
+        - name: KEY_ALIAS
+          valueFrom:
+            secretKeyRef:
+              name: $(params.android-keystore-secret)
+              key: keystore-alias
+        - name: KEY_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: $(params.android-keystore-secret)
+              key: alias-password
+      script: |
+        #!/bin/bash
+        set -e
+        
+        cd $(workspaces.shared-data.path)/repo/frontend-react-native/android
+        
+        echo "🏗️  Building Android APK..."
+        
+        # Build release APK (optional, for testing)
+        ./gradlew assembleRelease \
+          -Dorg.gradle.project.android.keystorePath=keystore.jks \
+          -Dorg.gradle.project.android.keystorePassword="$KEYSTORE_PASSWORD" \
+          -Dorg.gradle.project.android.keyAlias="$KEY_ALIAS" \
+          -Dorg.gradle.project.android.keyPassword="$KEY_PASSWORD"
+        
+        echo "✅ Android APK created successfully"
+        ls -lh app/build/outputs/apk/release/app-release.apk
+    
+    - name: verify-build
+      image: alpine:latest
+      script: |
+        #!/bin/sh
+        set -e
+        
+        echo "🔍 Verifying Android build artifacts..."
+        
+        BUNDLE_FILE=$(workspaces.shared-data.path)/repo/frontend-react-native/android/app/build/outputs/bundle/release/app-release.aab
+        APK_FILE=$(workspaces.shared-data.path)/repo/frontend-react-native/android/app/build/outputs/apk/release/app-release.apk
+        
+        if [ -f "$BUNDLE_FILE" ]; then
+          echo "✅ Build verification passed"
+          echo "   AAB file: $BUNDLE_FILE"
+          echo "   APK file: $APK_FILE"
+        else
+          echo "❌ Build verification failed: AAB file not found"
+          exit 1
+        fi
+

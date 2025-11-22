@@ -12,6 +12,8 @@ import { TaskHeader } from './components/TaskHeader';
 import { styles } from './styles';
 import { getStatusColor, getPriorityColor } from './utils';
 import { ApiClient } from '../../services/api';
+import { FeatureFlagGuard } from '../../components/FeatureFlagGuard';
+import { TierGuard } from '../../components/TierGuard';
 
 interface TaskDetailScreenProps {
   taskId: string;
@@ -236,6 +238,34 @@ export const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({
             </Text>
           )}
         </View>
+
+        {/* Standard Tier: Data Export */}
+        <TierGuard tier="standard">
+          <View style={{ padding: 16, backgroundColor: '#e8f4f8', borderRadius: 8, marginTop: 16 }}>
+            <Text style={{ color: '#006064', fontSize: 14, fontWeight: '600' }}>📊 Export Task Data</Text>
+            <Text style={{ color: '#00838f', fontSize: 12 }}>Available in Standard tier and above</Text>
+          </View>
+        </TierGuard>
+
+        {/* Enterprise: AI Suggestions */}
+        <FeatureFlagGuard flag="ai_suggestions">
+          <TierGuard tier="enterprise">
+            <View style={{ padding: 16, backgroundColor: '#2a1a3a', borderRadius: 8, marginTop: 16 }}>
+              <Text style={{ color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 8 }}>🤖 AI Insights</Text>
+              <Text style={{ color: '#ccc', fontSize: 12 }}>Get AI-powered recommendations for this task</Text>
+            </View>
+          </TierGuard>
+        </FeatureFlagGuard>
+
+        {/* Enterprise: Workflow Automation */}
+        <FeatureFlagGuard flag="workflow_automation">
+          <TierGuard tier="enterprise">
+            <View style={{ padding: 16, backgroundColor: '#1a3a2a', borderRadius: 8, marginTop: 16 }}>
+              <Text style={{ color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 8 }}>⚙️ Automation Rules</Text>
+              <Text style={{ color: '#ccc', fontSize: 12 }}>Set up automated workflows for this task type</Text>
+            </View>
+          </TierGuard>
+        </FeatureFlagGuard>
       </View>
     </ScrollView>
   );

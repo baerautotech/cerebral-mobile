@@ -18,6 +18,8 @@ import { RecentActivity } from './components/RecentActivity';
 import { StatsCard } from './components/StatsCard';
 import { styles } from './styles';
 import { AuthService } from '../../services/supabase';
+import { FeatureFlagGuard } from '../../components/FeatureFlagGuard';
+import { TierGuard } from '../../components/TierGuard';
 
 interface DashboardStats {
   totalTasks: number;
@@ -120,7 +122,23 @@ export const DashboardScreen: React.FC = () => {
         isDesktop={isDesktop}
       />
 
+      {/* Standard Tier: Advanced Analytics */}
+      <TierGuard tier="standard">
+        <View style={{ padding: 16, backgroundColor: '#e8f4f8', marginTop: 16, borderRadius: 8 }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 8 }}>Advanced Analytics</Text>
+          <Text style={{ color: '#666' }}>Detailed insights and trends available in Standard tier</Text>
+        </View>
+      </TierGuard>
+
       <RecentActivity />
+
+      {/* Enterprise Tier: AI Insights */}
+      <TierGuard tier="enterprise">
+        <View style={{ padding: 16, backgroundColor: '#f0e8f8', marginTop: 16, borderRadius: 8 }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 8 }}>🤖 AI-Powered Insights</Text>
+          <Text style={{ color: '#666' }}>Personalized recommendations powered by AI</Text>
+        </View>
+      </TierGuard>
     </ScrollView>
   );
 };

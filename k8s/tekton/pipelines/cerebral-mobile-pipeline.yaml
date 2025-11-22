@@ -1,0 +1,175 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: cerebral-mobile-pipeline
+  namespace: tekton-pipelines
+  labels:
+    app: cerebral-mobile
+    version: v1
+spec:
+  description: Complete CI/CD pipeline for Cerebral React Native mobile app (iOS + Android)
+  
+  params:
+    # Required parameters
+    - name: repo-url
+      type: string
+      description: Git repository URL (e.g., https://github.com/baerautotech/cerebral-mobile-1)
+    
+    # Optional parameters with defaults
+    - name: repo-branch
+      type: string
+      default: main
+      description: Git branch to build
+    
+    - name: build-target
+      type: string
+      default: all
+      description: "Build target: ios, android, or all"
+    
+    - name: version
+      type: string
+      default: "1.0.0"
+      description: App version (semver format)
+    
+    - name: ios-cert-secret
+      type: string
+      default: ios-signing-cert
+      description: Kubernetes secret containing iOS signing certificate
+    
+    - name: android-keystore-secret
+      type: string
+      default: android-keystore
+      description: Kubernetes secret containing Android keystore
+  
+  workspaces:
+    - name: shared-workspace
+      description: Shared workspace for all tasks
+  
+  tasks:
+    # Task 1: Clone repository
+    - name: git-clone
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: $(params.repo-url)
+        - name: revision
+          value: $(params.repo-branch)
+        - name: deleteExisting
+          value: "true"
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+    
+    # Task 2: Run tests
+    - name: run-tests
+      runAfter:
+        - git-clone
+      taskRef:
+        name: npm
+      params:
+        - name: ARGS
+          value:
+            - test
+            - --passWithNoTests
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+    
+    # Task 3: Lint code
+    - name: lint-code
+      runAfter:
+        - git-clone
+      taskRef:
+        name: npm
+      params:
+        - name: ARGS
+          value:
+            - lint
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+    
+    # Task 4: Build iOS (conditional)
+    - name: build-ios
+      when:
+        - input: $(params.build-target)
+          operator: in
+          values: ["ios", "all"]
+      runAfter:
+        - run-tests
+        - lint-code
+      taskRef:
+        name: ios-build-task
+      params:
+        - name: repo-url
+          value: $(params.repo-url)
+        - name: repo-branch
+          value: $(params.repo-branch)
+        - name: ios-cert-secret
+          value: $(params.ios-cert-secret)
+      workspaces:
+        - name: shared-data
+          workspace: shared-workspace
+    
+    # Task 5: Build Android (conditional)
+    - name: build-android
+      when:
+        - input: $(params.build-target)
+          operator: in
+          values: ["android", "all"]
+      runAfter:
+        - run-tests
+        - lint-code
+      taskRef:
+        name: android-build-task
+      params:
+        - name: repo-url
+          value: $(params.repo-url)
+        - name: repo-branch
+          value: $(params.repo-branch)
+        - name: android-keystore-secret
+          value: $(params.android-keystore-secret)
+      workspaces:
+        - name: shared-data
+          workspace: shared-workspace
+    
+    # Task 6: Build Docker image for web
+    - name: build-docker-image
+      runAfter:
+        - build-ios
+        - build-android
+      taskRef:
+        name: kaniko
+      params:
+        - name: IMAGE
+          value: 10.34.0.202:5000/cerebral/mobile:$(params.version)
+        - name: DOCKERFILE
+          value: ./Dockerfile.build
+        - name: CONTEXT
+          value: ./frontend-react-native
+        - name: EXTRA_ARGS
+          value:
+            - --cache=true
+            - --cache-repo=10.34.0.202:5000/cerebral/mobile-cache
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+  
+  finally:
+    # Final task: Notification
+    - name: notify-completion
+      taskRef:
+        name: slack-notification
+      params:
+        - name: message
+          value: |
+            🚀 Cerebral Mobile Build $(params.build-target)
+            Version: $(params.version)
+            Branch: $(params.repo-branch)
+            Status: $(tasks.status)
+      onFailure:
+        - build-ios
+        - build-android
+        - build-docker-image
+

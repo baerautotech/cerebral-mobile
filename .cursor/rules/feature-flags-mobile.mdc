@@ -1,0 +1,318 @@
+# Feature Flags & Tier System - Mobile Implementation
+
+## FOR AI AGENTS WORKING ON MOBILE APP
+
+### Quick Understanding
+Mobile apps are special: users can't auto-refresh the feature flags like web can.
+So we need to be smarter about caching, updates, and fallbacks.
+
+**Backend Control**: Feature flags enable/disable endpoints
+**Mobile Reflection**: Screens show/hide based on cached flags
+**User Action**: Pull-to-refresh to reload flags manually
+**Notification**: APNs pushes when flag changes (optional but recommended)
+
+### Architecture Overview
+
+```
+App Starts
+    │
+    ├─ useAuth() gets JWT from secure storage
+    │
+    ├─ Extract tier from JWT
+    │
+    ├─ Check AsyncStorage for cached flags
+    │  └─ If cache fresh (<5 min), use cached
+    │
+    ├─ Fetch /api/flags from backend
+    │  └─ Update cache with fresh flags
+    │
+    └─ Store in FeatureFlagContext
+       
+Screen Render:
+    │
+    ├─ <FeatureFlagGuard flag="new_feature">
+    │  └─ Only renders if flag enabled in cache
+    │
+    ├─ <TierGuard tier="enterprise">
+    │  └─ Only renders if user meets tier
+    │
+    ├─ <IAPFeature sku="premium_monthly">
+    │  └─ Only renders if purchase active
+    │
+    └─ Combined:
+       └─ All conditions must be true
+```
+
+### Implementation Checklist
+
+**PHASE 1: Feature Flags SDK**
+- [ ] Create `services/featureFlags.ts` (client for /api/flags)
+- [ ] Create `useFeatureFlags()` hook with caching
+- [ ] Create `FeatureFlagGuard` wrapper component
+- [ ] Add flag context provider to App.tsx
+- [ ] Test flag fetching and AsyncStorage caching
+- [ ] Implement pull-to-refresh flag update
+
+**PHASE 2: Tier System**
+- [ ] Create `services/tiers.ts` (tier from JWT)
+- [ ] Create `useUserTier()` hook
+- [ ] Create `TierGuard` wrapper component
+- [ ] Add upgrade CTA component
+- [ ] Test tier validation
+
+**PHASE 3: In-App Purchases**
+- [ ] Choose IAP provider (RevenueCat recommended)
+- [ ] Create `services/iap.ts` (RevenueCat client)
+- [ ] Create `useIAP()` hook
+- [ ] Create `IAPFeature` wrapper component
+- [ ] Implement purchase flow UI
+- [ ] Test with TestFlight StoreKit config
+- [ ] Verify purchase syncs to backend
+
+**PHASE 4: Screen Wrapping**
+- [ ] Identify tier-gated screens (20+)
+- [ ] Wrap with TierGuard or IAPFeature
+- [ ] Identify feature-flagged screens (15+)
+- [ ] Wrap with FeatureFlagGuard
+- [ ] Test each wrapped screen
+
+**PHASE 5: Build & Deployment**
+- [ ] Create build scripts (iOS + Android)
+- [ ] Setup Fastlane for automation
+- [ ] Create Tekton tasks for mobile builds
+- [ ] Wire GitHub webhooks
+- [ ] Test auto-build and TestFlight upload
+- [ ] Setup Play Store publishing
+
+**PHASE 6: Testing & QA**
+- [ ] Unit tests for hooks
+- [ ] Integration tests for guards
+- [ ] E2E tests on real devices
+- [ ] Test IAP purchase flow
+- [ ] Test feature flag updates
+- [ ] Test tier restrictions
+
+### Code Patterns
+
+**Pattern 1: Feature Flag Hook with Caching**
+```typescript
+// src/hooks/useFeatureFlags.ts
+import { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { fetchFeatureFlags } from '../services/featureFlags';
+
+const CACHE_KEY = 'feature_flags';
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+export function useFeatureFlags() {
+  const [flags, setFlags] = useState<Record<string, boolean>>({});
+  const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<number>(0);
+
+  const loadFlags = async () => {
+    try {
+      // Check cache
+      const cached = await AsyncStorage.getItem(CACHE_KEY);
+      const cacheTime = await AsyncStorage.getItem(`${CACHE_KEY}_time`);
+      
+      if (cached && cacheTime && Date.now() - parseInt(cacheTime) < CACHE_TTL) {
+        setFlags(JSON.parse(cached));
+        setLastUpdated(parseInt(cacheTime));
+        setLoading(false);
+        return;
+      }
+
+      // Fetch fresh
+      const newFlags = await fetchFeatureFlags();
+      await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(newFlags));
+      await AsyncStorage.setItem(`${CACHE_KEY}_time`, Date.now().toString());
+      
+      setFlags(newFlags);
+      setLastUpdated(Date.now());
+    } catch (error) {
+      console.error('Failed to load feature flags:', error);
+      // Fallback to cache even if expired
+      const cached = await AsyncStorage.getItem(CACHE_KEY);
+      if (cached) {
+        setFlags(JSON.parse(cached));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadFlags();
+  }, []);
+
+  return { flags, loading, refresh: loadFlags, lastUpdated };
+}
+```
+
+**Pattern 2: Feature Flag Guard Component**
+```typescript
+// src/components/FeatureFlagGuard.tsx
+import React, { ReactNode } from 'react';
+import { useFeatureFlags } from '../hooks/useFeatureFlags';
+
+interface FeatureFlagGuardProps {
+  flag: string;
+  children: ReactNode;
+  fallback?: ReactNode;
+}
+
+export function FeatureFlagGuard({ flag, children, fallback }: FeatureFlagGuardProps) {
+  const { flags, loading } = useFeatureFlags();
+
+  if (loading) {
+    return null; // or show loading spinner
+  }
+
+  if (!flags[flag]) {
+    return fallback ? <>{fallback}</> : null;
+  }
+
+  return <>{children}</>;
+}
+```
+
+**Pattern 3: Tier Guard Component with Upgrade CTA**
+```typescript
+// src/components/TierGuard.tsx
+import React, { ReactNode } from 'react';
+import { View, TouchableOpacity, Text } from 'react-native';
+import { useUserTier } from '../hooks/useUserTier';
+
+interface TierGuardProps {
+  tier: 'free' | 'standard' | 'enterprise';
+  children: ReactNode;
+  fallback?: ReactNode;
+}
+
+export function TierGuard({ tier, children, fallback }: TierGuardProps) {
+  const userTier = useUserTier();
+  const tierLevels = { free: 0, standard: 1, enterprise: 2 };
+
+  if (!userTier || tierLevels[userTier] < tierLevels[tier]) {
+    return fallback ? (
+      <>{fallback}</>
+    ) : (
+      <View style={{ padding: 16, backgroundColor: '#fff3cd', borderRadius: 8 }}>
+        <Text style={{ marginBottom: 12 }}>
+          This feature requires {tier} tier
+        </Text>
+        <TouchableOpacity onPress={() => navigateToUpgrade()}>
+          <Text style={{ color: '#007AFF', fontWeight: '600' }}>
+            Upgrade Now
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  return <>{children}</>;
+}
+```
+
+**Pattern 4: IAP Feature Component**
+```typescript
+// src/components/IAPFeature.tsx
+import React, { ReactNode } from 'react';
+import { useIAP } from '../hooks/useIAP';
+import { UpgradeCTA } from './UpgradeCTA';
+
+interface IAPFeatureProps {
+  sku: string;
+  children: ReactNode;
+}
+
+export function IAPFeature({ sku, children }: IAPFeatureProps) {
+  const { purchasedSKUs, loading, initiateCheckout } = useIAP();
+
+  if (loading) {
+    return null;
+  }
+
+  if (!purchasedSKUs.includes(sku)) {
+    return (
+      <UpgradeCTA 
+        sku={sku}
+        onPress={() => initiateCheckout(sku)}
+      />
+    );
+  }
+
+  return <>{children}</>;
+}
+```
+
+### Testing Strategy
+
+**Test 1: Feature Flag Caching**
+```typescript
+it('caches flags in AsyncStorage', async () => {
+  const flags = await useFeatureFlags();
+  
+  // First call fetches from backend
+  const item1 = await AsyncStorage.getItem('feature_flags');
+  expect(item1).toBeTruthy();
+  
+  // Second call uses cache
+  const item2 = await AsyncStorage.getItem('feature_flags');
+  expect(item2).toEqual(item1);
+});
+```
+
+**Test 2: Tier Validation**
+```typescript
+it('allows enterprise users to access premium features', async () => {
+  mockUserTier('enterprise');
+  
+  const { getByText } = render(
+    <TierGuard tier="standard">
+      <Text>Premium Content</Text>
+    </TierGuard>
+  );
+  
+  expect(getByText('Premium Content')).toBeTruthy();
+});
+```
+
+### Debugging Commands
+
+```bash
+# Check cached flags
+adb shell content query --uri content://com.cerebral.mobile/flags
+
+# Check iOS keychain (secure storage)
+security find-generic-password -s cerebral_tier
+
+# Check logs for flag evaluation
+adb logcat | grep feature_flag
+# Or Xcode console for iOS
+
+# Test IAP locally
+# iOS: Use StoreKit configuration file in Xcode
+# Android: Use Google Play Console internal testing
+```
+
+### Rollout Checklist (For Each Feature)
+
+- [ ] Feature flag created in backend
+- [ ] Endpoint wrapped with @require_feature
+- [ ] Mobile screen wrapped with FeatureFlagGuard
+- [ ] Unit tests passing (flag enabled/disabled)
+- [ ] Manual testing on simulator
+- [ ] Manual testing on real device
+- [ ] Merge to develop
+- [ ] Auto-build generates debug APK
+- [ ] Test on Android real device
+- [ ] Auto-build generates iOS build
+- [ ] Test on TestFlight
+- [ ] Merge to staging
+- [ ] Build to TestFlight external testers
+- [ ] QA testing complete
+- [ ] Merge to main
+- [ ] Build released to App Store
+- [ ] Monitor crash metrics
+- [ ] Monitor feature usage in analytics

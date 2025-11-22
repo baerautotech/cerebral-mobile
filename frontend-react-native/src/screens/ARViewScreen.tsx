@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { FeatureFlagGuard } from '../../components/FeatureFlagGuard';
+import { TierGuard } from '../../components/TierGuard';
 // import { ViroARSceneNavigator } from '@viro-community/react-viro';
 
 // Placeholder for the AR Scene
@@ -11,7 +13,7 @@ const ARScene = () => {
   );
 };
 
-const ARViewScreen = () => {
+const ARViewContent = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Augmented Reality View</Text>
@@ -25,6 +27,16 @@ const ARViewScreen = () => {
       */}
       <ARScene />
     </View>
+  );
+};
+
+const ARViewScreen = () => {
+  return (
+    <FeatureFlagGuard flag="ar_mode">
+      <TierGuard tier="enterprise">
+        <ARViewContent />
+      </TierGuard>
+    </FeatureFlagGuard>
   );
 };
 

@@ -1,0 +1,45 @@
+# Multi-stage Dockerfile for React Native Frontend
+# Optimized for both web and mobile builds
+
+# Stage 1: Dependencies and build
+FROM node:18-alpine as builder
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Build the app for web
+RUN npm run build:web || npm run build
+
+# Stage 2: Runtime environment
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install serve to run the built app
+RUN npm install -g serve
+
+# Copy built files from builder
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/web ./web
+
+# Expose port for web server
+EXPOSE 3000 8081
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+
+# Default command
+CMD ["serve", "-s", "dist", "-l", "3000"]
+

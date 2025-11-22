@@ -15,6 +15,8 @@ import {
 import { FilterBar } from './components/FilterBar';
 import { TaskCard } from './components/TaskCard';
 import { ApiClient } from '../../services/api';
+import { FeatureFlagGuard } from '../../components/FeatureFlagGuard';
+import { TierGuard } from '../../components/TierGuard';
 
 interface Task {
   id: string;
@@ -109,6 +111,20 @@ export const TasksScreen: React.FC = () => {
         />
 
         <FilterBar filter={filter} onFilterChange={setFilter} />
+
+        {/* Beta: Advanced Filtering */}
+        <FeatureFlagGuard flag="advanced_filtering">
+          <View style={{ padding: 8, backgroundColor: '#1f5f3f', borderRadius: 4, marginTop: 8 }}>
+            <Text style={{ color: '#fff', fontSize: 12, fontWeight: '600' }}>✨ Advanced Filters Available</Text>
+          </View>
+        </FeatureFlagGuard>
+
+        {/* Beta: Bulk Actions */}
+        <FeatureFlagGuard flag="advanced_actions">
+          <View style={{ padding: 8, backgroundColor: '#3f5f1f', borderRadius: 4, marginTop: 8 }}>
+            <Text style={{ color: '#fff', fontSize: 12, fontWeight: '600' }}>⚡ Bulk Actions Enabled</Text>
+          </View>
+        </FeatureFlagGuard>
       </View>
 
       <FlatList
@@ -127,6 +143,16 @@ export const TasksScreen: React.FC = () => {
           <View style={styles.emptyState}>
             <Text style={styles.emptyText}>No tasks found</Text>
           </View>
+        }
+        ListFooterComponent={
+          <FeatureFlagGuard flag="ai_suggestions">
+            <TierGuard tier="enterprise">
+              <View style={{ padding: 16, backgroundColor: '#2a1a3a', borderRadius: 8, marginTop: 16, marginHorizontal: 16, marginBottom: 16 }}>
+                <Text style={{ color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 8 }}>🤖 AI Task Suggestions</Text>
+                <Text style={{ color: '#ccc', fontSize: 12 }}>Get AI-powered suggestions to optimize your task workflow</Text>
+              </View>
+            </TierGuard>
+          </FeatureFlagGuard>
         }
       />
     </View>
