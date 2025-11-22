@@ -1,0 +1,35 @@
+---
+description: DEPRECATED - Use .trae/rules/self_improve.md instead
+globs: **/*
+alwaysApply: false
+---
+
+# ⚠️ Redirect: Use `.trae/` System Instead
+
+This file is deprecated. All rule improvements and development standards have been **consolidated into the unified `.trae/` system**.
+
+## 📍 Use This Instead
+
+```
+@.trae/rules/self_improve.md
+```
+
+## ✨ What's Available in `.trae/`
+
+- **self_improve.md** - Rule improvement guidelines (this content)
+- **enterprise_methodology.md** - Enterprise standards
+- **dev_workflow.md** - Development workflow integration
+- **trae_rules.md** - Rule formatting standards
+
+## 🔄 Migration
+
+The `.trae/` version includes:
+- ✅ Rule improvement triggers
+- ✅ Analysis process guidelines
+- ✅ Rule update criteria
+- ✅ Enterprise methodology integration
+- ✅ Continuous improvement framework
+
+---
+
+**Please reference [@.trae/rules/self_improve.md](mdc:../.trae/rules/self_improve.md) for all future use.**

@@ -2,7 +2,7 @@
 
 ## 🚨 CRITICAL: This is the DEFINITIVE CI/CD documentation for all 4 repositories
 
-**Required Reading**: `CI_CD_COMPLETE_GUIDE.md` in each repo  
+**Required Reading**: `CI_CD_COMPLETE_GUIDE.md` in each repo
 **This file**: Quick reference for AI agents and developers
 
 ---
@@ -106,7 +106,7 @@ docker build -f docker/Dockerfile.ai-base.cuda \
   -t 10.34.0.202:5000/cerebral/ai-base:cuda .
 ```
 
-**Why?** 
+**Why?**
 - Mac builds ARM64-only images by default
 - Kubernetes cluster (AMD64) cannot run ARM64 images
 - Kaniko fails: "no matching manifest for linux/amd64"

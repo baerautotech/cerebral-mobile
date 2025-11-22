@@ -1,0 +1,118 @@
+# 🏗️ CEREBRAFLOW ARCHITECTURE LAYERS
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    CURSOR AI LAYER                      │
+│  - MCP Tools (12 consolidated tools)                   │
+│  - Quick Reference Rules                               │
+│  - Memory System Integration                           │
+└─────────────────────────────────────────────────────────┘
+                              │
+┌─────────────────────────────────────────────────────────┐
+│                 CEREBRAFLOW MCP LAYER                   │
+│  - .cerebraflow/core/mcp/cerebraflow_server.py        │
+│  - Task Management (task_handlers.py)                  │
+│  - Research Integration (research_handlers.py)         │
+└─────────────────────────────────────────────────────────┘
+                              │
+┌─────────────────────────────────────────────────────────┐
+│                   UNIFIED STORAGE LAYER                │
+│  - MCPUnifiedStorage (ChromaDB + Supabase sync)       │
+│  - Tenant Isolation                                   │
+│  - Enterprise Security                                │
+└─────────────────────────────────────────────────────────┘
+                              │
+┌─────────────────────────────────────────────────────────┐
+│                   PRODUCTION DATA LAYER                │
+│  - Supabase (Production Database)                     │
+│  - ChromaDB (Local Cache)                            │
+│  - AutoDoc RAG (4,527 chunks)                        │
+└─────────────────────────────────────────────────────────┘
+```
+
+## 🔄 INTEGRATION FLOW
+1. **RAG Query** → `mcp_cerebraflow-stdio_research`
+2. **Task Operations** → `TaskManager` → `MCPUnifiedStorage`
+3. **Data Persistence** → `ChromaDB` → `Supabase` (sync)
+4. **Enterprise Validation** → Real implementations only
+
+## 📁 CRITICAL DIRECTORY STRUCTURE
+
+```
+/Users/bbaer/Development/Cerebral/
+├── .cerebraflow/
+│   ├── core/
+│   │   ├── mcp/
+│   │   │   ├── cerebraflow_server.py         # Main MCP server
+│   │   │   ├── handlers/
+│   │   │   │   ├── task_handlers.py          # Task operations
+│   │   │   │   └── research_handlers.py      # RAG operations
+│   │   │   └── core/
+│   │   │       └── task_manager.py           # Core task logic
+│   │   └── storage/
+│   │       └── mcp_unified_storage.py        # Unified storage
+│   └── validation/
+│       └── enterprise_pattern_validator.py   # Compliance validator
+├── autodoc/
+│   └── rag/
+│       └── chunks/                           # 4,527 RAG files
+├── backend-python/
+│   └── services/
+│       └── memory/                           # Memory services
+└── src/                                      # Frontend React app
+```
+
+## 🛠️ MCP TOOL REFERENCE
+
+### **Core Tools (Use These)**
+- `mcp_cerebraflow-stdio_research` - RAG queries (USE FIRST)
+- `mcp_cerebraflow-stdio_task_query` - List/get tasks
+- `mcp_cerebraflow-stdio_task_modify` - Create/update tasks
+- `mcp_cerebraflow-stdio_system` - System operations
+
+### **Enterprise Tools**
+- `mcp_cerebraflow-stdio_code_quality` - Code validation
+- `mcp_cerebraflow-stdio_compliance_workflow` - SOC2/HIPAA compliance
+
+## 🎯 INTEGRATION PATTERNS
+
+### **Task Management Integration:**
+```python
+# Import pattern
+from .cerebraflow.core.mcp.core.task_manager import TaskManager
+from .cerebraflow.core.mcp.direct_mcp_client import DirectMCPClient
+
+# Usage pattern
+task_manager = TaskManager()
+result = await task_manager.create_task(task_data, tenant_id="...")
+```
+
+### **RAG Integration Pattern:**
+```python
+# Always use MCP tool first
+result = await mcp_cerebraflow_research({
+    "query": "specific implementation pattern",
+    "limit": 5
+})
+```
+
+### **Storage Integration Pattern:**
+```python
+# Unified storage for all data operations
+from .cerebraflow.core.storage.mcp_unified_storage import MCPUnifiedStorage
+
+storage = MCPUnifiedStorage()
+await storage.store_with_tenant_isolation(data, tenant_id)
+```
+
+## 🚨 CRITICAL ARCHITECTURE RULES
+
+1. **RAG FIRST**: Always query knowledge before implementation
+2. **TENANT ISOLATION**: Every operation must include tenant_id
+3. **ENTERPRISE COMPLIANCE**: Zero tolerance for mock/fake code
+4. **UNIFIED STORAGE**: Single source of truth for all data
+5. **MCP INTEGRATION**: Use direct MCP client for all operations
+
+---
+
+**This architecture ensures enterprise-grade, compliant, and efficient implementations on first attempt.**

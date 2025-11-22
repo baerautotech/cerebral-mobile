@@ -1,6 +1,6 @@
 /**
  * In-App Purchase (IAP) Type Definitions
- * 
+ *
  * Defines types for RevenueCat integration and purchase flow
  */
 
@@ -16,10 +16,10 @@ export enum IAP_SKUS {
   // Monthly subscriptions
   STANDARD_MONTHLY = 'standard_monthly',
   ENTERPRISE_MONTHLY = 'enterprise_monthly',
-  
+
   // Annual subscriptions
   FAMILY_ANNUAL = 'family_annual',
-  
+
   // Add-ons (optional)
   ANALYTICS_ADDON = 'analytics_addon',
 }
@@ -30,19 +30,19 @@ export enum IAP_SKUS {
 export interface SKUConfig {
   /** SKU identifier */
   id: IAP_SKUS | string;
-  
+
   /** Display name */
   name: string;
-  
+
   /** Description */
   description: string;
-  
+
   /** Price display string */
   price: string;
-  
+
   /** Billing period */
   billingPeriod: 'monthly' | 'annual';
-  
+
   /** Tier this SKU grants (if any) */
   tierGrant?: 'standard' | 'enterprise';
 }
@@ -53,19 +53,19 @@ export interface SKUConfig {
 export interface Purchase {
   /** Purchase ID from store */
   id: string;
-  
+
   /** Product/SKU ID */
   productId: string;
-  
+
   /** Purchase timestamp */
   purchaseDate: number;
-  
+
   /** Expiration date (for subscriptions)*/
   expirationDate?: number;
-  
+
   /** Whether purchase is active */
   isActive: boolean;
-  
+
   /** Whether this is a subscription */
   isSubscription: boolean;
 }
@@ -76,13 +76,13 @@ export interface Purchase {
 export interface CustomerInfo {
   /** Customer ID */
   customerId: string;
-  
+
   /** Active purchases */
   activePurchases: Purchase[];
-  
+
   /** All subscriptions */
   subscriptions: Record<string, Purchase>;
-  
+
   /** Non-subscription purchases */
   nonSubscriptionPurchases: Record<string, Purchase>;
 }
@@ -93,22 +93,22 @@ export interface CustomerInfo {
 export interface IAPContextType {
   /** Currently purchased SKUs */
   purchasedSKUs: string[];
-  
+
   /** Whether IAP is loading */
   loading: boolean;
-  
+
   /** Customer info */
   customerInfo: CustomerInfo | null;
-  
+
   /** Initiate purchase flow */
   initiateCheckout: (sku: string) => Promise<void>;
-  
+
   /** Restore purchases */
   restorePurchases: () => Promise<void>;
-  
+
   /** Refresh purchase status */
   refresh: () => Promise<void>;
-  
+
   /** Check if specific SKU is purchased */
   hasPurchase: (sku: string) => boolean;
 }
@@ -119,7 +119,7 @@ export interface IAPContextType {
 export interface IAPProviderProps {
   /** RevenueCat API key */
   apiKey: string;
-  
+
   /** Child components */
   children: React.ReactNode;
 }
@@ -130,10 +130,10 @@ export interface IAPProviderProps {
 export interface IAPFeatureProps {
   /** SKU required for this feature */
   sku: string;
-  
+
   /** Content to show if user has purchased */
   children: React.ReactNode;
-  
+
   /** Content to show if user hasn't purchased */
   fallback?: React.ReactNode;
 }
@@ -144,13 +144,13 @@ export interface IAPFeatureProps {
 export interface PurchaseResult {
   /** Purchase success */
   success: boolean;
-  
+
   /** Error message if failed */
   error?: string;
-  
+
   /** Purchased SKU */
   sku?: string;
-  
+
   /** New tier (if applicable) */
   newTier?: 'standard' | 'enterprise';
 }
@@ -184,4 +184,3 @@ export const SKU_CONFIGS: Record<string, SKUConfig> = {
     tierGrant: 'standard',
   },
 };
-

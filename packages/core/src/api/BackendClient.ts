@@ -1,7 +1,7 @@
 /**
  * Backend API Client
  * Cross-platform HTTP client for Cerebral Platform Backend API
- * 
+ *
  * Features:
  * - Automatic JWT token injection
  * - Error handling with custom error types
@@ -292,7 +292,3 @@ export class BackendClient {
 
 export const backendClient = new BackendClient();
 export default backendClient;
-
-
-
-

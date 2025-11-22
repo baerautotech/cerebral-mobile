@@ -1,0 +1,70 @@
+# 🧹 MANDATORY POST-DEVELOPMENT CLEANUP
+
+## **CRITICAL: Post-Development Cleanup Protocol**
+
+### **MANDATORY CLEANUP STEPS (ZERO TOLERANCE)**
+
+After completing ANY development task, the following cleanup MUST be performed:
+
+#### **1. File Organization Audit**
+```bash
+# Check for misplaced files
+find . -maxdepth 1 -name "*.md" ! -name "README.md"  # Should return nothing
+find . -maxdepth 1 -name "*.log"                     # Should return nothing
+find . -name "test_*.py" ! -path "./tests/*" ! -path "./backend-python/tests/*"  # Should return nothing
+```
+
+#### **2. RAG System Compliance**
+```bash
+# Verify no RAG JSON files remain
+find . -path "./autodoc/rag/chunks/*.json" | wc -l   # Should return 0
+```
+
+#### **3. Backend Directory Cleanup**
+```bash
+# Remove temporary files, logs, test artifacts
+find backend-python/ -name "*.log" -o -name "phase_*" -o -name "*_test_*" | head -10
+```
+
+#### **4. Documentation Location Verification**
+- All `.md` files MUST be in `docs/` with `CEREBRAL_XXX_` naming
+- No documentation in root directory except `README.md`
+- No temporary documentation files
+
+### **ENFORCEMENT MECHANISMS**
+
+#### **Pre-Commit Hook**
+Automatically prevents commits with organization violations:
+```bash
+# Hook location: .git/hooks/pre-commit
+# Checks: Root .md files, log files, misplaced tests, RAG JSON files
+```
+
+#### **Post-Development Checklist**
+- [ ] All temporary files removed
+- [ ] All logs archived to `.cleanup/`
+- [ ] All tests in proper directories
+- [ ] RAG data in ChromaDB only
+- [ ] Documentation follows naming conventions
+- [ ] No clutter in root directory
+
+### **VIOLATION CONSEQUENCES**
+- **Development Block**: Tasks cannot be marked "done" with violations
+- **Commit Prevention**: Pre-commit hooks prevent contaminated commits
+- **Code Review Rejection**: PRs with organization violations are rejected
+
+### **CLEANUP COMMANDS**
+```bash
+# Emergency cleanup (when violations found)
+python emergency_organization_cleanup.py
+
+# RAG system fix (when JSON files found)
+python rag_system_migration.py
+
+# Verification
+.git/hooks/pre-commit
+```
+
+---
+
+**This rule enforces enterprise-grade file organization standards and prevents the organizational chaos that violates production platform standards.**

@@ -1,6 +1,6 @@
 /**
  * TierGuard Component
- * 
+ *
  * Conditionally renders content based on user tier level
  */
 
@@ -11,21 +11,21 @@ import { TierGuardProps, formatTierName } from '../types/tiers';
 
 /**
  * TierGuard Component
- * 
+ *
  * Wraps content and shows it only if user has the required tier
  * Shows upgrade prompt if user doesn't have sufficient access
- * 
+ *
  * @param {string} tier - Required tier level ('free' | 'standard' | 'enterprise')
  * @param {ReactNode} children - Content to show if user has tier
  * @param {ReactNode} [fallback] - Optional custom fallback UI
  * @returns {ReactNode} Either content, fallback, or upgrade prompt
- * 
+ *
  * @example
  * // Show premium analytics only to standard+ users
  * <TierGuard tier="standard">
  *   <AdvancedAnalyticsScreen />
  * </TierGuard>
- * 
+ *
  * @example
  * // With custom fallback
  * <TierGuard
@@ -72,7 +72,7 @@ export function TierGuard({
             You are currently on {formatTierName(userTier)} tier
           </Text>
         )}
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.upgradeButton}
           onPress={() => {
             // TODO: Navigate to upgrade/purchase screen
@@ -138,4 +138,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-

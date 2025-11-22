@@ -1,6 +1,6 @@
 /**
  * Tier System Service
- * 
+ *
  * Handles tier extraction from JWT and tier validation
  */
 
@@ -8,7 +8,7 @@ import { TierLevel, UserTier, TIER_HIERARCHY } from '../types/tiers';
 
 /**
  * Decode JWT and extract tier
- * 
+ *
  * @param token - JWT token
  * @returns Decoded JWT payload or null if invalid
  */
@@ -23,17 +23,17 @@ function decodeJWT(token: string): Record<string, any> | null {
 
     // Decode payload (second part)
     const payload = parts[1];
-    
+
     // Add padding if needed
     const padded = payload + '==='.substring(0, (4 - payload.length % 4) % 4);
-    
+
     // Convert base64url to base64
     const base64 = padded.replace(/-/g, '+').replace(/_/g, '/');
-    
+
     // Decode
     const decoded = atob(base64);
     const parsed = JSON.parse(decoded);
-    
+
     return parsed;
   } catch (error) {
     console.error('Error decoding JWT:', error);
@@ -43,10 +43,10 @@ function decodeJWT(token: string): Record<string, any> | null {
 
 /**
  * Extract and validate tier from JWT token
- * 
+ *
  * @param token - JWT token from authentication
  * @returns User tier or 'free' as default
- * 
+ *
  * @example
  * const token = await getAuthToken();
  * const tier = extractTierFromJWT(token);
@@ -64,7 +64,7 @@ export function extractTierFromJWT(token: string | null): TierLevel {
   }
 
   const tier = payload.tier || payload.user_tier;
-  
+
   if (!tier) {
     console.warn('No tier found in JWT, defaulting to free tier');
     return 'free';
@@ -82,7 +82,7 @@ export function extractTierFromJWT(token: string | null): TierLevel {
 
 /**
  * Check if a tier value is valid
- * 
+ *
  * @param tier - Tier to validate
  * @returns True if tier is valid
  */
@@ -92,7 +92,7 @@ export function isValidTier(tier: any): tier is TierLevel {
 
 /**
  * Get tier hierarchy level (0=free, 1=standard, 2=enterprise)
- * 
+ *
  * @param tier - Tier to get level for
  * @returns Numeric level
  */
@@ -102,11 +102,11 @@ export function getTierLevel(tier: TierLevel): number {
 
 /**
  * Check if user has at least the required tier
- * 
+ *
  * @param userTier - User's current tier
  * @param requiredTier - Required tier
  * @returns True if user meets requirement
- * 
+ *
  * @example
  * if (hasTierAccess(userTier, 'standard')) {
  *   // Show premium features
@@ -119,13 +119,13 @@ export function hasTierAccess(userTier: TierLevel | null, requiredTier: TierLeve
 
   const userLevel = getTierLevel(userTier);
   const requiredLevel = getTierLevel(requiredTier);
-  
+
   return userLevel >= requiredLevel;
 }
 
 /**
  * Construct UserTier object from tier string
- * 
+ *
  * @param tier - Tier level
  * @returns Full UserTier object
  */
@@ -144,7 +144,7 @@ export function createUserTier(
 
 /**
  * Check if tier subscription is expired
- * 
+ *
  * @param tierInfo - User tier information
  * @returns True if expired
  */
@@ -159,7 +159,7 @@ export function isTierExpired(tierInfo: UserTier): boolean {
 
 /**
  * Format tier name for display
- * 
+ *
  * @param tier - Tier level
  * @returns Display name
  */
@@ -169,7 +169,6 @@ export function formatTierName(tier: TierLevel): string {
     standard: 'Standard',
     enterprise: 'Enterprise',
   };
-  
+
   return names[tier];
 }
-

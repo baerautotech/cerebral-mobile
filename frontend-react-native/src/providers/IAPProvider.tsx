@@ -1,6 +1,6 @@
 /**
  * IAPProvider Component
- * 
+ *
  * React Context provider for in-app purchase functionality
  */
 
@@ -16,15 +16,15 @@ export const IAPContext = createContext<IAPContextType | null>(null);
 
 /**
  * IAPProvider Component
- * 
+ *
  * Provides in-app purchase functionality to entire app
  * Initializes RevenueCat on mount
- * 
+ *
  * @param {Object} props
  * @param {string} props.apiKey - RevenueCat SDK key
  * @param {React.ReactNode} props.children - Child components
  * @returns {JSX.Element} Provider wrapper
- * 
+ *
  * @example
  * <IAPProvider apiKey="your_revenuecat_key">
  *   <App />
@@ -62,17 +62,16 @@ export function IAPProvider({
 
 /**
  * Hook to access IAP context
- * 
+ *
  * @returns {IAPContextType} IAP context
  * @throws {Error} If used outside IAPProvider
  */
 export function useIAPContext(): IAPContextType {
   const context = React.useContext(IAPContext);
-  
+
   if (!context) {
     throw new Error('useIAPContext must be used within IAPProvider');
   }
-  
+
   return context;
 }
-

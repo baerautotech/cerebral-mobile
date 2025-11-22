@@ -23,22 +23,22 @@ spec:
   workspaces:
     - name: shared-data
       description: Shared workspace for repository and build artifacts
-  
+
   steps:
     - name: clone-repo
       image: alpine/git:latest
       script: |
         #!/bin/sh
         set -e
-        
+
         echo "🔄 Cloning repository..."
         cd $(workspaces.shared-data.path)
         git clone -b $(params.repo-branch) $(params.repo-url) repo
         cd repo
-        
+
         echo "✅ Repository cloned successfully"
         git log --oneline -1
-    
+
     - name: setup-android-environment
       image: mcr.microsoft.com/devcontainers/android:latest
       env:
@@ -49,22 +49,22 @@ spec:
       script: |
         #!/bin/bash
         set -e
-        
+
         cd $(workspaces.shared-data.path)/repo/frontend-react-native
-        
+
         echo "🔄 Setting up Android environment..."
-        
+
         # Install Node dependencies
         echo "📦 Installing Node dependencies..."
         npm install -g pnpm
         pnpm install --frozen-lockfile
-        
+
         # Accept Android licenses
         echo "📋 Accepting Android SDK licenses..."
         yes | sdkmanager --licenses 2>/dev/null || true
-        
+
         echo "✅ Android environment setup complete"
-    
+
     - name: build-android-bundle
       image: mcr.microsoft.com/devcontainers/android:latest
       env:
@@ -90,29 +90,29 @@ spec:
       script: |
         #!/bin/bash
         set -e
-        
+
         cd $(workspaces.shared-data.path)/repo/frontend-react-native
-        
+
         echo "🏗️  Building Android App Bundle..."
-        
+
         # Copy keystore to workspace
         echo "🔐 Setting up signing keystore..."
         cp /var/run/secrets/android-keystore/keystore.jks android/
-        
+
         cd android
-        
+
         # Build release bundle
         ./gradlew bundleRelease \
           -Dorg.gradle.project.android.keystorePath=keystore.jks \
           -Dorg.gradle.project.android.keystorePassword="$KEYSTORE_PASSWORD" \
           -Dorg.gradle.project.android.keyAlias="$KEY_ALIAS" \
           -Dorg.gradle.project.android.keyPassword="$KEY_PASSWORD"
-        
+
         cd ..
-        
+
         echo "✅ Android App Bundle created successfully"
         ls -lh android/app/build/outputs/bundle/release/app-release.aab
-    
+
     - name: build-android-apk
       image: mcr.microsoft.com/devcontainers/android:latest
       env:
@@ -138,32 +138,32 @@ spec:
       script: |
         #!/bin/bash
         set -e
-        
+
         cd $(workspaces.shared-data.path)/repo/frontend-react-native/android
-        
+
         echo "🏗️  Building Android APK..."
-        
+
         # Build release APK (optional, for testing)
         ./gradlew assembleRelease \
           -Dorg.gradle.project.android.keystorePath=keystore.jks \
           -Dorg.gradle.project.android.keystorePassword="$KEYSTORE_PASSWORD" \
           -Dorg.gradle.project.android.keyAlias="$KEY_ALIAS" \
           -Dorg.gradle.project.android.keyPassword="$KEY_PASSWORD"
-        
+
         echo "✅ Android APK created successfully"
         ls -lh app/build/outputs/apk/release/app-release.apk
-    
+
     - name: verify-build
       image: alpine:latest
       script: |
         #!/bin/sh
         set -e
-        
+
         echo "🔍 Verifying Android build artifacts..."
-        
+
         BUNDLE_FILE=$(workspaces.shared-data.path)/repo/frontend-react-native/android/app/build/outputs/bundle/release/app-release.aab
         APK_FILE=$(workspaces.shared-data.path)/repo/frontend-react-native/android/app/build/outputs/apk/release/app-release.apk
-        
+
         if [ -f "$BUNDLE_FILE" ]; then
           echo "✅ Build verification passed"
           echo "   AAB file: $BUNDLE_FILE"
@@ -172,4 +172,3 @@ spec:
           echo "❌ Build verification failed: AAB file not found"
           exit 1
         fi
-

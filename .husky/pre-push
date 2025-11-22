@@ -25,4 +25,3 @@ pre-commit run --all-files
 
 echo ""
 echo "✅ Pre-push checks passed!"
-

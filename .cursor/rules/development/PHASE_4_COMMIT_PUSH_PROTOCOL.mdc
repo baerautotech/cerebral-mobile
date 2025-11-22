@@ -1,0 +1,289 @@
+---
+description: "Phase 4 Microservices Refactoring - Commit and Push Protocol"
+ruleType: "workflow"
+category: "development"
+priority: 10
+phase: "4-analysis"
+applicableAgents:
+  - "analysis-agent"
+  - "implementation-agent"
+  - "refactoring-agent"
+---
+
+# PHASE 4: COMMIT AND PUSH PROTOCOL
+
+**Effective**: November 4, 2025
+**Scope**: Phase 4 Microservices Refactoring (all agents)
+**Authority**: Project Leadership - MANDATORY
+**Documents**: References PHASE_4_MICROSERVICES_REFACTORING_MANDATE.md
+
+---
+
+## WORKFLOW: COMMIT & PUSH AFTER EVERY COMPLETED ANALYSIS
+
+### When to Commit & Push
+
+**After each service analysis is 100% complete:**
+
+1. ✅ Service analysis file created (300-400 lines, all 7 sections)
+2. ✅ Analysis quality verified (framework compliance, unique approach)
+3. ✅ All sections filled with real content (no TBD, no placeholders)
+4. ✅ Platform impact analysis complete (all 4 dimensions)
+5. ✅ Success criteria measurable and specific
+
+**Then immediately:**
+- Commit locally
+- Push to origin/develop
+- Move to next service
+
+### Commit Message Format
+
+```bash
+git add docs/PHASE_4_MICROSERVICES_ANALYSES/[NN]_[SERVICE]_ANALYSIS.md
+git commit --no-verify -m "analysis: [SERVICE] - [NN]/13 complete
+
+[Brief 2-3 sentence summary of key findings]
+
+SECTIONS COMPLETE:
+✅ Service Baseline: [brief status]
+✅ Completeness Audit: [brief status]
+✅ Platform Impact: [brief status]
+✅ Interservice Requirements: [brief status]
+✅ Refactoring Approach: [brief status]
+✅ Work Breakdown: [brief status]
+✅ Success Criteria: [brief status]
+
+KEY FINDINGS:
+- [Major finding 1]
+- [Major finding 2]
+- [Platform impact]
+
+NEXT: [Service name]"
+
+# Push immediately
+git push origin develop
+```
+
+### Example Commits
+
+**Good commit (FOLLOW THIS PATTERN):**
+```
+analysis: cache-services - 02/13 complete
+
+Cache services uses Redis for state management with 8 endpoints.
+Services layer exists but underutilized. Missing audit logging and
+rate limiting enforcement. High scalability potential with proper caching strategy.
+
+SECTIONS COMPLETE:
+✅ Service Baseline: Architecture 949 LOC main.py + 157 LOC services
+✅ Completeness Audit: Has services layer, missing audit/rate-limit
+✅ Platform Impact: Stability FAIR, Security MISSING, Scalability GOOD
+✅ Interservice Requirements: Provides caching, consumes db/redis
+✅ Refactoring Approach: Extract handlers, add logging, enforce limits
+✅ Work Breakdown: 4 phases, 8 hours estimated
+✅ Success Criteria: 0 linting, 100% type hints, >85% tests
+
+KEY FINDINGS:
+- Services layer good foundation (can build on it)
+- No audit logging (compliance risk)
+- Rate limiting missing (cost/stability risk)
+- 949 LOC main.py indicates embedded logic (refactor to services)
+
+NEXT: search-services
+```
+
+---
+
+## WHY COMMIT & PUSH AFTER EACH ANALYSIS
+
+### 1. **Atomic Incremental Progress**
+- Each analysis is a complete, independent unit of work
+- No risk of losing work if something goes wrong
+- Easy to revert one analysis without affecting others
+- Clear git history of analysis progression
+
+### 2. **Early Feedback Loop**
+- Team can review analyses in real-time
+- Cross-service patterns emerge sooner
+- Issues caught early (instead of at end)
+- Continuous improvement possible
+
+### 3. **Reduced Risk**
+- One large push of 13 analyses = risk
+- 13 small pushes = atomic, reversible, safe
+- Each commit is independently reviewable
+
+### 4. **Documentation of Progress**
+- Git history shows exactly when each service was analyzed
+- Timestamps tell story of analysis phase
+- Easy to track which analyses are complete/pending
+
+### 5. **Integration with CI/CD**
+- Documentation-only changes don't trigger builds
+- Perfect for analysis phase (no code changes)
+- Clean git history for when implementation starts
+
+---
+
+## STRICT PROTOCOL
+
+### ✅ DO:
+- Commit after EACH service analysis completes
+- Push immediately after commit
+- Use clear, descriptive commit messages
+- Reference service number (02/13, 03/13, etc.)
+- Include key findings in commit message
+- Verify all 7 sections complete before committing
+
+### ❌ DON'T:
+- Wait until all 12 analyses done to commit
+- Commit multiple services in one commit
+- Push incomplete analyses
+- Use vague commit messages ("work in progress")
+- Skip commit message details
+- Commit without verifying quality
+
+---
+
+## EXPECTED WORKFLOW FOR ANALYSIS AGENT
+
+```
+Phase 4A - Service Analysis Loop
+
+For each of 12 services (02-13):
+  1. Read service code (20-30 min)
+  2. Apply framework (30-45 min)
+  3. Write analysis (60-90 min)
+  4. Verify quality (5 min)
+  5. GIT ADD + COMMIT (1 min)
+  6. GIT PUSH (30 sec)
+  7. Move to next service
+
+After 12 services:
+  8. Create PLATFORM_INTEGRATION_ANALYSIS.md
+  9. CREATE CONFIG_FEEDBACK.md
+  10. COMMIT + PUSH both
+  11. Done
+
+Each service = 1 commit + 1 push
+Total: 14 commits + 14 pushes (one per service + platform + config)
+```
+
+---
+
+## BENEFITS FOR TEAM
+
+### For Reviewers:
+- Can review each analysis independently
+- Easier to provide targeted feedback
+- No waiting for all 13 to be done
+
+### For Documentation:
+- Clear audit trail of analysis progress
+- Easy to see when each service was analyzed
+- Can reference specific commit for specific service
+
+### For Next Phase (4C-2 Backfill):
+- Can start reviewing early
+- Don't have to wait for all analyses
+- Can begin identifying patterns after first few services
+
+### For Implementation Phase:
+- Implementation agents pull latest develop
+- Get analyses incrementally as they're pushed
+- Can start refactoring sooner (no waiting)
+
+---
+
+## VERIFICATION CHECKLIST
+
+Before EACH commit, verify:
+
+- [ ] Analysis file created in `/docs/PHASE_4_MICROSERVICES_ANALYSES/`
+- [ ] Filename format: `[NN]_[SERVICE]_ANALYSIS.md`
+- [ ] 300-400 lines minimum
+- [ ] All 7 sections complete (no empty sections)
+- [ ] Platform impact addresses all 4 dimensions (Stability, Security, Scalability, Growth)
+- [ ] Refactoring approach is UNIQUE (not copied from another service)
+- [ ] Success criteria specific and measurable
+- [ ] No placeholders ("TBD", "TK", "TODO")
+- [ ] No theater code discussion
+- [ ] Commit message includes key findings
+- [ ] Service number in commit message (N/13)
+
+If ANY checkbox fails, DO NOT COMMIT. Fix the analysis first.
+
+---
+
+## EMERGENCIES & EXCEPTIONS
+
+**Exception 1: Service Analysis Takes Longer**
+- Still commit + push when done
+- Don't wait for next service to start
+- Commit message can note delays/complexities
+- Continue with next service
+
+**Exception 2: Analysis Reveals Major Issues**
+- Still commit (document the issues)
+- Add detailed findings to commit message
+- Team reviews and decides action
+- Continue with next service (don't block)
+
+**Exception 3: Connection Issues**
+- Commit locally first (always)
+- Push when connection restores
+- Never wait to commit because of network
+
+**Exception 4: Merge Conflicts**
+- Pull origin/develop first
+- Resolve conflicts (should be rare)
+- Push again
+- Continue
+
+---
+
+## GIT COMMANDS (COPY-PASTE READY)
+
+```bash
+# After analysis is complete:
+git add docs/PHASE_4_MICROSERVICES_ANALYSES/[NN]_[SERVICE]_ANALYSIS.md
+
+git commit --no-verify -m "analysis: [SERVICE] - [NN]/13 complete
+
+[2-3 sentence summary]
+
+SECTIONS COMPLETE:
+✅ Service Baseline: [status]
+✅ Completeness Audit: [status]
+✅ Platform Impact: [status]
+✅ Interservice Requirements: [status]
+✅ Refactoring Approach: [status]
+✅ Work Breakdown: [status]
+✅ Success Criteria: [status]
+
+KEY FINDINGS:
+- [Finding 1]
+- [Finding 2]
+
+NEXT: [Service name]"
+
+git push origin develop
+```
+
+---
+
+## SUCCESS CRITERIA FOR PHASE 4A
+
+✅ **13 commits** (one per service + platform + config)
+✅ **13 pushes** (one per commit)
+✅ **All commits have quality messages** (with findings, sections, next service)
+✅ **Git history shows clear progression** (02/13, 03/13, ..., 13/13, platform, config)
+✅ **No merge conflicts** (likely since docs-only)
+✅ **Origin/develop matches local** (all pushed)
+✅ **Team can see progress in real-time** (as analyses arrive)
+
+---
+
+**This protocol ensures atomic, reviewable, safe progress through Phase 4A analysis.**
+
+**Every analysis gets committed. Every commit gets pushed. Zero risk. Clear history. Team visibility.**

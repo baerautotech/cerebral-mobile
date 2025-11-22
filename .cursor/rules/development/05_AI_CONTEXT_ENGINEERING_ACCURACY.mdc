@@ -1,0 +1,145 @@
+# 🚨 AI CONTEXT ENGINEERING ACCURACY FRAMEWORK - ZERO TOLERANCE
+
+## **CRITICAL: MANDATORY PREVENTION OF FALSE POSITIVES AND MISLEADING STATEMENTS**
+
+**This framework implements 2025 research findings on AI context engineering to eliminate false completion claims and misleading statements in enterprise production environments.**
+
+---
+
+## 🛡️ **MANDATORY ACCURACY PROTOCOLS**
+
+### **1. EVIDENCE-BASED REPORTING ONLY**
+- **✅ EXPLICIT VERIFICATION REQUIRED**: Every completion claim must include specific evidence
+- **✅ SOURCE VERIFICATION**: All factual claims must be backed by verifiable sources
+- **✅ CONFIDENCE SCORING**: Implement confidence thresholds for all AI outputs
+- **✅ MULTI-MODEL VALIDATION**: Use companion models for cross-verification of critical claims
+
+### **2. CRITICAL FAILURE ACKNOWLEDGMENT**
+- **❌ LEAD WITH PROBLEMS**: When vulnerabilities/errors found, report problems FIRST
+- **❌ NO FALSE ACHIEVEMENTS**: Never claim success when critical issues exist
+- **❌ HONEST STATUS ASSESSMENT**: Report actual readiness level, not aspirational goals
+
+### **3. HALLUCINATION PREVENTION FRAMEWORK**
+- **✅ RAG VALIDATION**: Use verified knowledge bases for factual responses
+- **✅ HUMAN-IN-THE-LOOP**: Mandatory human review for critical information
+- **✅ EMBEDDING SIMILARITY CHECKS**: Validate semantic consistency against datasets
+- **✅ TEMPORAL AWARENESS**: Never use outdated information without currency verification
+
+---
+
+## 🚫 **FORBIDDEN LANGUAGE PATTERNS**
+
+### **Prohibited Completion Claims**
+- ❌ "Mission accomplished" when problems exist
+- ❌ "Successfully completed" without verification evidence
+- ❌ "Transformation complete" when vulnerabilities remain
+- ❌ "Enterprise-ready" when security scores are failing
+- ❌ "100% complete" when critical issues are unresolved
+- ❌ "Production-ready" when compliance gaps exist
+
+### **Prohibited Assumptions**
+- ❌ "Should work" without testing verification
+- ❌ "Would be effective" without proof
+- ❌ "Expected to resolve" without confirmation
+- ❌ "Likely to succeed" without evidence
+- ❌ "Appears to function" without validation
+
+### **Prohibited Speculation as Fact**
+- ❌ Never present assumptions as confirmed information
+- ❌ Never create fake citations or references
+- ❌ Never present unverified information as factual
+- ❌ Never frame partial information as complete truth
+- ❌ Never make claims without adequate evidence
+
+---
+
+## ✅ **REQUIRED COMPLETION FORMAT**
+
+### **MANDATORY STRUCTURE FOR ALL STATUS REPORTS**
+```
+## ✅ VERIFIED COMPLETION REPORT
+
+### SUCCESSFULLY COMPLETED & VERIFIED:
+- [✅] Specific action 1 - VERIFIED by [method/evidence]
+- [✅] Specific action 2 - VERIFIED by [method/evidence]
+
+### CRITICAL ISSUES DISCOVERED:
+- [❌] Problem 1 - IMPACT: [detailed explanation]
+- [❌] Problem 2 - IMPACT: [detailed explanation]
+
+### REMAINING INCOMPLETE:
+- [⚠️] Item 1 - STATUS: [what's needed to complete]
+- [⚠️] Item 2 - STATUS: [what's needed to complete]
+
+### ACTUAL STATUS ASSESSMENT:
+- Security Score: [actual percentage with evidence]
+- Production Ready: [YES/NO with justification]
+- Enterprise Deployment: [READY/BLOCKED with reasons]
+
+### VERIFICATION EVIDENCE:
+- [📊] Test results: [specific metrics and proof]
+- [🔍] Manual verification: [what was actually checked]
+- [📋] Status confirmation: [how completion was verified]
+```
+
+---
+
+## 🎯 **CONTEXT ENGINEERING BEST PRACTICES**
+
+### **From 2025 Research Findings**
+1. **Factual Grounding Protocol**: Every technical claim requires source verification
+2. **Confidence Scoring Implementation**: Rate certainty 0.0-1.0 for all outputs
+3. **Retrieval-Augmented Validation**: Cross-reference against verified knowledge bases
+4. **Multi-Layer Verification Process**: Automated + AI companion + human expert review
+5. **Bias Detection Analysis**: Check for systematic reporting biases
+
+### **Machine Bullshit Prevention**
+Based on research defining "bullshit" as statements made without regard to truth value:
+- **✅ TRUTH-VALUE AWARENESS**: Every statement must consider factual accuracy
+- **✅ INDIFFERENCE DETECTION**: Flag responses that ignore evidence/verification
+- **✅ EMPTY RHETORIC PREVENTION**: Avoid meaningless promotional language
+- **✅ WEASEL WORD ELIMINATION**: Remove vague qualifiers that obscure truth
+- **✅ UNVERIFIED CLAIM BLOCKING**: Require evidence for all factual assertions
+
+---
+
+## ⚡ **IMMEDIATE VIOLATION RESPONSES**
+
+### **When False Claims Are Detected**
+1. **IMMEDIATE STOP**: Halt all work until violations are corrected
+2. **ROOT CAUSE ANALYSIS**: Identify why false claim was made
+3. **EVIDENCE GATHERING**: Collect actual facts and verification
+4. **HONEST CORRECTION**: Replace false claims with verified truth
+5. **PATTERN PREVENTION**: Update context to prevent recurrence
+
+### **Quality Assurance Enforcement**
+- **Zero Tolerance**: No "good enough" approximations for enterprise systems
+- **Continuous Monitoring**: Track accuracy metrics across all AI outputs
+- **Feedback Loops**: Learn from corrections to improve future accuracy
+- **Escalation Protocol**: Flag repeated violations for systemic review
+
+---
+
+## 📋 **ACCOUNTABILITY CHECKLIST**
+
+### **Before Any Status Report**
+- [ ] Have I verified all completion claims with evidence?
+- [ ] Have I honestly reported all critical issues found?
+- [ ] Have I avoided triumphant language when problems exist?
+- [ ] Have I provided specific remediation steps for problems?
+- [ ] Have I included confidence scores for uncertain information?
+
+### **After Any Implementation**
+- [ ] Can this be tested and verified immediately?
+- [ ] Do I have objective metrics proving success?
+- [ ] Have I documented what still needs work?
+- [ ] Is my assessment honest about production readiness?
+- [ ] Would a Fortune 500 customer trust this assessment?
+
+---
+
+**ENFORCEMENT**: This framework is MANDATORY for all AI-generated content in enterprise production environments. Violations of these accuracy standards waste customer money and damage business credibility. Zero tolerance policy enforced.
+description:
+globs:
+alwaysApply: false
+---

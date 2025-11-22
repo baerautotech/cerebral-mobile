@@ -1,0 +1,67 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 🏗️ ARCHITECTURE PATTERNS - FOLLOW ESTABLISHED PATTERNS
+
+## **Multi-tenant SaaS Architecture**
+
+### **Core Architecture Layers**
+1. **Core Layer** (Foundation)
+   - Authentication & Authorization System
+   - Multi-tenant Data Management
+   - **Enterprise Compliance Framework** (see `08_ENTERPRISE_COMPLIANCE_STANDARDS.mdc`)
+   - Real-time Communication Infrastructure
+   - Performance Monitoring & Analytics
+
+2. **Modules Layer** (Business Logic)
+   - Knowledge Management
+   - AI Provider Management
+   - Project Management
+   - Education & Learning
+   - Productivity & Analytics
+
+3. **Plugins Layer** (Extensions)
+   - Advanced AI Capabilities
+   - Third-party Integrations
+   - Custom Automation Tools
+
+### **Naming Conventions (MANDATORY)**
+- **Core Components**: `Core[Feature][Type]` pattern in `src/core/`
+- **Enterprise Components**: `Enterprise[Feature][Type]` pattern
+- **Admin Components**: `Admin[Feature][Type]` pattern
+- **BANNED Prefixes**: "Enhanced", "Unified", "Advanced"
+
+### **File Structure Standards**
+- Follow `CEREBRAL_010_CORE_NAMING_SPECIFICATION.md`
+- Use proper barrel exports (`index.ts`)
+- Maintain category-based organization
+- Check implementation roadmap before assuming missing components
+
+### **Performance Optimization**
+- **Lazy Loading**: All components >20KB must use lazy loading
+- **Bundle Splitting**: Intelligent chunking for feature-based optimization
+- **Tree Shaking**: Enhanced tree shaking with moduleSideEffects: false
+- **Minification**: Terser with production-grade compression
+
+### **Security & Compliance**
+- **MULTI-STANDARD COMPLIANCE** - See `08_ENTERPRISE_COMPLIANCE_STANDARDS.mdc` for complete requirements:
+  - **SOC2 Type II** - Continuous security monitoring and controls
+  - **GDPR** - Privacy by design and data protection
+  - **ISO27001** - Systematic information security management
+  - **HIPAA** - Healthcare data protection (healthcare modules)
+  - **Industry Standards** - Automotive (ISO 26262), Legal (ABA), Financial (PCI DSS)
+- **Data encryption** - At rest and in transit
+- **Access controls** - Role-based permissions and audit trails
+- **Security monitoring** - Real-time threat detection
+
+### **Mobile-First PWA Architecture**
+- Responsive design for all components
+- Offline functionality where applicable
+- Native mobile integration capabilities
+- Progressive enhancement principles
+
+---
+
+**Always follow established architectural patterns - use RAG to discover existing implementations.**

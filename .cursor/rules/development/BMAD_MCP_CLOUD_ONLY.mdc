@@ -1,0 +1,89 @@
+---
+description: BMAD access via cloud MCP tools only - no local file-based personas
+globs: []
+alwaysApply: true
+---
+
+# BMAD MCP Cloud-Only Access
+
+**CRITICAL ENFORCEMENT**: BMAD is accessed ONLY through cloud-based MCP tools. NO local file execution.
+
+## MCP Tools Available
+
+All BMAD interactions must use these MCP tools exclusively:
+
+### Core Agents
+- `mcp_bmad-cloud_bmad_analyst` - Mary (Analyst) - Market research, brainstorming, competitive analysis, project briefs
+- `mcp_bmad-cloud_bmad_architect` - Winston (Architect) - System design, architecture documents, technology selection, API design
+- `mcp_bmad-cloud_bmad_pm` - John (PM) - PRD creation, product strategy, feature prioritization, roadmap planning
+- `mcp_bmad-cloud_bmad_po` - Sarah (PO) - Product ownership, document alignment, epic/story management
+- `mcp_bmad-cloud_bmad_sm` - Bob (Scrum Master) - Story creation, epic management, agile process guidance
+- `mcp_bmad-cloud_bmad_dev` - James (Developer) - Code implementation, debugging, refactoring, development
+- `mcp_bmad-cloud_bmad_qa` - Lisa (QA) - Test architecture, quality gates, test strategy, risk assessment
+- `mcp_bmad-cloud_bmad_ux` - Sophie (UX Expert) - UI/UX design, front-end specifications, user experience
+
+### Management Agents
+- `mcp_bmad-cloud_bmad_dispatcher` - Diana (Dispatcher) - Work distribution, task assignment across agent team
+- `mcp_bmad-cloud_bmad_master` - Universal task executor - handles any task across all agent domains
+- `mcp_bmad-cloud_bmad_orchestrator` - Workflow coordinator - orchestrates multi-agent workflows and task sequencing
+
+## Tool Usage
+
+**DO:**
+- ✅ Use MCP tools: `mcp_bmad-cloud_bmad_analyst`, `mcp_bmad-cloud_bmad_pm`, etc.
+- ✅ Pass clear task descriptions and context to MCP tools
+- ✅ Reference `vendor/bmad/` in documentation about deployment source
+
+**DO NOT:**
+- ❌ Execute files from `vendor/bmad/` locally
+- ❌ Reference `.bmad-core/` directory (deleted)
+- ❌ Use file-based BMAD personas or agents
+- ❌ Try to load local BMAD templates, tasks, or checklists
+- ❌ Execute Node.js BMAD scripts directly
+
+## vendor/bmad/ Directory
+
+The `vendor/bmad/` directory contains:
+- **Purpose**: Source code for cloud BMAD deployment ONLY
+- **Status**: Checked into repo for deployment infrastructure
+- **Usage**: Reference in deployment documentation ONLY
+- **DO NOT**: Execute, load, or import these files locally
+
+## Example Usage
+
+```python
+# CORRECT - Using MCP tools
+result = mcp_bmad-cloud_bmad_analyst(
+    task="Analyze market opportunities for feature X",
+    context="Cerebral Platform enterprise SaaS"
+)
+
+# INCORRECT - Local file access (DO NOT DO THIS)
+# from vendor.bmad.bmad_core import analyst  # ❌ WRONG
+# analyst.run_task(...)  # ❌ WRONG
+```
+
+## Integration with Cerebral
+
+BMAD MCP tools integrate with:
+- ✅ Knowledge Graph (120K+ entities)
+- ✅ RAG System (41K+ documents)
+- ✅ Task Database (Supabase cerebral_tasks)
+- ✅ HIL Sessions (Database-backed interactive sessions)
+- ✅ Multi-user cluster workflows
+
+All BMAD work flows through cloud infrastructure with proper tenant isolation and compliance.
+
+## Workflow
+
+1. **Task Assignment**: Use dispatcher or specific agent MCP tool
+2. **Document Generation**: BMAD generates PRDs, Architecture docs, Stories
+3. **Storage**: Documents stored in Supabase database
+4. **HIL Sessions**: Interactive sessions managed through MCP tools
+5. **Integration**: BMAD queries KG/RAG for context automatically
+
+## Zero Tolerance
+
+**ABSOLUTE PROHIBITION**: Never execute, import, or load files from `vendor/bmad/` locally. This violates the cloud-first architecture and bypasses tenant isolation, security controls, and compliance requirements.
+
+All BMAD functionality MUST go through MCP cloud tools exclusively.

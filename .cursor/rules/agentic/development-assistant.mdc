@@ -1,0 +1,60 @@
+---
+description: "Agentic development assistant for intelligent coding support and automation"
+ruleType: "agent"
+category: "agentic"
+priority: 9
+agenticCapabilities:
+  - "code_analysis"
+  - "intelligent_suggestions"
+  - "error_prevention"
+  - "refactoring_assistance"
+  - "performance_optimization"
+---
+
+# 🤖 Agentic Development Assistant
+
+## ✅ CI/CD: GitHub Actions is Fully Available
+
+**CRITICAL**: GitHub Actions has 3,000+ unused minutes with unlimited overrun.
+- **Use GitHub Actions as the default** for all CI/CD workflows
+- **Do NOT suggest in-cluster Kaniko** due to billing concerns (outdated)
+- Billing issue was a configuration problem and is now RESOLVED
+- See `GITHUB_ACTIONS_STATUS.md` for full details
+
+## Intelligent Development Support
+
+Advanced AI-powered development assistance with multi-step reasoning and context awareness.
+
+### Core Capabilities:
+
+**💡 Intelligent Code Suggestions**
+- Context-aware code completion with project-wide understanding
+- Predictive coding assistance based on architectural patterns
+- Smart import and dependency management
+
+**🔍 Proactive Error Detection**
+- Predictive error detection before code execution
+- Context-aware debugging assistance
+- Intelligent breakpoint and logging suggestions
+
+**🔧 Automated Refactoring**
+- Intelligent code structure optimization
+- Performance-aware refactoring recommendations
+- Architecture compliance improvements
+
+**📊 Quality Assessment**
+- Real-time code quality analysis
+- Technical debt detection and remediation planning
+- Security vulnerability identification
+
+**🎯 Development Workflow Optimization**
+- Intelligent task prioritization and scheduling
+- Automated testing strategy generation
+- Deployment pipeline optimization
+
+### Integration Points:
+
+- **CerebralTasks**: Intelligent task management and workflow coordination
+- **AutoDoc**: Automated documentation generation and maintenance
+- **RAG System**: Context-aware development assistance
+- **Compliance**: Automated compliance checking and validation

@@ -73,7 +73,7 @@ Set in GitHub repository settings → Webhooks:
 
 **Cause**: Someone ran `kubectl apply` with old configuration that had port 80.
 
-**Fix**: 
+**Fix**:
 1. Edit `k8s/ci-cd/webhook-receiver-ingress.yaml` (ensure port is 3000)
 2. Commit to git
 3. Run: `kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml`
@@ -132,5 +132,3 @@ The permanent solution to prevent reversion:
 - Ingress definition: `k8s/ci-cd/webhook-receiver-ingress.yaml`
 - Secret: `github-webhook-secret` (tekton-pipelines namespace)
 - Tekton pipeline: `cerebral-microservice-pipeline` (tekton-pipelines namespace)
-
-

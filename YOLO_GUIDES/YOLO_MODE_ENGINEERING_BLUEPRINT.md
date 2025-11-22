@@ -53,25 +53,25 @@ ERROR SCENARIOS (Critical):
      - Out of memory
      - Port already in use
      Handler: Wait 30s, check logs, auto-restart
-     
+
   2. Health check fails
      - Database connection timeout
      - OAuth creds missing
      - Service misconfiguration
      Handler: Return 503, log error, retry with backoff
-     
+
   3. AlertManager webhook fails
      - Network connectivity lost
      - Invalid HMAC signature
      - JSON parsing error
      Handler: Queue to DLQ, retry with exponential backoff
-     
+
   4. Concurrent requests
      - Race condition on initialization
      - Multiple pods starting simultaneously
      - Database connection pool exhausted
      Handler: Implement request queueing, connection pooling
-     
+
 ACCEPTANCE: All error scenarios must be tested before merge
 ```
 
@@ -86,28 +86,28 @@ Phase 1-2 Integration Tests (GCP + FastAPI):
     Action: Call /health endpoint
     Expect: 200 OK + healthy JSON
     Rollback: Delete deployment
-    
+
   Test 2: AlertManager→Pod
     Setup: Create fake alert, send to webhook
     Action: POST /webhook with test alert
     Expect: 200 OK + message queued
     Verify: Check database for message
     Rollback: Clear test data
-    
+
   Test 3: Pod→Google Chat
     Setup: Mock Google Chat API
     Action: Trigger test notification
     Expect: HMAC valid + message formatted
     Verify: Webhook called with correct payload
     Rollback: Clear mock calls
-    
+
   Test 4: End-to-End (Prometheus→Chat)
     Setup: Real AlertManager + Pod + Google Chat space
     Action: Trigger critical alert
     Expect: Message appears in Chat within 5s
     Verify: User can interact with message
     Rollback: Delete test space
-    
+
   Test 5: Failure Recovery
     Setup: All systems running
     Action: Kill pod, send alert
@@ -123,7 +123,7 @@ GATE: Block merge if any test fails
 
 ```yaml
 After Each Phase (Before starting next):
-  
+
 PHASE 1 GATE (After Story 1.1.5):
   Questions:
     ✓ Are health checks passing consistently?
@@ -133,7 +133,7 @@ PHASE 1 GATE (After Story 1.1.5):
     ✓ Is HMAC validation working?
   Decision: PROCEED / REVIEW / PAUSE
   Action: 30-min architecture sync (if PROCEED, skip)
-  
+
 PHASE 2 GATE (After Story 2.1.5):
   Questions:
     ✓ Is BMAD API stable?
@@ -142,7 +142,7 @@ PHASE 2 GATE (After Story 2.1.5):
     ✓ Any edge cases discovered?
     ✓ Do we need rate limiting?
   Decision: PROCEED / ADJUST / PAUSE
-  
+
 PHASE 3 GATE (After Story 3.1.5):
   Questions:
     ✓ Is RAG search performing?
@@ -151,7 +151,7 @@ PHASE 3 GATE (After Story 3.1.5):
     ✓ Any data inconsistencies?
     ✓ Can we handle 10k documents?
   Decision: PROCEED / OPTIMIZE / PAUSE
-  
+
 PHASE 4-6 GATES: Similar pattern
 ```
 
@@ -217,7 +217,7 @@ Phase 1 GATE:
   [ ] Latency: Alert→Chat < 2s p99
   [ ] Error rate: < 0.1%
   [ ] Recovery time: < 30s
-  
+
 Phase 2 GATE:
   [ ] BMAD integration latency < 500ms
   [ ] Agent handoff success rate > 99%
@@ -283,7 +283,7 @@ RAG Integration Tests:
   ✓ Conversation auto-indexing
   ✓ Context retrieval < 200ms
   ✓ Hybrid search consistent
-  
+
 Edge Cases:
   ✓ Large document handling (>10MB)
   ✓ Long conversation (>10k messages)
@@ -542,4 +542,3 @@ Gate Review Checklist:
 **Key Insight**: The difference between 79% and 91% accuracy is not better documentation—it's **explicit error scenarios, integration tests, and architectural gates**.
 
 You have the foundation. Add these three layers and get to 91%+ accuracy.
-

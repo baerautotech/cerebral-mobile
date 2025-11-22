@@ -1,7 +1,7 @@
 # 🚀 Cerebral Platform - Complete CI/CD System Guide
 
-**Last Updated**: October 24, 2025  
-**Status**: ✅ Production Ready  
+**Last Updated**: October 24, 2025
+**Status**: ✅ Production Ready
 **Build System**: Tekton (ONLY) - GitHub Actions NOT used for builds
 
 ---
@@ -24,25 +24,25 @@
 ```mermaid
 graph TB
     A["👤 Developer<br/>Local Machine"] -->|1. git push| B["🐙 GitHub<br/>Repository"]
-    
+
     B -->|2. GitHub Webhook<br/>HTTPS POST| C["🌐 Ingress nginx<br/>webhook.dev.cerebral.baerautotech.com"]
-    
+
     C -->|3. Routes to port 3000| D["⚙️ github-webhook-receiver<br/>Rust Service<br/>2 Replicas"]
-    
+
     D -->|4. Validates signature<br/>Creates PipelineRun| E["🔧 Tekton PipelineRun<br/>tekton-pipelines ns"]
-    
+
     E --> F["📦 Pipeline Tasks"]
-    
+
     F -->|Task 1| F1["git-clone-task<br/>Clone repository<br/>Extract commit info"]
     F -->|Task 2| F2["kaniko-build-task<br/>Build Docker image<br/>Inside Kubernetes"]
     F -->|Task 3| F3["deploy-task<br/>Update K8s deployment<br/>Zero-downtime rollout"]
-    
+
     F1 --> G["📚 Git Repo<br/>Source code<br/>All branches"]
     F2 --> H["🐳 Internal Registry<br/>10.34.0.202:5000<br/>cerebral/service:branch"]
     F3 --> I["☸️ Kubernetes Cluster<br/>cerebral-platform ns<br/>Live services"]
-    
+
     I -->|Services available| J["👥 End Users<br/>Web/Mobile/API"]
-    
+
     style A fill:#e1f5ff
     style B fill:#fff3e0
     style C fill:#f3e5f5
@@ -69,7 +69,7 @@ git push origin main  # ← This triggers everything
 ### 2. GitHub Fires Webhook
 - **URL**: `https://webhook.dev.cerebral.baerautotech.com/`
 - **Method**: POST
-- **Headers**: 
+- **Headers**:
   - `X-Hub-Signature-256`: HMAC validation
   - `X-GitHub-Event`: push
 - **Body**: Repository info, commit SHA, changed files
@@ -405,18 +405,18 @@ cat ~/Development/cerebral/docker/requirements-unified.txt
 ```
 k8s/ci-cd/webhook-receiver-ingress.yaml
 ```
-**What**: Routes webhook.dev.cerebral.baerautotech.com → github-webhook-receiver:3000  
-**Port**: 3000 (NOT 80!)  
-**Edit**: Edit this file, then apply with `kubectl apply -f`  
+**What**: Routes webhook.dev.cerebral.baerautotech.com → github-webhook-receiver:3000
+**Port**: 3000 (NOT 80!)
+**Edit**: Edit this file, then apply with `kubectl apply -f`
 **Never**: Don't manually patch the ingress
 
 ### 2. Webhook Receiver Deployment
 ```
 tekton-pipelines/github-webhook-receiver
 ```
-**Image**: 10.34.0.202:5000/webhook-receiver:latest  
-**Replicas**: 2  
-**Port**: 3000  
+**Image**: 10.34.0.202:5000/webhook-receiver:latest
+**Replicas**: 2
+**Port**: 3000
 **Secret**: github-webhook-secret (HMAC validation)
 
 ### 3. Tekton Components
@@ -432,8 +432,8 @@ tekton-pipelines/
 ```
 scripts/validate-webhook-receiver.sh
 ```
-**Run**: `./scripts/validate-webhook-receiver.sh`  
-**Checks**: Port 3000, deployment health, secret exists  
+**Run**: `./scripts/validate-webhook-receiver.sh`
+**Checks**: Port 3000, deployment health, secret exists
 **Exit Code**: 0 = OK, 1 = ERROR
 
 ---

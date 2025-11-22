@@ -1,7 +1,7 @@
 # Supabase Database Access - CLI Only
 
-**Status**: Production Ready  
-**Method**: Supabase CLI (No MCP)  
+**Status**: Production Ready
+**Method**: Supabase CLI (No MCP)
 **Global Config**: `~/.cursor/.env.supabase`
 
 ---
@@ -165,8 +165,8 @@ echo $SUPABASE_PROJECT_REF
 
 ## Summary
 
-✅ Supabase CLI is global  
-✅ Configuration available everywhere  
-✅ No MCP crashes  
-✅ Full functionality  
+✅ Supabase CLI is global
+✅ Configuration available everywhere
+✅ No MCP crashes
+✅ Full functionality
 ✅ Ready to use!

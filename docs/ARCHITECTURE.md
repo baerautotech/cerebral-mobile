@@ -1,8 +1,8 @@
 # Mobile Monorepo Architecture
 
-**Version**: 2.0  
-**Platform**: React Native + React Web  
-**Status**: Production  
+**Version**: 2.0
+**Platform**: React Native + React Web
+**Status**: Production
 **Last Updated**: October 2025
 
 ---
@@ -317,7 +317,7 @@ import { useApi, useTasks } from '@cerebral/core';
 const MyComponent = () => {
   const api = useApi();
   const { tasks, loading } = useTasks();
-  
+
   return <div>{tasks.map(t => <p key={t.id}>{t.title}</p>)}</div>;
 };
 ```
@@ -518,12 +518,12 @@ import create from 'zustand';
 export const useAuthStore = create((set) => ({
   user: null,
   isAuthenticated: false,
-  
+
   login: async (email: string, password: string) => {
     const response = await api.post('/auth/login', { email, password });
     set({ user: response.user, isAuthenticated: true });
   },
-  
+
   logout: () => set({ user: null, isAuthenticated: false })
 }));
 
@@ -718,7 +718,7 @@ import { useToast } from '@cerebral/design-system';
 
 const MyComponent = () => {
   const toast = useToast();
-  
+
   const handleAction = async () => {
     try {
       await api.post('/data');
@@ -816,6 +816,6 @@ pnpm build
 
 ---
 
-**Status**: ✅ Production Ready  
-**Last Updated**: October 19, 2025  
+**Status**: ✅ Production Ready
+**Last Updated**: October 19, 2025
 **Maintained By**: Cerebral Mobile Team

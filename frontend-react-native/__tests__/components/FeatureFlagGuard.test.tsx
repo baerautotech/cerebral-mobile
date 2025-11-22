@@ -1,6 +1,6 @@
 /**
  * FeatureFlagGuard Component Tests
- * 
+ *
  * Tests for conditional rendering based on feature flags
  */
 
@@ -173,4 +173,3 @@ describe('FeatureFlagGuard', () => {
     expect(screen.getByTestID('premium-content')).toBeTruthy();
   });
 });
-

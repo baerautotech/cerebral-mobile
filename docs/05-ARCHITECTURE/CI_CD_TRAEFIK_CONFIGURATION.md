@@ -1,8 +1,8 @@
 # 🚀 Traefik Configuration Guide - Cross-Namespace Routing
 
-**Date**: October 25, 2025  
-**Last Updated**: After webhook 404 fix  
-**Status**: Production Ready ✅  
+**Date**: October 25, 2025
+**Last Updated**: After webhook 404 fix
+**Status**: Production Ready ✅
 **Namespace**: `traefik-production`
 
 ---
@@ -48,31 +48,31 @@ spec:
           # Global settings
           - --global.checkNewVersion=true
           - --global.sendAnonymousUsage=false
-          
+
           # Entry Points (where Traefik listens)
           - --entryPoints.web.address=:8000           # HTTP
           - --entryPoints.websecure.address=:8443     # HTTPS
           - --entryPoints.metrics.address=:9090       # Prometheus
-          
+
           # HTTP → HTTPS redirect
           - --entryPoints.web.http.redirections.entryPoint.to=websecure
           - --entryPoints.web.http.redirections.entryPoint.scheme=https
-          
+
           # Providers (what Traefik watches for routing rules)
           - --providers.kubernetescrd                  # Watch Traefik CRDs
           - --providers.kubernetescrd.allowCrossNamespace=true  # ✅ CRITICAL - Enable cross-namespace
           - --providers.kubernetesingress              # Watch Kubernetes Ingress resources
-          
+
           # Metrics
           - --metrics.prometheus.addEntryPointsLabels=true
           - --metrics.prometheus.addServicesLabels=true
-          
+
           # Logging & Dashboard
           - --log.level=INFO
           - --accesslog=true
           - --api.dashboard=true
           - --api.insecure=false
-        
+
         ports:
         - containerPort: 8000    # HTTP
           name: http
@@ -144,7 +144,7 @@ spec:
       port: 3000
 ```
 
-**Without flag**: 404 Not Found  
+**Without flag**: 404 Not Found
 **With flag**: ✅ Routes correctly to service
 
 ---
@@ -318,7 +318,7 @@ scrape_configs:
 rate(traefik_requests_total[5m])
 
 # Error rate (% 5xx responses)
-sum(rate(traefik_requests_total{code=~"5.."}[5m])) / 
+sum(rate(traefik_requests_total{code=~"5.."}[5m])) /
 sum(rate(traefik_requests_total[5m]))
 
 # Request duration percentiles
@@ -504,4 +504,3 @@ curl -v -X POST https://webhook.dev.cerebral.baerautotech.com/ \
 - ✅ All systems fully operational
 
 **Status**: 🟢 PRODUCTION READY
-

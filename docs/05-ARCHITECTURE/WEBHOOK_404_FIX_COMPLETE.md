@@ -1,10 +1,10 @@
 # ✅ CI/CD Webhook 404 Bug - FIXED
 
-**Date**: October 25, 2025, 17:45 UTC  
-**Status**: RESOLVED ✅  
-**Issue**: GitHub webhooks returned HTTP 404 Not Found  
-**Root Cause**: Traefik missing `--providers.kubernetescrd.allowCrossNamespace=true` flag  
-**Fix**: Enable cross-namespace routing in Traefik DaemonSet  
+**Date**: October 25, 2025, 17:45 UTC
+**Status**: RESOLVED ✅
+**Issue**: GitHub webhooks returned HTTP 404 Not Found
+**Root Cause**: Traefik missing `--providers.kubernetescrd.allowCrossNamespace=true` flag
+**Fix**: Enable cross-namespace routing in Traefik DaemonSet
 
 ---
 
@@ -121,7 +121,7 @@ curl -s -w "HTTP Status: %{http_code}\n" \
 ```bash
 $ kubectl get pipelineruns -n tekton-pipelines --sort-by='.metadata.creationTimestamp' | tail -3
 
-webhook-api-gateway-1761414231                  Unknown     PipelineRunPending   
+webhook-api-gateway-1761414231                  Unknown     PipelineRunPending
 webhook-api-gateway-1761414312                  Unknown     PipelineRunPending
 ```
 
@@ -180,7 +180,7 @@ The Traefik service account has limited permissions (only watches Ingress/Ingres
    git add microservices/api-gateway/webhook-test.txt
    git commit -m "test: verify webhook integration"
    git push origin main
-   
+
    # Wait 10 seconds, then verify PipelineRun was created
    kubectl get pipelineruns -n tekton-pipelines --sort-by='.metadata.creationTimestamp' | tail -1
    ```
@@ -225,7 +225,7 @@ The Traefik service account has limited permissions (only watches Ingress/Ingres
 
 **What Fixed It**: One flag in Traefik: `--providers.kubernetescrd.allowCrossNamespace=true`
 
-**Result**: 
+**Result**:
 - ✅ GitHub webhooks now return 202 ACCEPTED
 - ✅ PipelineRuns are created automatically
 - ✅ CI/CD pipeline is fully functional

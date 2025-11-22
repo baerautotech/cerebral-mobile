@@ -1,0 +1,192 @@
+# System Status Updates - Living Documentation
+
+**Purpose**: Ensure SYSTEM_STATUS.md stays current with actual operational state
+
+---
+
+## 🎯 **THE REQUIREMENT**
+
+`SYSTEM_STATUS.md` at project root MUST be updated after:
+1. Infrastructure deployments
+2. Data consolidations/migrations
+3. Major system changes
+4. Quarterly reviews
+
+**Why**: Prevents AI agents from planning redundant infrastructure (see Oct 4 incident - almost deployed Apache AGE when 120K entity KG already existed)
+
+---
+
+## 🔄 **UPDATE TRIGGERS**
+
+### Automatic Updates
+Run `./scripts/check_system_state.py` after:
+- ✅ Database migrations
+- ✅ Data consolidations
+- ✅ Infrastructure deployments
+- ✅ System scaling events
+
+### Manual Updates
+Update manually when:
+- ✅ New systems deployed
+- ✅ Systems deprecated
+- ✅ Major architecture changes
+- ✅ Quarterly documentation review
+
+---
+
+## 📋 **UPDATE PROCEDURE**
+
+### Option A: Auto-Generate (Recommended)
+```bash
+# Query databases and auto-update SYSTEM_STATUS.md
+cd /Users/bbaer/Development/Cerebral
+./scripts/check_system_state.py
+```
+
+**What It Does**:
+- Queries `kg_entities`, `kg_relationships` (counts)
+- Queries `cerebral_rag` (embedding count)
+- Queries `cerebral_tasks` (status distribution)
+- Generates updated SYSTEM_STATUS.md with current numbers
+
+### Option B: Manual Update
+```markdown
+# Edit SYSTEM_STATUS.md manually
+
+1. Update "Last Updated" timestamp
+2. Update row counts from database
+3. Update operational status
+4. Add/remove systems as needed
+5. Update Quick Status table
+```
+
+---
+
+## 🚨 **MANDATORY UPDATES**
+
+### After Infrastructure Deployment
+```bash
+# Example: After deploying new service
+./scripts/check_system_state.py
+
+# Commit the update
+git add SYSTEM_STATUS.md
+git commit -m "docs: update SYSTEM_STATUS after XYZ deployment"
+```
+
+### After Data Consolidation
+```bash
+# Example: After RAG consolidation (Oct 4, 2025)
+./scripts/check_system_state.py
+# → cerebral_rag: 41,415 embeddings (updated automatically)
+
+git add SYSTEM_STATUS.md
+git commit -m "docs: update SYSTEM_STATUS after RAG consolidation"
+```
+
+### After System Scale Changes
+```bash
+# Example: When KG grows significantly
+./scripts/check_system_state.py
+# → kg_entities: 120,533 → 150,000 (growth documented)
+```
+
+---
+
+## 🔧 **GIT HOOK INTEGRATION**
+
+### Post-Commit Hook (Optional Enhancement)
+```bash
+# In git-hooks/enhanced-post-commit
+
+# Check if major files changed
+if [[ "$CHANGED_FILES" =~ (migrations/|supabase/|backend-python/services/) ]]; then
+    echo "📊 Updating system status..."
+    ./scripts/check_system_state.py
+
+    # Check if SYSTEM_STATUS.md changed
+    if git diff --quiet SYSTEM_STATUS.md; then
+        echo "  No changes to system status"
+    else
+        echo "  ✅ SYSTEM_STATUS.md updated with current state"
+        # Note: Don't auto-commit, let user review
+    fi
+fi
+```
+
+---
+
+## 📊 **WHAT TO UPDATE**
+
+### System Status Changes
+Update when these change significantly (>10% or new system):
+- Knowledge Graph entity/relationship counts
+- RAG embedding counts
+- Task database size and distribution
+- New systems deployed
+- Systems deprecated
+
+### Operational Status Changes
+Update immediately when:
+- System goes from PLANNING → OPERATIONAL
+- System goes from OPERATIONAL → DEPRECATED
+- System goes from OPERATIONAL → ERROR
+- New system added to platform
+
+---
+
+## ✅ **QUALITY CHECKS**
+
+### Before Committing Updates
+- [ ] All counts verified via database queries
+- [ ] Operational statuses accurate (tested, not assumed)
+- [ ] Timestamp updated to current date/time
+- [ ] Quick Status table matches detailed sections
+- [ ] No placeholder "TBD" or "Unknown" values
+
+### Quarterly Review (Every 3 Months)
+- [ ] Run `./scripts/check_system_state.py`
+- [ ] Verify all services still operational
+- [ ] Update growth projections
+- [ ] Archive deprecated systems
+- [ ] Update documentation links
+
+---
+
+## 🎯 **SUCCESS CRITERIA**
+
+**This rule is working when**:
+- ✅ SYSTEM_STATUS.md updated within 24h of infrastructure changes
+- ✅ Counts in SYSTEM_STATUS.md match actual database (within 5%)
+- ✅ AI agents read SYSTEM_STATUS.md before planning
+- ✅ No redundant infrastructure planned
+- ✅ New team members can quickly understand operational state
+
+---
+
+## 📚 **RELATED DOCUMENTATION**
+
+- `SYSTEM_STATUS.md` - The living status document
+- `.cursor/rules/infrastructure/check-before-build.mdc` - Verification requirements
+- `scripts/check_system_state.py` - Auto-update script
+- `docs/ROOT_CAUSE_ANALYSIS_DISCOVERY_FAILURE.md` - Why this matters
+
+---
+
+## 🔄 **UPDATE SCHEDULE**
+
+| Trigger | Frequency | Method |
+|---------|-----------|--------|
+| Infrastructure deployment | Immediate | Auto-generate |
+| Data consolidation | Immediate | Auto-generate |
+| Code changes to services/ | On commit (optional) | Auto-generate |
+| Quarterly review | Every 3 months | Auto-generate + manual review |
+| On demand | As needed | `./scripts/check_system_state.py` |
+
+---
+
+**REMEMBER**: SYSTEM_STATUS.md is your "source of truth" for operational state. Keep it current, and AI agents won't waste time planning infrastructure that already exists!
+
+**Rule Type**: Process Requirement
+**Enforcement**: Code review, CI/CD checks
+**Severity**: HIGH (prevents costly mistakes)

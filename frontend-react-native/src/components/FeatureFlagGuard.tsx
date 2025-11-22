@@ -1,6 +1,6 @@
 /**
  * FeatureFlagGuard Component
- * 
+ *
  * Conditionally renders content based on feature flag state
  */
 
@@ -10,24 +10,24 @@ import { FeatureFlagGuardProps } from '../types/featureFlags';
 
 /**
  * FeatureFlagGuard Component
- * 
+ *
  * Wraps content and conditionally renders based on feature flag state
- * 
+ *
  * @param {string} flag - The feature flag key to check
  * @param {ReactNode} children - Content to render if flag is enabled
  * @param {ReactNode} [fallback] - Optional content to render if flag is disabled
  * @returns {ReactNode} Rendered content or fallback
- * 
+ *
  * @example
  * // Show premium features only if flag enabled
  * <FeatureFlagGuard flag="premium_features">
  *   <PremiumAnalytics />
  * </FeatureFlagGuard>
- * 
+ *
  * @example
  * // With fallback UI
- * <FeatureFlagGuard 
- *   flag="beta_ui" 
+ * <FeatureFlagGuard
+ *   flag="beta_ui"
  *   fallback={<Text>Beta UI not available</Text>}
  * >
  *   <BetaUI />
@@ -61,4 +61,3 @@ export function FeatureFlagGuard({
   // Default: render nothing
   return null;
 }
-

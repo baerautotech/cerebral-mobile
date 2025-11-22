@@ -11,7 +11,7 @@ PRODUCTION_BRANCHES="main|master|hotfix/.*"
 # Validate branch
 if [[ $BRANCH =~ ^($DEVELOP_BRANCHES|$STAGING_BRANCHES|$PRODUCTION_BRANCHES)$ ]]; then
     echo "✅ Branch '$BRANCH' is valid"
-    
+
     # Warn about production branches in development mode
     if [[ $BRANCH =~ ^($PRODUCTION_BRANCHES)$ ]]; then
         echo "⚠️  WARNING: You're on a production branch ($BRANCH)"

@@ -1,6 +1,6 @@
 /**
  * Feature Flags Type Definitions
- * 
+ *
  * Defines the types used throughout the feature flag system
  */
 
@@ -18,13 +18,13 @@ export interface FeatureFlags {
 export interface FeatureFlagContextType {
   /** Current feature flags state */
   flags: FeatureFlags;
-  
+
   /** Whether flags are currently loading from backend */
   loading: boolean;
-  
+
   /** Manually refresh flags from backend */
   refresh: () => Promise<void>;
-  
+
   /** Timestamp of last successful update */
   lastUpdated: number;
 }
@@ -43,11 +43,10 @@ export interface FeatureFlagProviderProps {
 export interface FeatureFlagGuardProps {
   /** The feature flag key to check */
   flag: string;
-  
+
   /** Content to render if flag is enabled */
   children: React.ReactNode;
-  
+
   /** Optional content to render if flag is disabled */
   fallback?: React.ReactNode;
 }
-

@@ -1,7 +1,7 @@
 /**
  * @cerebral/core
  * Shared core library for Cerebral mobile apps
- * 
+ *
  * Exports:
  * - Authentication services (Supabase)
  * - Backend API client
@@ -13,7 +13,3 @@ export * from './services/index';
 export * from './api/index';
 
 export default {};
-
-
-
-

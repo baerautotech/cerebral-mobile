@@ -92,58 +92,58 @@ print_section "STARTING $PLATFORM SIMULATOR/EMULATOR"
 
 if [[ "$PLATFORM" == "ios" ]]; then
     print_test "Checking for iOS simulator..."
-    
+
     # Find available iOS simulator
     SIMULATOR=$(xcrun simctl list devices available | grep "^  iPhone" | head -1 | sed 's/.*(\([^)]*\)).*/\1/')
-    
+
     if [ -z "$SIMULATOR" ]; then
         print_fail "No iOS simulator available"
         echo "Please ensure Xcode is installed and a simulator is available"
         exit 1
     fi
-    
+
     print_pass "Found simulator: $SIMULATOR"
-    
+
     print_test "Opening iOS simulator..."
     open -a Simulator
-    
+
     # Wait for simulator to start
     sleep 5
-    
+
     print_test "Starting Metro bundler..."
     npm start -- --reset-cache &
     METRO_PID=$!
-    
+
     # Wait for Metro to be ready
     sleep 10
-    
+
     print_test "Building and running iOS app..."
     npm run ios
-    
+
     print_pass "iOS app launched"
-    
+
 elif [[ "$PLATFORM" == "android" ]]; then
     print_test "Checking for Android emulator..."
-    
+
     # Check if emulator is running
     if ! pgrep -x "emulator" > /dev/null; then
         print_fail "Android emulator not running"
         echo "Please start an Android emulator first"
         exit 1
     fi
-    
+
     print_pass "Android emulator detected"
-    
+
     print_test "Starting Metro bundler..."
     npm start -- --reset-cache &
     METRO_PID=$!
-    
+
     # Wait for Metro to be ready
     sleep 10
-    
+
     print_test "Building and running Android app..."
     npm run android
-    
+
     print_pass "Android app launched"
 fi
 
@@ -215,4 +215,3 @@ echo "2. Check 'test-results.log' for integration test results"
 echo "3. If all tests pass, proceed to Phase 4"
 echo "4. If issues found, fix and re-run tests"
 echo ""
-

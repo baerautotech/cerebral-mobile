@@ -1,0 +1,81 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+## TypeScript-ESLint Coordination Rules
+
+### **CRITICAL: Tool Execution Order**
+**ALWAYS follow this sequence when making changes:**
+1. Check TypeScript compilation FIRST: `npx tsc --noEmit --skipLibCheck`
+2. Fix TypeScript syntax errors before ESLint
+3. Run ESLint AFTER TypeScript is clean: `npx eslint .`
+4. Apply auto-fixes only when parsing succeeds
+
+### **File-Level Error Prevention**
+- **NEVER work on files with BOTH TypeScript AND ESLint errors simultaneously**
+- **ALWAYS fix TypeScript errors before addressing ESLint issues**
+- **VERIFY each change doesn't introduce cross-tool errors**
+- **CREATE backups before mass pattern-based fixes**
+
+### **Pattern-Based Fix Safety**
+When applying regex-based fixes:
+- **Start with TS1005 (semicolons)** - safest pattern
+- **Avoid TS1128 (declarations)** - most complex, causes cascading issues
+- **Test on 5 files before applying to many**
+- **Verify ESLint can still parse after TypeScript changes**
+
+### **Configuration Synchronization**
+- **Keep tsconfig.json exclude and .eslintignore synchronized**
+- **Files excluded from TypeScript MUST be excluded from ESLint**
+- **Use consistent parser configurations across tools**
+- **Update both configurations simultaneously**
+
+### **Pre-commit Validation**
+Before committing changes:
+```bash
+# Required validation sequence:
+npm run type-check  # TypeScript compilation
+npm run lint       # ESLint parsing + rules
+npm run format     # Prettier formatting
+```
+
+### **Error Correlation Monitoring**
+- **Weekly**: Check files with both error types
+- **Alert threshold**: >100 files with cross-tool errors
+- **Track correlation metrics** in project documentation
+- **Document patterns that cause tool conflicts**
+
+### **Mass Fix Guidelines**
+- **Batch size**: Maximum 25 files per fix operation
+- **Verification**: Check both tools after each batch
+- **Conservative approach**: One error pattern at a time
+- **Rollback plan**: Keep backups of pre-fix state
+
+### **Development Workflow**
+- **Pair programming**: Second dev verifies cross-tool impacts
+- **Staged fixing**: Complete TypeScript → then ESLint → then Prettier
+- **Tool isolation**: Don't run multiple linting tools simultaneously
+- **Impact assessment**: Test changes on dependency files
+
+## Error Pattern Safety Ranking
+
+### **Safe Patterns (90%+ success rate)**
+- Missing semicolons (TS1005 semicolon type)
+- Basic formatting issues
+- Unused imports (ESLint auto-fix)
+
+### **Moderate Risk (70% success rate)**
+- Property assignment fixes (TS1136)
+- Simple expression errors (TS1109)
+
+### **High Risk (40% success rate)**
+- Declaration statement fixes (TS1128)
+- Complex syntax restructuring
+- Interface/type modifications
+
+### **Forbidden Patterns**
+- **NEVER** apply mass regex fixes across >50 files
+- **NEVER** fix TypeScript and ESLint errors in same operation
+- **NEVER** ignore TypeScript errors to "fix ESLint later"
+- **NEVER** bypass tool execution order requirements

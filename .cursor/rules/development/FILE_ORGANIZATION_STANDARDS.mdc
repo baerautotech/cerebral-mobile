@@ -1,0 +1,212 @@
+---
+description: File organization standards preventing aggressive cleanup and maintaining project context
+globs: scripts/*cleanup*.py, **/*cleanup*.py, .git/hooks/pre-commit
+alwaysApply: false
+---
+
+# 🗂️ MANDATORY: File Organization Standards and Cleanup Prevention
+
+**CRITICAL**: This rule prevents over-aggressive file cleanup that destroys project context and moves legitimate files inappropriately.
+
+---
+
+## ⚠️ IMPORTANT CLARIFICATION
+
+**Scope**: This rule applies to CLEANUP SCRIPTS and ARTIFACT MANAGEMENT.
+
+**For AI-Generated Documentation**, see instead:
+- `.cursor/rules/development/00_MASTER_DOCUMENTATION_STANDARDS.mdc` (authoritative)
+
+The MASTER DOCUMENTATION STANDARDS rule consolidates all documentation naming,
+placement, and organization decisions. This rule focuses on cleanup protection
+and file preservation during automated cleanup processes.
+
+---
+
+## **LEGITIMATE ROOT DIRECTORY FILES**
+
+### ✅ **Core Project Files (NEVER MOVE)**
+- `README.md`, `package.json`, `package-lock.json`, `pyproject.toml`
+- `tsconfig.json`, `tsconfig.app.json`, `tsconfig.node.json`
+- `activate.sh`, `activate.bat`, `components.json`
+
+### ✅ **Configuration Files (NEVER MOVE)**
+- `.env`, `.env.example`, `.gitignore`, `.eslintignore`
+- `.prettierrc`, `.cursorignore`, `.roomodes`
+
+### ✅ **CLI Tools and Executables (NEVER MOVE)**
+- `caef`, `cflow`, `cflow-research-status`, `cflow-shortcuts`
+- Any executable script used from project root
+
+### ✅ **Active Project Documentation (NEVER MOVE)**
+- `CLAUDE.md` - Current Claude Code integration guide
+- `CerebralMemory.md` - Current memory system documentation
+- `CAEF_*.md` - Current CAEF framework documentation
+- `*_ATOMIC_*.md` - Current atomic implementation plans
+- `SRP_*.md` - Current SRP work documentation
+- `COMPREHENSIVE_SERVICE_*.md` - Current service implementation
+
+## **HISTORICAL FILES TO MOVE TO DOCS/**
+
+### 📚 **Historical Reports → `docs/historical-reports/`**
+```
+*_REPORT*.md          # Completion reports
+*_COMPLETE*.md        # Completion documentation
+*_COMPLETION*.md      # Completion summaries
+PHASE_*.md           # Phase completion docs
+CRITICAL_*.md        # Critical violation reports
+CV_CAMPAIGN_*.md     # Campaign completion reports
+*_SUMMARY*.md        # Historical summaries
+*_SOLUTION*.md       # Solution documentation
+*_STATUS*.md         # Status reports
+OPTION_*.md          # Option analysis docs
+EMERGENCY_*.md       # Emergency remediation docs
+```
+
+### 📝 **Other Documentation → `docs/`**
+```
+CHANGELOG.md         # Change logs
+*_MIGRATION*.md      # Migration documentation (if historical)
+```
+
+## **CLEANUP SCRIPT REQUIREMENTS**
+
+### 🛡️ **Protection Rules (MANDATORY)**
+```python
+# ✅ CORRECT: Intelligent protection
+def is_legitimate_root_file(self, filename: str) -> bool:
+    legitimate_files = {
+        'README.md', 'package.json', 'CLAUDE.md', 'caef', 'cflow',
+        '.env', '.gitignore', '.prettierrc', # ... complete list
+    }
+
+    legitimate_patterns = {
+        'CAEF_*.md',           # Current CAEF work
+        '*_ATOMIC_*.md',       # Current atomic plans
+        'SRP_*.md',           # Current SRP work
+    }
+
+    return filename in legitimate_files or matches_patterns(filename, legitimate_patterns)
+
+# ❌ FORBIDDEN: Aggressive blanket rules
+def _is_violation(self, filename: str) -> bool:
+    allowed_files = {'README.md', 'package.json'}  # TOO RESTRICTIVE!
+    return filename not in allowed_files  # DANGEROUS!
+```
+
+### 📋 **Smart Categorization (REQUIRED)**
+```python
+# ✅ CORRECT: Context-aware categorization
+historical_patterns = {
+    '*_REPORT*.md': 'docs/historical-reports/',
+    '*_COMPLETE*.md': 'docs/historical-reports/',
+    'PHASE_*.md': 'docs/historical-reports/',
+    # Specific patterns for historical vs current work
+}
+
+# ❌ FORBIDDEN: Moving all markdown files
+if filename.endswith('.md') and filename != 'README.md':
+    return True  # DESTROYS PROJECT CONTEXT!
+```
+
+## **PRE-COMMIT HOOK STANDARDS**
+
+### ✅ **Intelligent File Validation**
+```bash
+# Root file validation with protection
+ROOT_VIOLATIONS=$(git diff --cached --name-only --diff-filter=A |
+    grep -E '^[^/]+\.(py|json|sql|log|txt|sh)$' |
+    grep -v -E '^(README\.md|package\.json|CLAUDE\.md|caef|cflow|\.env|\.gitignore)$' |
+    grep -v -E '^CAEF_.*\.md$|^.*_ATOMIC_.*\.md$|^SRP_.*\.md$')
+```
+
+### ❌ **Forbidden Patterns**
+```bash
+# ❌ FORBIDDEN: Blanket markdown restrictions
+ROOT_VIOLATIONS=$(find . -maxdepth 1 -name "*.md" ! -name "README.md")
+
+# ❌ FORBIDDEN: Moving files without context awareness
+mv *.md .cleanup/root-md-files/
+```
+
+## **RECOVERY PROCEDURES**
+
+### 🚨 **If Over-Aggressive Cleanup Occurs**
+1. **Stop immediately** - Don't continue cleanup
+2. **Assess damage** - Check what was moved inappropriately
+3. **Restore legitimate files** - Move back to root if needed
+4. **Reorganize historical files** - Move completion reports to docs/
+5. **Update cleanup script** - Add proper protection rules
+6. **Test new logic** - Dry run before execution
+
+### 📝 **Recovery Commands**
+```bash
+# Restore legitimate root files
+mv .cleanup/unknown/.env .cleanup/unknown/.gitignore ./
+mv .cleanup/unknown/caef .cleanup/unknown/cflow* ./
+
+# Move historical docs to proper location
+mv .cleanup/root-md-files/*_REPORT*.md docs/historical-reports/
+mv .cleanup/root-md-files/*_COMPLETE*.md docs/historical-reports/
+
+# Verify current work files are in root
+ls CAEF_*.md *_ATOMIC_*.md SRP_*.md CLAUDE.md
+```
+
+## **CLEANUP SCRIPT VALIDATION**
+
+### 🧪 **Required Testing**
+```python
+def test_protection_rules():
+    """Test that legitimate files are protected"""
+    cleanup = FileOrganizationCleanup()
+
+    # Test legitimate files are protected
+    assert cleanup.is_legitimate_root_file("CLAUDE.md")
+    assert cleanup.is_legitimate_root_file("caef")
+    assert cleanup.is_legitimate_root_file("CAEF_ATOMIC_PLAN.md")
+
+    # Test historical files are identified
+    assert cleanup.get_historical_destination("PHASE_1_COMPLETE.md")
+    assert cleanup.get_historical_destination("CV_CAMPAIGN_1_REPORT.md")
+```
+
+### 📊 **Mandatory Dry Run Analysis**
+- Show what will be moved and why
+- Display protection count vs move count
+- Require explicit confirmation for any moves
+- Generate detailed report of all actions
+
+## **DOCUMENTATION REQUIREMENTS**
+
+### 📚 **Required Documentation Updates**
+When implementing cleanup scripts:
+
+1. **Update this rule** with any new file patterns
+2. **Document protection logic** in cleanup script comments
+3. **Add recovery procedures** for any new file types
+4. **Test with current project state** before deployment
+
+### 🔄 **Continuous Maintenance**
+- Review file organization rules monthly
+- Update protection patterns as project evolves
+- Test cleanup scripts on staging environment first
+- Maintain separation between current vs historical work
+
+## **ENFORCEMENT**
+
+### 🚨 **Pre-commit Validation**
+- Check for overly restrictive cleanup logic
+- Validate protection rules exist and are comprehensive
+- Require dry run logs for any organizational changes
+- Block commits that remove protection rules
+
+### 📋 **Code Review Requirements**
+- All cleanup scripts require architectural review
+- Protection rule changes need approval
+- Historical pattern updates must preserve context
+- Recovery procedures must be documented
+
+---
+
+**This rule prevents the catastrophic file organization failures that move legitimate project files and destroy development context. Zero tolerance for aggressive cleanup without proper protection.**

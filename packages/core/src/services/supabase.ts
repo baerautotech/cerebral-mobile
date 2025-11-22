@@ -1,7 +1,7 @@
 /**
  * Supabase Authentication Service
  * Cross-platform support: React Native (iOS/Android) + Web
- * 
+ *
  * Provides:
  * - Email/password authentication
  * - OAuth (GitHub, Google)
@@ -306,7 +306,3 @@ export class AuthService {
 }
 
 export default AuthService;
-
-
-
-

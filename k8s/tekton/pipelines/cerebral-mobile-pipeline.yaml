@@ -8,43 +8,43 @@ metadata:
     version: v1
 spec:
   description: Complete CI/CD pipeline for Cerebral React Native mobile app (iOS + Android)
-  
+
   params:
     # Required parameters
     - name: repo-url
       type: string
       description: Git repository URL (e.g., https://github.com/baerautotech/cerebral-mobile-1)
-    
+
     # Optional parameters with defaults
     - name: repo-branch
       type: string
       default: main
       description: Git branch to build
-    
+
     - name: build-target
       type: string
       default: all
       description: "Build target: ios, android, or all"
-    
+
     - name: version
       type: string
       default: "1.0.0"
       description: App version (semver format)
-    
+
     - name: ios-cert-secret
       type: string
       default: ios-signing-cert
       description: Kubernetes secret containing iOS signing certificate
-    
+
     - name: android-keystore-secret
       type: string
       default: android-keystore
       description: Kubernetes secret containing Android keystore
-  
+
   workspaces:
     - name: shared-workspace
       description: Shared workspace for all tasks
-  
+
   tasks:
     # Task 1: Clone repository
     - name: git-clone
@@ -60,7 +60,7 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
-    
+
     # Task 2: Run tests
     - name: run-tests
       runAfter:
@@ -75,7 +75,7 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
-    
+
     # Task 3: Lint code
     - name: lint-code
       runAfter:
@@ -89,7 +89,7 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
-    
+
     # Task 4: Build iOS (conditional)
     - name: build-ios
       when:
@@ -111,7 +111,7 @@ spec:
       workspaces:
         - name: shared-data
           workspace: shared-workspace
-    
+
     # Task 5: Build Android (conditional)
     - name: build-android
       when:
@@ -133,7 +133,7 @@ spec:
       workspaces:
         - name: shared-data
           workspace: shared-workspace
-    
+
     # Task 6: Build Docker image for web
     - name: build-docker-image
       runAfter:
@@ -155,7 +155,7 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
-  
+
   finally:
     # Final task: Notification
     - name: notify-completion
@@ -172,4 +172,3 @@ spec:
         - build-ios
         - build-android
         - build-docker-image
-

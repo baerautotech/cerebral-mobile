@@ -1,0 +1,395 @@
+
+# 🚀 FastAPI Optimization Rules - MANDATORY Enterprise Performance Standards
+
+## **MANDATORY: Async-First Development**
+
+### **Always Use Async/Await for I/O Operations**
+- **✅ REQUIRED**: All database operations must use `async def` and `await`
+- **✅ REQUIRED**: All external API calls must use async HTTP clients (`httpx.AsyncClient`)
+- **✅ REQUIRED**: All file operations must use `aiofiles`
+- **❌ FORBIDDEN**: Synchronous blocking operations in FastAPI endpoints
+
+```python
+# ✅ CORRECT: Async database operation
+@app.get("/users/{user_id}")
+async def get_user(user_id: str, db: AsyncSession = Depends(get_async_db)):
+    result = await db.execute(select(User).where(User.id == user_id))
+    return result.scalar_one_or_none()
+
+# ✅ CORRECT: Async external API call
+async def fetch_ai_status(provider_url: str) -> dict:
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.get(f"{provider_url}/health")
+        return response.json()
+
+# ❌ FORBIDDEN: Synchronous blocking operation
+def get_user_sync(user_id: str, db: Session = Depends(get_db)):
+    return db.query(User).filter(User.id == user_id).first()
+```
+
+### **CPU-Bound Task Handling**
+```python
+# ✅ CORRECT: Delegate CPU-intensive tasks to process pools
+from concurrent.futures import ProcessPoolExecutor
+import asyncio
+
+async def process_large_dataset(data: List[dict]) -> ProcessedResult:
+    loop = asyncio.get_event_loop()
+    with ProcessPoolExecutor() as executor:
+        result = await loop.run_in_executor(
+            executor, cpu_intensive_processing, data
+        )
+    return result
+```
+
+---
+
+## **MANDATORY: Database Optimization**
+
+### **Connection Pooling Configuration**
+```python
+# ✅ REQUIRED: Optimized async database setup
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.pool import QueuePool
+
+engine = create_async_engine(
+    DATABASE_URL,
+    poolclass=QueuePool,
+    pool_size=20,          # Production: 20 connections per worker
+    max_overflow=30,       # Allow burst to 50 total connections
+    pool_pre_ping=True,    # Validate connections
+    pool_recycle=3600,     # Recycle connections every hour
+    echo=False,            # Disable query logging in production
+)
+```
+
+### **Efficient Query Patterns**
+```python
+# ✅ REQUIRED: Select only necessary columns (avoid SELECT *)
+async def get_user_data(db: AsyncSession, user_id: str) -> UserData:
+    query = select(
+        User.id,
+        User.name,
+        User.email,
+        Tenant.name.label('tenant_name')
+    ).select_from(
+        User.__table__.join(Tenant.__table__)
+    ).where(
+        User.id == user_id
+    ).options(
+        # Use eager loading to avoid N+1 query problems
+        joinedload(User.profile),
+        selectinload(User.permissions)
+    )
+
+    result = await db.execute(query)
+    return result.scalar_one_or_none()
+
+# ✅ REQUIRED: Batch operations for multiple records
+async def bulk_update_users(db: AsyncSession, updates: List[dict]) -> int:
+    stmt = update(User).where(User.id.in_([u['id'] for u in updates]))
+    result = await db.execute(stmt, updates)
+    await db.commit()
+    return result.rowcount
+```
+
+---
+
+## **MANDATORY: Pydantic V2 Optimization**
+
+### **Enhanced Model Configuration**
+```python
+# ✅ REQUIRED: Optimized Pydantic models with V2 features
+from pydantic import BaseModel, ConfigDict, Field
+
+class OptimizedModel(BaseModel):
+    model_config = ConfigDict(
+        validate_assignment=False,  # Skip validation on assignment
+        use_enum_values=True,      # Use enum values directly
+        str_strip_whitespace=True,
+        validate_default=True,
+        extra='forbid'             # Prevent extra fields
+    )
+
+    id: str = Field(..., description="Unique identifier")
+    name: str = Field(..., min_length=1, max_length=100)
+
+# ✅ REQUIRED: Skip re-validation for trusted data
+class UserListResponse(BaseModel):
+    users: List[OptimizedModel]
+    total: int
+
+    @classmethod
+    def from_db_result(cls, users: List[User], total: int):
+        # Use model_construct to skip re-validation of trusted DB data
+        return cls.model_construct(
+            users=[OptimizedModel.model_construct(**user.__dict__) for user in users],
+            total=total
+        )
+```
+
+---
+
+## **MANDATORY: Caching Implementation**
+
+### **Multi-Level Caching Strategy**
+```python
+# ✅ REQUIRED: Redis caching for frequent operations
+import redis.asyncio as redis
+from functools import wraps
+import pickle
+from functools import wraps
+
+# Redis connection pool
+redis_pool = redis.ConnectionPool.from_url(
+    REDIS_URL,
+    max_connections=20,
+    retry_on_timeout=True,
+    health_check_interval=30
+)
+
+# ✅ REQUIRED: LRU cache for frequently accessed static data
+@lru_cache(maxsize=1000)
+def get_static_config(config_key: str) -> dict:
+    """Cache static configuration data."""
+    return load_configuration(config_key)
+
+# ✅ REQUIRED: Cache decorator for endpoints
+def cache_result(ttl: int = 300):
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(*args, **kwargs):
+            cache_key = f"{func.__name__}:{hash(str(args) + str(kwargs))}"
+            cached = await redis_client.get(cache_key)
+            if cached:
+                return pickle.loads(cached)
+
+            result = await func(*args, **kwargs)
+            await redis_client.setex(cache_key, ttl, pickle.dumps(result))
+            return result
+        return wrapper
+    return decorator
+```
+
+---
+
+## **MANDATORY: Production Deployment**
+
+### **Uvicorn with Standard Extensions**
+```python
+# ✅ REQUIRED: Install performance extensions
+# uv add uvicorn[standard]  # Includes uvloop and httptools
+
+# ✅ REQUIRED: Production Gunicorn configuration
+# gunicorn_config.py
+import multiprocessing
+
+workers = multiprocessing.cpu_count() * 2 + 1
+worker_class = "uvicorn.workers.UvicornWorker"
+bind = "0.0.0.0:8000"
+worker_connections = 1000
+max_requests = 10000
+max_requests_jitter = 1000
+preload_app = True
+```
+
+### **Middleware Optimization**
+```python
+# ✅ REQUIRED: Performance monitoring middleware
+from starlette.middleware.base import BaseHTTPMiddleware
+import time
+
+class PerformanceMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next) -> Response:
+        start_time = time.perf_counter()
+        response = await call_next(request)
+        process_time = time.perf_counter() - start_time
+
+        response.headers["X-Process-Time"] = str(process_time)
+
+        # Log slow requests
+        if process_time > 1.0:
+            logger.warning(f"Slow request: {request.method} {request.url.path} took {process_time:.2f}s")
+
+        return response
+```
+
+---
+
+## **MANDATORY: Background Tasks**
+
+### **Background Task Patterns**
+```python
+# ✅ REQUIRED: Use BackgroundTasks for non-blocking operations
+from fastapi import BackgroundTasks
+
+@app.post("/process-data")
+async def process_data(
+    data: DataRequest,
+    background_tasks: BackgroundTasks,
+    user: UserDep
+) -> ProcessingResponse:
+    task_id = generate_task_id()
+
+    # Schedule background processing
+    background_tasks.task_add(
+        process_data_async,
+        data.model_dump(),
+        user.id,
+        task_id
+    )
+
+    return ProcessingResponse(task_id=task_id, status="queued")
+
+# ✅ REQUIRED: Celery for heavy computational tasks
+from celery import Celery
+
+celery_app = Celery(
+    "cerebral_tasks",
+    broker=REDIS_URL,
+    backend=REDIS_URL
+)
+
+@celery_app.task
+def heavy_computation_task(data: dict) -> dict:
+    # CPU-intensive processing
+    return process_heavy_computation(data)
+```
+
+---
+
+## **MANDATORY: Input Validation & Security**
+
+### **Enhanced Input Validation**
+```python
+# ✅ REQUIRED: Strict input validation
+from pydantic import validator, Field
+from typing import Literal
+
+class SecureInput(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100, pattern=r'^[a-zA-Z0-9\s\-_]+$')
+    email: str = Field(..., regex=r'^[\w\.-]+@[\w\.-]+\.\w+$')
+    role: Literal['user', 'admin', 'viewer'] = Field(default='user')
+
+    @validator('name')
+    def sanitize_name(cls, v):
+        return v.strip().replace('<', '&lt;').replace('>', '&gt;')
+```
+
+### **Rate Limiting**
+```python
+# ✅ REQUIRED: API rate limiting
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["1000/hour", "100/minute"],
+    storage_uri=REDIS_URL
+)
+
+@app.get("/api/sensitive-data")
+@limiter.limit("10/minute")
+async def get_sensitive_data(request: Request, user: UserDep):
+    return await data_service.get_user_data(user.id)
+```
+
+---
+
+## **MANDATORY: Error Handling**
+
+### **Comprehensive Exception Handling**
+```python
+# ✅ REQUIRED: Proper exception handling
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "error": True,
+            "message": exc.detail,
+            "status_code": exc.status_code,
+            "path": str(request.url.path),
+            "timestamp": datetime.now().isoformat()
+        }
+    )
+
+# ✅ REQUIRED: Database error handling
+async def safe_db_operation(db: AsyncSession, operation: Callable) -> Optional[Any]:
+    try:
+        return await operation(db)
+    except SQLAlchemyError as e:
+        await db.rollback()
+        logger.error(f"Database error: {e}")
+        raise HTTPException(status_code=500, detail="Database operation failed")
+    except Exception as e:
+        await db.rollback()
+        logger.error(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+```
+
+---
+
+## **MANDATORY: Monitoring & Profiling**
+
+### **Performance Metrics**
+```python
+# ✅ REQUIRED: Prometheus metrics collection
+from prometheus_client import Counter, Histogram, generate_latest
+
+REQUEST_COUNT = Counter('fastapi_requests_total', 'Total requests', ['method', 'endpoint', 'status'])
+REQUEST_DURATION = Histogram('fastapi_request_duration_seconds', 'Request duration', ['method', 'endpoint'])
+
+@app.middleware("http")
+async def metrics_middleware(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    duration = time.time() - start_time
+
+    REQUEST_COUNT.labels(
+        method=request.method,
+        endpoint=request.url.path,
+        status=response.status_code
+    ).inc()
+
+    REQUEST_DURATION.labels(
+        method=request.method,
+        endpoint=request.url.path
+    ).observe(duration)
+
+    return response
+
+@app.get("/metrics")
+async def get_metrics():
+    return Response(generate_latest(), media_type="text/plain")
+```
+
+---
+
+## **PERFORMANCE TARGETS**
+
+### **Mandatory Benchmarks**
+- **Response Time**: < 200ms for 95% of requests
+- **Throughput**: > 1000 requests/second
+- **Memory Usage**: < 512MB per worker
+- **Error Rate**: < 0.1%
+- **Database Query Time**: < 50ms average
+
+### **Monitoring Requirements**
+- **✅ REQUIRED**: Real-time performance monitoring
+- **✅ REQUIRED**: Slow query logging (>100ms)
+- **✅ REQUIRED**: Error tracking and alerting
+- **✅ REQUIRED**: Resource utilization monitoring
+
+---
+
+**Reference Documentation**: [CEREBRAL_241_TECHNICAL_FASTAPI_OPTIMIZATION_GUIDE.md](mdc:docs/CEREBRAL_241_TECHNICAL_FASTAPI_OPTIMIZATION_GUIDE.md)
+
+**Compliance Level**: Enterprise SOC2
+**Review Frequency**: Monthly
+**Next Review**: July 2025
+
+
+**Reference**: [CEREBRAL_242_FASTAPI_OPTIMIZATION_IMPLEMENTATION.md](mdc:docs/CEREBRAL_242_FASTAPI_OPTIMIZATION_IMPLEMENTATION.md)
+
+**Compliance**: Enterprise SOC2 Production Standards

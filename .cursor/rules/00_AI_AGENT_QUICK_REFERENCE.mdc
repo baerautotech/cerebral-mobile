@@ -1,0 +1,94 @@
+# 🚀 AI AGENT QUICK REFERENCE - MEMORIZE THESE PATTERNS
+
+## 🚀 CRITICAL FILE PATHS (MEMORIZE THESE)
+- **MCP Server**: `.cerebraflow/core/mcp/cerebraflow_server.py`
+- **Task Management**: `.cerebraflow/core/mcp/handlers/task_handlers.py`
+- **Unified Storage**: `.cerebraflow/core/storage/mcp_unified_storage.py`
+- **RAG System**: `autodoc/rag/chunks/` (4,527 files)
+- **Enterprise Validator**: `.cerebraflow/validation/enterprise_pattern_validator.py`
+- **Task Manager Core**: `.cerebraflow/core/mcp/core/task_manager.py`
+- **MCP Direct Client**: `.cerebraflow/core/mcp/direct_mcp_client.py`
+
+## 🏗️ ARCHITECTURE INTEGRATION PATTERNS
+- **Task Creation**: Use `TaskManager().create_task()` with tenant isolation
+- **RAG Access**: Use `mcp_cerebraflow-stdio_research` tool FIRST
+- **Storage Operations**: Use `MCPUnifiedStorage` for all data persistence
+- **MCP Integration**: Import from `.cerebraflow.core.mcp.direct_mcp_client`
+
+## 🛡️ ENTERPRISE COMPLIANCE (ZERO TOLERANCE)
+- **NEVER** use words: mock, fake, placeholder, "for now"
+- **ALWAYS** implement real production functionality
+- **REQUIRED** tenant isolation for all operations
+- **MANDATORY** SOC2/HIPAA compliance patterns
+
+## 📊 PERFORMANCE OPTIMIZATION
+- **RAG First**: Query knowledge before any implementation
+- **Unified Storage**: Single source of truth for all data
+- **Apple Silicon**: Use MPS acceleration where available
+- **Enterprise Patterns**: Follow BaseEnterpriseService architecture
+
+## 🧠 MANDATORY EXECUTION PROTOCOL
+
+### **BEFORE ANY CODE IMPLEMENTATION:**
+1. **Query RAG**: `mcp_cerebraflow-stdio_research` with relevant topic
+2. **Load Context**: Review existing patterns and implementations
+3. **Verify Architecture**: Confirm integration approach
+4. **Implement**: Follow discovered patterns exactly
+
+### **REQUIRED RAG QUERIES BY TASK TYPE:**
+
+**Task Management:**
+```
+mcp_cerebraflow-stdio_research query="task management MCP integration patterns"
+mcp_cerebraflow-stdio_research query="TaskManager unified storage implementation"
+```
+
+**RAG Integration:**
+```
+mcp_cerebraflow-stdio_research query="RAG system AutoDoc integration patterns"
+mcp_cerebraflow-stdio_research query="enterprise RAG search implementation"
+```
+
+**Compliance:**
+```
+mcp_cerebraflow-stdio_research query="enterprise compliance SOC2 implementation patterns"
+mcp_cerebraflow-stdio_research query="tenant isolation security architecture"
+```
+
+**Storage Operations:**
+```
+mcp_cerebraflow-stdio_research query="MCPUnifiedStorage ChromaDB Supabase sync patterns"
+mcp_cerebraflow-stdio_research query="unified storage tenant isolation implementation"
+```
+
+## 🎯 ENTERPRISE IMPLEMENTATION STANDARDS
+
+### **Required Architecture Pattern:**
+```python
+# CORRECT ENTERPRISE PATTERN
+from .cerebraflow.core.mcp.core.task_manager import TaskManager
+from .cerebraflow.core.storage.mcp_unified_storage import MCPUnifiedStorage
+
+class EnterpriseService(BaseEnterpriseService):
+    def __init__(self):
+        self.task_manager = TaskManager()
+        self.storage = MCPUnifiedStorage()
+
+    async def create_task(self, task_data: dict, tenant_id: str):
+        # Real production implementation with tenant isolation
+        return await self.task_manager.create_task(
+            task_data,
+            tenant_id=tenant_id,
+            compliance_level="SOC2"
+        )
+```
+
+### **RAG Query Optimization:**
+- **Specific**: Use exact component names and integration patterns
+- **Context-Rich**: Include "implementation", "integration", "patterns"
+- **Architecture-Focused**: Search for existing architectural decisions
+- **Enterprise-Grade**: Always include compliance and security context
+
+---
+
+**USE THIS REFERENCE TO ELIMINATE WASTED ITERATIONS AND ENSURE ENTERPRISE-GRADE CODE FROM FIRST ATTEMPT**

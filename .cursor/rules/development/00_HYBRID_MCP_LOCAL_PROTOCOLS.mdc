@@ -1,0 +1,193 @@
+# 🔄 **HYBRID MCP/LOCAL PROTOCOLS - DEVELOPMENT FLEXIBILITY**
+
+## **ADAPTIVE DEVELOPMENT ARCHITECTURE**
+
+The Cerebral Platform supports **two operational modes** to ensure development continuity regardless of infrastructure availability.
+
+---
+
+## 🎯 **MODE SELECTION HIERARCHY**
+
+### **Primary Mode: MCP Server (Preferred)**
+**Use when Kubernetes infrastructure is available:**
+
+- **Task Management**: `mcp_cerebraflow-stdio_task_query`, `mcp_cerebraflow-stdio_task_modify`
+- **Database Operations**: `mcp_supabase_list_tables`, `mcp_supabase_execute_sql`, `mcp_supabase_apply_migration`
+- **RAG Operations**: `mcp_cerebraflow-stdio_research`
+- **Full Orchestration**: Complete MCP server with real-time sync and team collaboration
+
+### **Fallback Mode: Local CLI (When MCP Unavailable)**
+**Use when server infrastructure is not running:**
+
+- **Task Management**: `./scripts/cflow-local tasks list`, `./scripts/cflow-local tasks add`
+- **Database Operations**: Direct ChromaDB and SQLite access via local CLI
+- **RAG Operations**: `./scripts/cflow-local rag search --collection cerebral_docs`
+- **Standalone Development**: Full functionality without server dependencies
+
+---
+
+## 🚨 **MANDATORY MODE DETECTION LOGIC**
+
+### **1. Attempt MCP First (Always)**
+```python
+# Try MCP operation first
+try:
+    result = mcp_cerebraflow_stdio_task_query(...)
+    if result.success:
+        return result
+except (ConnectionError, TimeoutError, ServiceUnavailable):
+    # MCP server not available, fallback to local
+    pass
+```
+
+### **2. Automatic Fallback to Local CLI**
+```bash
+# When MCP fails, use local CLI
+./scripts/cflow-local status  # Check local system availability
+./scripts/cflow-local tasks list --status pending
+./scripts/cflow-local rag search "query" --collection cerebral_docs
+```
+
+### **3. User Override Options**
+```bash
+# Force local mode (bypass MCP attempt)
+./scripts/cflow-local --local tasks list
+./scripts/cflow-local --local rag search "query"
+
+# Force MCP mode (fail if unavailable)
+mcp_cerebraflow-stdio_task_query --force-mcp
+```
+
+---
+
+## 📋 **OPERATION MAPPING TABLE**
+
+| Operation | MCP Server Mode | Local CLI Mode |
+|-----------|----------------|----------------|
+| **List Tasks** | `mcp_cerebraflow-stdio_task_query` | `./scripts/cflow-local tasks list` |
+| **Add Task** | `mcp_cerebraflow-stdio_task_modify` | `./scripts/cflow-local tasks add` |
+| **Search RAG** | `mcp_cerebraflow-stdio_research` | `./scripts/cflow-local rag search` |
+| **Database Query** | `mcp_supabase_execute_sql` | Local SQLite via CLI |
+| **View Collections** | MCP ChromaDB tools | `./scripts/cflow-local rag collections` |
+
+---
+
+## 🔧 **DEVELOPMENT WORKFLOW PROTOCOLS**
+
+### **Session Startup Sequence:**
+1. **Check MCP Availability**: Attempt basic MCP operation
+2. **Mode Notification**: Display which mode is active
+3. **Capability Assessment**: Show available operations for current mode
+4. **Fallback Readiness**: Ensure local CLI is functional as backup
+
+### **Mode Switching During Development:**
+- **MCP → Local**: When server infrastructure goes down
+- **Local → MCP**: When server infrastructure comes online
+- **Seamless Transition**: Data sync between modes when possible
+- **State Preservation**: Maintain development context across mode switches
+
+---
+
+## 🚀 **HYBRID WORKFLOW EXAMPLES**
+
+### **Example 1: Task Management Workflow**
+```bash
+# Primary: Try MCP first
+mcp_cerebraflow-stdio_task_query operation=list || \
+./scripts/cflow-local tasks list
+
+# Secondary: Add task with fallback
+mcp_cerebraflow-stdio_task_modify operation=create title="New Task" || \
+./scripts/cflow-local tasks add "New Task" --description "Task description"
+```
+
+### **Example 2: RAG Research Workflow**
+```bash
+# Primary: Try MCP research
+mcp_cerebraflow-stdio_research query="authentication patterns" || \
+./scripts/cflow-local rag search "authentication patterns" --collection cerebral_docs
+```
+
+### **Example 3: Database Operations**
+```bash
+# Primary: Try MCP Supabase tools
+mcp_supabase_list_tables project_id="project" || \
+./scripts/cflow-local rag search "database schema" --collection cerebral_docs
+```
+
+---
+
+## ✅ **VALIDATION REQUIREMENTS**
+
+### **Mode Capability Verification:**
+- **MCP Mode**: Verify server connectivity before operations
+- **Local Mode**: Verify ChromaDB and SQLite accessibility
+- **Hybrid Mode**: Test fallback scenarios regularly
+- **Data Integrity**: Ensure no data loss during mode transitions
+
+### **Performance Standards:**
+- **MCP Mode**: <200ms response times for operations
+- **Local Mode**: <100ms response times (no network overhead)
+- **Mode Detection**: <5 seconds to determine availability
+- **Fallback Switch**: <10 seconds to switch modes
+
+---
+
+## 🚨 **CRITICAL ENFORCEMENT RULES**
+
+### **NEVER Do These:**
+- ❌ **Assume single mode**: Always implement fallback logic
+- ❌ **Hard-code tool choice**: Use conditional logic for tool selection
+- ❌ **Ignore mode failures**: Always handle connection errors gracefully
+- ❌ **Block on unavailable mode**: Switch to available mode immediately
+
+### **ALWAYS Do These:**
+- ✅ **Test both modes**: Ensure functionality works in both scenarios
+- ✅ **Graceful degradation**: Provide reduced functionality rather than failure
+- ✅ **Clear error messages**: Inform users of mode limitations
+- ✅ **Document mode differences**: Show what's available in each mode
+
+---
+
+## 📊 **MODE STATUS INDICATORS**
+
+### **MCP Server Mode Active:**
+```
+🟢 MCP Mode: Full orchestration with real-time sync
+📡 Server: Connected to Kubernetes infrastructure
+🔄 Sync: Team collaboration enabled
+⚡ Performance: <200ms response times
+```
+
+### **Local CLI Mode Active:**
+```
+🟡 Local Mode: Standalone development functionality
+💾 Storage: Direct ChromaDB and SQLite access
+🏠 Scope: Single developer workflow
+⚡ Performance: <100ms response times (no network)
+```
+
+### **Hybrid Mode Errors:**
+```
+🔴 Mode Conflict: Both modes attempted simultaneously
+🔄 Switching: Transitioning between modes
+⚠️ Degraded: Limited functionality due to infrastructure issues
+```
+
+---
+
+## 🎯 **IMPLEMENTATION SUCCESS CRITERIA**
+
+- ✅ **Zero Infrastructure Dependencies**: Development never blocked by server availability
+- ✅ **Seamless Mode Switching**: Automatic fallback without manual intervention
+- ✅ **Consistent Functionality**: Core operations available in both modes
+- ✅ **Performance Optimization**: Each mode optimized for its architecture
+- ✅ **Clear Documentation**: Developers understand both modes completely
+
+---
+
+**This hybrid approach ensures development velocity is maintained regardless of infrastructure state while providing enterprise-grade capabilities when full infrastructure is available.**
+description:
+globs:
+alwaysApply: false
+---

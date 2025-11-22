@@ -1,6 +1,6 @@
 /**
  * useFeatureFlags Hook Tests
- * 
+ *
  * Tests for feature flag fetching, caching, and offline support
  */
 
@@ -24,7 +24,7 @@ describe('useFeatureFlags', () => {
 
   test('loads flags from backend on startup', async () => {
     const mockFlags = { ai_features: true, beta_ui: false };
-    
+
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => mockFlags,
@@ -46,7 +46,7 @@ describe('useFeatureFlags', () => {
 
   test('caches flags in AsyncStorage', async () => {
     const mockFlags = { ai_features: true };
-    
+
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => mockFlags,
@@ -187,7 +187,7 @@ describe('useFeatureFlags', () => {
 
   test('returns lastUpdated timestamp', async () => {
     const mockFlags = { ai_features: true };
-    
+
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => mockFlags,
@@ -225,4 +225,3 @@ describe('useFeatureFlags', () => {
     expect(result.current.flags).toEqual({});
   });
 });
-

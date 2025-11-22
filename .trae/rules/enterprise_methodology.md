@@ -124,12 +124,12 @@ async def call_external_api(self, data: dict) -> dict:
 # ✅ REQUIRED: All services extend BaseEnterpriseService
 class UserService(BaseEnterpriseService[User]):
     """User management service following enterprise standards"""
-    
+
     async def create(self, user: User) -> User:
         """Create user with full enterprise compliance"""
         async with self.monitor.track("user_create"):
             return await self.circuit_breaker.call(self._create_impl, user)
-    
+
     async def _create_impl(self, user: User) -> User:
         """Implementation logic (protected by circuit breaker)"""
         try:
@@ -153,7 +153,7 @@ class UserService:
 class UserModel(BaseModel):
     """Memory-efficient user model"""
     __slots__ = ('id', 'tenant_id', 'email', 'name', 'created_at', 'updated_at')
-    
+
     id: str
     tenant_id: str
     email: str
@@ -246,10 +246,10 @@ async callExternalApi(data: unknown): Promise<unknown> {
 public class UserService extends BaseEnterpriseService<User> {
     @Autowired
     private Database database;
-    
+
     @Autowired
     private StructuredLogger logger;
-    
+
     @Autowired
     private PerformanceMonitor monitor;
 }
@@ -268,14 +268,14 @@ public class UserService extends BaseEnterpriseService<User> {
 // ✅ REQUIRED: Annotations for monitoring and resilience
 @Service
 public class UserService extends BaseEnterpriseService<User> {
-    
+
     @PerformanceMonitored("user-service")
     @CircuitBreaker(name = "user-service", fallbackMethod = "createUserFallback")
     @Retry(delay = 100, maxAttempts = 3)
     public User createUser(User user) {
         return this.database.save(user);
     }
-    
+
     public User createUserFallback(User user, Exception e) {
         logger.error("User creation failed, using fallback", e);
         return new User();  // Fallback response
@@ -310,9 +310,9 @@ class TestUserService:
         """Test successful user creation with monitoring"""
         service = UserService()
         user = User(name="John", email="john@example.com")
-        
+
         result = await service.create(user)
-        
+
         assert result.id is not None
         assert result.name == "John"
         # Verify monitoring was called
@@ -322,12 +322,12 @@ class TestUserService:
     async def test_create_circuit_breaker_activation(self):
         """Test circuit breaker activation on failures"""
         service = UserService()
-        
+
         # Trigger circuit breaker
         for _ in range(5):
             with pytest.raises(Exception):
                 await service.create(invalid_user)
-        
+
         # Circuit breaker should be open
         with pytest.raises(CircuitBreakerOpenError):
             await service.create(valid_user)
@@ -337,11 +337,11 @@ class TestUserService:
         """Test response time requirements"""
         service = UserService()
         user = User(name="John", email="john@example.com")
-        
+
         start = time.time()
         await service.create(user)
         duration = time.time() - start
-        
+
         assert duration < 0.200  # <200ms requirement
 
 # ❌ FORBIDDEN: Incomplete test coverage
@@ -485,4 +485,3 @@ These violations have **ZERO tolerance** - no exceptions:
 ---
 
 **All code MUST follow these enterprise methodology standards. This is mandatory for production deployment. No exceptions.**
-

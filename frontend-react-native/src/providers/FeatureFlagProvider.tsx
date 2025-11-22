@@ -1,6 +1,6 @@
 /**
  * FeatureFlagProvider Component
- * 
+ *
  * React Context provider for feature flags
  * Wraps the app and makes feature flags accessible throughout the component tree
  */
@@ -11,7 +11,7 @@ import { FeatureFlagContextType, FeatureFlagProviderProps } from '../types/featu
 
 /**
  * Feature Flag Context
- * 
+ *
  * Provides access to:
  * - flags: Current feature flags
  * - loading: Whether flags are loading
@@ -22,17 +22,17 @@ export const FeatureFlagContext = createContext<FeatureFlagContextType | null>(n
 
 /**
  * FeatureFlagProvider Component
- * 
+ *
  * Wraps your application and provides feature flags context
- * 
+ *
  * @param {Object} props - Provider props
  * @param {ReactNode} props.children - Child components to wrap
  * @returns {JSX.Element} Context provider wrapper
- * 
+ *
  * @example
  * // In your App.tsx
  * import { FeatureFlagProvider } from './providers/FeatureFlagProvider';
- * 
+ *
  * export function App() {
  *   return (
  *     <FeatureFlagProvider>
@@ -61,16 +61,16 @@ export function FeatureFlagProvider({ children }: FeatureFlagProviderProps): JSX
 
 /**
  * Hook to access feature flag context
- * 
+ *
  * Must be used within FeatureFlagProvider
- * 
+ *
  * @returns {FeatureFlagContextType} Feature flag context
  * @throws Error if used outside FeatureFlagProvider
- * 
+ *
  * @example
  * function MyComponent() {
  *   const { flags, refresh } = useContext(FeatureFlagContext)!;
- *   
+ *
  *   return (
  *     <View>
  *       {flags.my_feature && <Text>Feature enabled!</Text>}
@@ -81,13 +81,12 @@ export function FeatureFlagProvider({ children }: FeatureFlagProviderProps): JSX
  */
 export function useFeatureFlagContext(): FeatureFlagContextType {
   const context = React.useContext(FeatureFlagContext);
-  
+
   if (!context) {
     throw new Error(
       'useFeatureFlagContext must be used within FeatureFlagProvider'
     );
   }
-  
+
   return context;
 }
-

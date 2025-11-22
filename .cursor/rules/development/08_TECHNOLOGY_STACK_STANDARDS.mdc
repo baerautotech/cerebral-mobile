@@ -1,0 +1,131 @@
+# 🏗️ TECHNOLOGY STACK STANDARDS - OFFICIAL ARCHITECTURE
+
+**Rule Type**: CRITICAL ARCHITECTURE ENFORCEMENT
+**Violation Level**: IMMEDIATE CORRECTION REQUIRED
+**Scope**: All Development, Technology Choices, Architecture Decisions
+
+## 🚨 OFFICIAL TECHNOLOGY STACK (REACT NATIVE FIRST)
+
+**This enterprise-scale platform has standardized on the following technology stack, based on the `CEREBRAL_RN_BLUEPRINT.md`.**
+
+### **⚛️ FRONTEND DEVELOPMENT (MANDATORY)**
+-   **Primary Framework**: **React Native (New Architecture Enabled)**
+-   **Language**: TypeScript (strict mode)
+-   **Rendering System**: **Fabric** (Non-negotiable)
+-   **Native Modules**: **TurboModules** for all native integrations
+-   **UI Library**: A suitable library compatible with React Native (e.g., React Native Paper).
+-   **Styling**: A consistent styling solution (e.g., StyleSheet, a styled-components library).
+-   **State Management**:
+    -   **Server State**: **TanStack Query**
+    -   **UI State**: **Zustand**
+-   **Navigation**: React Navigation
+-   **Data Visualization**: **React Native Skia**, **React Native Reanimated**, and **D3.js**.
+-   **AR/VR**: ViroReact
+
+#### **Frontend Code Standards**
+```typescript
+// ✅ CORRECT: React Native component with TypeScript
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Button } from 'react-native-paper';
+
+interface DashboardCardProps {
+  title: string;
+  onPress: () => void;
+}
+
+export const DashboardCard: React.FC<DashboardCardProps> = ({ title, onPress }) => {
+  return (
+    <View style={styles.card}>
+      <Text style={styles.title}>{title}</Text>
+      <Button mode="contained" onPress={onPress}>
+        View Details
+      </Button>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  card: {
+    padding: 16,
+    margin: 8,
+    borderRadius: 8,
+    backgroundColor: '#ffffff',
+    elevation: 2,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+});
+```
+
+### **🐍 BACKEND DEVELOPMENT (MANDATORY)**
+-   **Primary Language**: Python 3.11+
+-   **Web Framework**: **FastAPI** (as a pure, stateless API server)
+-   **Database**: Supabase (PostgreSQL) with Row Level Security
+-   **Real-time**: **WebSockets** via FastAPI's native support
+-   **Authentication**: **JWT-based OAuth2 flow**
+-   **API Style**: RESTful with OpenAPI/Swagger documentation
+
+#### **Backend Code Standards**
+```python
+# ✅ CORRECT: FastAPI endpoint for a mobile client
+from fastapi import FastAPI, Depends
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class User(BaseModel):
+    id: str
+    name: string
+
+@app.get("/api/v1/users/{user_id}", response_model=User)
+async def get_user(user_id: str, current_user: User = Depends(get_current_user)):
+    # Logic to fetch user from database
+    user = await db_get_user(user_id)
+    return user
+```
+
+### **🗄️ DATABASE & INFRASTRUCTURE**
+-   **Primary Database**: Supabase (PostgreSQL 15+)
+-   **Row Level Security**: Mandatory for all tables
+-   **File Storage**: Supabase Storage with CDN
+-   **Infrastructure**: Docker containerization
+-   **Deployment**: GitHub Actions with separate pipelines for frontend and backend.
+
+## 🚫 DEPRECATED TECHNOLOGIES (NO LONGER USED)
+
+### **❌ React + Capacitor (REPLACED BY REACT NATIVE)**
+-   **Justification**: The new architecture prioritizes the performance and native capabilities of React Native's New Architecture (Fabric, TurboModules) for our high-fidelity data visualizations and future AR needs.
+-   **Action**: All development of web-based frontends using this stack is discontinued. All prior documentation is now in `docs/archive/`.
+
+### **❌ Session-Based Authentication (REPLACED BY JWT)**
+-   **Justification**: A stateless JWT-based OAuth2 flow is more secure and scalable for a mobile-first API backend.
+
+## 📋 DEVELOPMENT DECISION MATRIX
+
+| Use Case                  | Technology                                     | Justification                                      |
+| ------------------------- | ---------------------------------------------- | -------------------------------------------------- |
+| **Mobile & Core Frontend**| React Native (New Architecture)                | Performance, native integration, future-proofing for AR. |
+| **Web APIs**              | Python + FastAPI                               | Performance, typing, enterprise ecosystem.         |
+| **Database**              | Supabase PostgreSQL                            | RLS, real-time, scalability.                       |
+| **State Management**      | Zustand + TanStack Query                       | Lightweight, performant, and dedicated state solutions. |
+| **Real-time Data**        | WebSockets (via FastAPI)                       | Low-latency streaming for live visualizations.     |
+
+## 🚨 ENFORCEMENT PROTOCOLS
+
+### **Code Review Requirements:**
+-   [ ] **Frontend**: Must use React Native with TypeScript and the New Architecture.
+-   [ ] **Backend**: Must be a pure, stateless FastAPI server.
+-   [ ] **Authentication**: Must use the JWT-based OAuth2 flow.
+-   [ ] **NO Capacitor**: Any use of Capacitor or related plugins will be rejected.
+
+### **Violation Consequences:**
+-   **Immediate rejection** of PRs using deprecated technologies (Capacitor).
+-   **Refactor requirement** for code not following the new architectural standards.
+
+---
+
+**CRITICAL REMINDER**: These technology standards are MANDATORY. The project's success depends on full adherence to the React Native-first strategy outlined in the `CEREBRAL_RN_BLUEPRINT.md`.

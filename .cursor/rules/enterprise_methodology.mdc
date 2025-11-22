@@ -1,0 +1,57 @@
+---
+description: DEPRECATED - See .trae/rules/enterprise_methodology.md instead
+globs: **/*.py, **/*.ts, **/*.tsx, **/*.java, **/*.go
+alwaysApply: false
+---
+
+# ⚠️ DEPRECATED - Use `.trae/rules/enterprise_methodology.md` Instead
+
+This file is **deprecated**. All enterprise methodology standards have been **consolidated into the unified `.trae/` system**.
+
+## 📍 What Changed
+
+**Before**: Enterprise standards split across:
+- `.cursor/rules/enterprise_methodology.mdc` (this file)
+- `.enterprise/README.md`
+- `.enterprise/scripts/`
+
+**Now**: Single source of truth:
+- **`.trae/rules/enterprise_methodology.md`** ⭐ **USE THIS**
+
+## 🔗 New References
+
+- **Enterprise Methodology Standards**: [@.trae/rules/enterprise_methodology.md](mdc:../.trae/rules/enterprise_methodology.md)
+- **Development Workflow**: [@.trae/rules/dev_workflow.md](mdc:../.trae/rules/dev_workflow.md)
+- **Rule Improvement**: [@.trae/rules/self_improve.md](mdc:../.trae/rules/self_improve.md)
+- **Framework Info**: [.enterprise/README.md](mdc:../../.enterprise/README.md)
+
+## ✨ In Cursor Chat, Use
+
+Instead of referencing this file, reference the new location:
+
+```
+@.trae/rules/enterprise_methodology.md
+```
+
+This gives you:
+- ✅ All language-specific patterns (Python/FastAPI, TypeScript, Java/Spring)
+- ✅ Dependency injection requirements
+- ✅ Performance monitoring patterns
+- ✅ Circuit breaker implementation
+- ✅ Testing requirements
+- ✅ Code structure guidelines
+- ✅ Quality gates and compliance scoring
+
+## 📝 Migration Notes
+
+All content from this file has been preserved and enhanced in the new `.trae/` system. The consolidation provides:
+
+1. **Unified System**: All development standards in one place
+2. **Better Cross-References**: `.trae/` rules reference each other naturally
+3. **Workflow Integration**: Standards integrated into `dev_workflow.md`
+4. **Continuous Improvement**: Standards evolve through `self_improve.md`
+5. **Automation Connection**: Links to `.enterprise/scripts/` validators
+
+---
+
+**Please use [@.trae/rules/enterprise_methodology.md](mdc:../.trae/rules/enterprise_methodology.md) for all future references.**

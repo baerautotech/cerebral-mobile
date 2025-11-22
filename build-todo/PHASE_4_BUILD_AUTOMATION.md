@@ -135,7 +135,7 @@ spec:
       image: alpine/git:latest
       script: |
         git clone -b $(params.repo-branch) $(params.repo-url) /workspace/shared-data/repo
-    
+
     - name: setup-ios
       image: ghcr.io/cirruslabs/macos-runner:latest
       env:
@@ -152,16 +152,16 @@ spec:
       script: |
         #!/bin/bash
         set -e
-        
+
         cd /workspace/shared-data/repo/frontend-react-native
-        
+
         # Install dependencies
         npm install -g pnpm
         pnpm install
-        
+
         # Install CocoaPods dependencies
         cd ios && pod install && cd ..
-        
+
         # Build iOS app
         xcodebuild \
           -workspace ios/CerebralNative.xcworkspace \
@@ -170,16 +170,16 @@ spec:
           -derivedDataPath build \
           -archivePath build/CerebralNative.xcarchive \
           archive
-        
+
         # Export IPA
         xcodebuild \
           -exportArchive \
           -archivePath build/CerebralNative.xcarchive \
           -exportOptionsPlist ios/ExportOptions.plist \
           -exportPath build/output
-        
+
         echo "✅ iOS build complete: build/output/CerebralNative.ipa"
-    
+
     - name: upload-testflight
       image: alpine:latest
       script: |
@@ -222,7 +222,7 @@ spec:
       image: alpine/git:latest
       script: |
         git clone -b $(params.repo-branch) $(params.repo-url) /workspace/shared-data/repo
-    
+
     - name: setup-android
       image: android:api-34
       env:
@@ -241,13 +241,13 @@ spec:
       script: |
         #!/bin/bash
         set -e
-        
+
         cd /workspace/shared-data/repo/frontend-react-native
-        
+
         # Install dependencies
         npm install -g pnpm
         pnpm install
-        
+
         # Build Android app
         cd android
         ./gradlew clean bundleRelease \
@@ -255,9 +255,9 @@ spec:
           -DkeyPassword=$(KEYSTORE_PASSWORD) \
           -DstorePassword=$(KEYSTORE_PASSWORD) \
           -Dkeystore=/workspace/shared-data/keystore.jks
-        
+
         echo "✅ Android build complete: app/build/outputs/bundle/release/app-release.aab"
-    
+
     - name: upload-play-store
       image: alpine:latest
       script: |
@@ -314,13 +314,13 @@ spec:
       type: string
       default: android-keystore
       description: Kubernetes secret with Android keystore
-  
+
   workspaces:
     - name: shared-workspace
       description: Shared workspace for tasks
     - name: docker-config
       description: Docker config for registry access
-  
+
   tasks:
     # Task 1: Clone repository
     - name: git-clone
@@ -336,7 +336,7 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
-    
+
     # Task 2: Run tests
     - name: run-tests
       runAfter:
@@ -351,7 +351,7 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
-    
+
     # Task 3: Lint code
     - name: lint-code
       runAfter:
@@ -365,7 +365,7 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
-    
+
     # Task 4: Build iOS (if target is ios or all)
     - name: build-ios
       when:
@@ -387,7 +387,7 @@ spec:
       workspaces:
         - name: shared-data
           workspace: shared-workspace
-    
+
     # Task 5: Build Android (if target is android or all)
     - name: build-android
       when:
@@ -409,7 +409,7 @@ spec:
       workspaces:
         - name: shared-data
           workspace: shared-workspace
-    
+
     # Task 6: Notify Slack
     - name: notify-slack
       runAfter:
@@ -750,4 +750,3 @@ kubectl get events -n tekton-pipelines --sort-by='.lastTimestamp'
 ---
 
 **Next**: Phase 5: App Store & Play Store Distribution (Fastlane setup, TestFlight, Play Store)
-

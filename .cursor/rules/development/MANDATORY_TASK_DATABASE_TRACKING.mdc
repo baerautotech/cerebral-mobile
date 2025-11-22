@@ -1,0 +1,222 @@
+# 🚨 MANDATORY: Task Database Tracking Process Control
+
+**CRITICAL PROCESS REQUIREMENT** - Zero tolerance for violations
+
+## **THE PROBLEM**
+
+In Epic 1, Stories 1.7-1.10 were completed in code but never tracked in the cerebral_tasks database:
+- ✅ Code written (10,000+ lines)
+- ✅ Tests created (440+ tests)
+- ✅ QA validated (96-100/100 scores)
+- ❌ **Database NOT updated** (parent task stayed "pending")
+
+**Result:** Incomplete project history and inaccurate tracking.
+
+---
+
+## **MANDATORY WORKFLOW**
+
+### **BEFORE Starting ANY Story/Task:**
+
+```bash
+# STEP 1: Check if task exists
+cb tasks list | grep -i "<story-name>"
+
+# STEP 2: If NOT found, STOP and CREATE it first
+# Do NOT write code until task exists in database
+
+# STEP 3: If found, get task ID
+cb tasks show <task-id>
+
+# STEP 4: Mark as in-progress BEFORE first code commit
+cb tasks update <task-id> --status in-progress
+```
+
+**❌ VIOLATION: Starting code without database task = Process violation**
+
+---
+
+### **DURING Work:**
+
+```bash
+# Update task with progress notes periodically
+UPDATE cerebral_tasks
+SET details = details || E'\n\nProgress: <notes>',
+    updated_at = NOW()
+WHERE id = '<task-id>';
+```
+
+---
+
+### **AFTER Completing Work:**
+
+```bash
+# STEP 1: Commit all code
+git add -A && git commit -m "feat: Story X.Y complete"
+
+# STEP 2: Mark task as done in database (CRITICAL!)
+cb tasks update <task-id> --status done
+
+# STEP 3: Verify update
+cb tasks list | grep <task-id>
+
+# STEP 4: Update parent Epic if all children complete
+```
+
+**❌ VIOLATION: Committing without updating database = Process violation**
+
+---
+
+## **ENFORCEMENT MECHANISMS**
+
+### **1. Cursor Agent Behavior:**
+
+When user says:
+- "Start Story X.Y"
+- "Begin Epic Z"
+- "Implement task ABC"
+
+**Agent MUST:**
+1. Query cerebral_tasks database FIRST
+2. Verify task exists
+3. If not: Ask user if they want to create it
+4. Mark as "in-progress" before writing code
+5. Remind to mark "done" after completion
+
+**Agent must NOT:**
+- Start coding without checking database
+- Complete work without updating database
+- Assume task tracking is optional
+
+---
+
+### **2. Pre-Commit Hook:**
+
+File: `git-hooks/pre-commit-task-tracking`
+
+**Checks:**
+- Detects BMAD/Story/Epic file changes
+- Prompts for database update confirmation
+- Blocks commit if not confirmed
+
+**Installation:**
+```bash
+ln -sf ../../git-hooks/pre-commit-task-tracking .git/hooks/pre-commit-task-tracking
+```
+
+---
+
+### **3. Session End Checklist:**
+
+At end of every session, agent must:
+
+```bash
+# List all in-progress tasks
+cb tasks list | grep "in-progress"
+
+# Remind user to update completed work
+echo "Did you mark completed tasks as 'done'?"
+
+# Show parent epic status
+cb tasks list | grep EPIC
+```
+
+---
+
+## **PROCESS CONTROL CHECKLIST**
+
+### **For Cursor Agent:**
+
+Before starting work on ANY task:
+- [ ] Query cerebral_tasks: `cb tasks list | grep <task>`
+- [ ] Verify task exists (if not, CREATE it)
+- [ ] Mark as "in-progress"
+- [ ] Proceed with implementation
+
+After completing work:
+- [ ] Commit all code
+- [ ] Mark task as "done" in database
+- [ ] Verify database update
+- [ ] Update parent task if needed
+
+At session end:
+- [ ] List all tasks worked on
+- [ ] Verify all are marked correctly
+- [ ] Update any missing statuses
+
+---
+
+## **EXAMPLES**
+
+### **✅ CORRECT Process (Future):**
+
+```
+User: "Start Story 1.11"
+
+Agent:
+1. Checking database... cb tasks list | grep STORY1.11
+2. Task found! ID: abc-123
+3. Marking as in-progress...
+4. ✅ Task updated. Beginning implementation...
+
+[... code work ...]
+
+Agent:
+1. Code complete! Committing...
+2. Marking task as done: cb tasks update abc-123 --status done
+3. ✅ Task marked complete in database
+```
+
+### **❌ INCORRECT Process (What Happened in Epic 1):**
+
+```
+User: "Start Story 1.7"
+
+Agent:
+1. [SKIPPED database check] ❌
+2. Beginning implementation...
+
+[... code work ...]
+
+Agent:
+1. Code complete! Committing...
+2. [SKIPPED database update] ❌
+3. ✅ Code committed
+
+Result: Task still "pending" in database ❌
+```
+
+---
+
+## **ZERO TOLERANCE ENFORCEMENT**
+
+**This is a MANDATORY process requirement.**
+
+Cursor agent MUST:
+1. Check database before coding
+2. Update database after coding
+3. Verify updates completed
+
+**Violations will result in:**
+- Incomplete project tracking
+- Inaccurate reporting
+- Lost work history
+- Parent tasks stuck in "pending"
+
+**This rule has the same priority as VEG compliance.**
+
+---
+
+## **IMPLEMENTATION STATUS**
+
+- ✅ Process documented
+- ✅ Pre-commit hook created
+- ✅ Cursor rule defined
+- ⏳ Install hooks (next session)
+- ⏳ Test enforcement (next session)
+
+---
+
+**NEVER skip task database tracking again!**
+
+**Reference:** `docs/development/TASK_DATABASE_PROCESS_CONTROL.md`

@@ -280,4 +280,3 @@ describe('TierGuard Component', () => {
     });
   });
 });
-

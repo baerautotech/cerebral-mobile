@@ -1,6 +1,6 @@
 /**
  * useUserTier Hook
- * 
+ *
  * React hook that manages user tier extraction and caching
  */
 
@@ -11,19 +11,19 @@ import { TierLevel, UserTier } from '../types/tiers';
 
 /**
  * useUserTier Hook
- * 
+ *
  * Extracts user tier from JWT token and provides tier-based access checks
- * 
+ *
  * @returns {Object} User tier state and methods
  * @returns {TierLevel | null} tier - Current user tier
  * @returns {UserTier | null} tierInfo - Full tier information
  * @returns {boolean} loading - Whether tier is loading
  * @returns {Function} refresh - Manually refresh tier
  * @returns {Function} hasTier - Check if user has required tier
- * 
+ *
  * @example
  * const { tier, loading, hasTier } = useUserTier();
- * 
+ *
  * if (loading) return <LoadingSpinner />;
  * if (hasTier('standard')) {
  *   return <PremiumFeature />;
@@ -42,7 +42,7 @@ export function useUserTier() {
   const loadTier = useCallback(async () => {
     try {
       setLoading(true);
-      
+
       const token = await getToken();
       if (!token) {
         console.warn('No auth token available, setting to free tier');
@@ -57,7 +57,7 @@ export function useUserTier() {
 
       const extractedTier = extractTierFromJWT(token);
       setTier(extractedTier);
-      
+
       // Create tier info object
       const info: UserTier = {
         tier: extractedTier,
@@ -106,4 +106,3 @@ export function useUserTier() {
     hasTier: hasTierLevel,
   };
 }
-

@@ -16,8 +16,8 @@ This document describes all automated guardrails that ensure **100% lint complia
 
 ### 1. Pre-Commit Hooks (Git Hooks)
 
-**File**: `.husky/pre-commit`  
-**Triggered**: Before every `git commit`  
+**File**: `.husky/pre-commit`
+**Triggered**: Before every `git commit`
 **Action**: Runs `git-hooks/enhanced-pre-commit` script
 
 **What It Does**:
@@ -38,7 +38,7 @@ This document describes all automated guardrails that ensure **100% lint complia
 
 ### 2. TypeScript Strict Mode
 
-**File**: `tsconfig.json`  
+**File**: `tsconfig.json`
 **Effect**: Enforces strict type checking
 
 **Enabled Rules**:
@@ -63,7 +63,7 @@ This document describes all automated guardrails that ensure **100% lint complia
 
 ### 3. ESLint Configuration
 
-**File**: `.eslintrc.json`  
+**File**: `.eslintrc.json`
 **Rules**: React + React Native + TypeScript
 
 **What It Enforces**:
@@ -86,7 +86,7 @@ pnpm lint -- --fix
 
 ### 4. Prettier Code Formatting
 
-**File**: `.prettierrc.json`  
+**File**: `.prettierrc.json`
 **Enforces**: Consistent code style
 
 **Standards**:
@@ -108,7 +108,7 @@ pnpm exec prettier --check <files>
 
 ### 5. Jest Testing
 
-**File**: `jest.config.js`  
+**File**: `jest.config.js`
 **Enforces**: Minimum test coverage
 
 **Coverage Thresholds**:
@@ -131,7 +131,7 @@ pnpm test -- --watch
 
 ### 6. Lint-Staged Integration
 
-**File**: `package.json` (`lint-staged` section)  
+**File**: `package.json` (`lint-staged` section)
 **Purpose**: Only lint/format staged files
 
 **Configured Tasks**:
@@ -456,11 +456,11 @@ git commit --no-verify -m "your message"
 - Check `.cerebraflow/logs/pre-commit-validation.log`
 - Ask the team for help
 
-**All guardrails are designed to help, not hinder.**  
+**All guardrails are designed to help, not hinder.**
 They ensure we deliver production-quality code.
 
 ---
 
-*Created: October 19, 2025*  
-*Part of**: Cerebral Platform Mobile Monorepo  
+*Created: October 19, 2025*
+*Part of**: Cerebral Platform Mobile Monorepo
 *Version**: 1.0 (Enterprise-Grade)

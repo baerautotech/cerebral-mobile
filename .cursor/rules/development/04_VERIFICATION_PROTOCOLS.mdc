@@ -1,0 +1,70 @@
+---
+description: Verification protocols for critical production operations only
+globs: "**/*.sql, **/migrations/*, **/deploy/*"
+alwaysApply: false
+---
+
+# ✅ VERIFICATION PROTOCOLS - ZERO TOLERANCE FOR INCOMPLETE OPERATIONS
+
+## **CRITICAL: Explicit Verification Required**
+
+**The AI must never claim completion without explicit verification of every step.**
+
+### **Mandatory Verification Requirements**
+- **✅ EXPLICIT VERIFICATION REQUIRED**: Every completion claim must include specific evidence
+- **✅ FAILED OPERATION REPORTING**: All failures must be explicitly reported, not glossed over
+- **✅ INCOMPLETE STATUS DISCLOSURE**: Clearly state what remains unfinished
+- **✅ TESTING VALIDATION**: All implementations must be tested before claiming success
+- **✅ DEPENDENCY VERIFICATION**: Confirm all prerequisites are met before proceeding
+
+### **Forbidden Practices**
+- ❌ **NO "Should Work" Claims**: Never claim something "should work" without testing
+- ❌ **NO Silent Failures**: Never move on from failed operations without explicit reporting
+- ❌ **NO Partial Credit**: Don't claim completion for partially implemented features
+- ❌ **NO Assumption Statements**: Don't assume configurations will work without verification
+- ❌ **NO Glossing Over**: Never minimize or skip reporting failed operations
+
+### **Required Completion Format**
+```
+## ✅ VERIFIED COMPLETION REPORT
+
+### SUCCESSFULLY COMPLETED:
+- [✅] Specific action 1 - VERIFIED by [method]
+- [✅] Specific action 2 - VERIFIED by [method]
+
+### FAILED OPERATIONS:
+- [❌] Specific failure 1 - REASON: [detailed explanation]
+- [❌] Specific failure 2 - REASON: [detailed explanation]
+
+### REMAINING INCOMPLETE:
+- [⚠️] Item 1 - STATUS: [what's needed to complete]
+- [⚠️] Item 2 - STATUS: [what's needed to complete]
+
+### VERIFICATION EVIDENCE:
+- [📊] Test results: [specific evidence]
+- [🔍] Manual verification: [what was checked]
+- [📋] Status confirmation: [how completion was verified]
+```
+
+### **Error Handling Protocol**
+1. **IMMEDIATE DISCLOSURE**: Report failures as soon as they occur
+2. **ROOT CAUSE ANALYSIS**: Explain why the failure happened
+3. **IMPACT ASSESSMENT**: Describe what this means for the overall task
+4. **REMEDIATION STEPS**: Provide specific steps to resolve the issue
+5. **DEPENDENCIES**: List what's needed from the user or system to proceed
+
+### **Tool Call Failure Protocol**
+- **File Operations**: If edit_file, search_replace, or read_file fails, explicitly report why
+- **Terminal Commands**: If run_terminal_cmd fails, report exit code and full error message
+- **API Calls**: If any API operation fails, report the specific error and implications
+- **System Operations**: Never assume system state without explicit verification
+
+---
+
+**This is a production platform serving real enterprise customers - incomplete work affects real revenue.**
+
+
+
+---
+
+**This is a production platform serving real enterprise customers - incomplete work affects real revenue.**

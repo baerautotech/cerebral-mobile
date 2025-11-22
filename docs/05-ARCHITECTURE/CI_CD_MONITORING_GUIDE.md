@@ -1,6 +1,6 @@
 # CI/CD Pipeline Monitoring Guide
 
-**Status**: ✅ LIVE MONITORING ACTIVE  
+**Status**: ✅ LIVE MONITORING ACTIVE
 **Date**: October 24, 2025
 
 ---
@@ -113,7 +113,7 @@ kubectl logs <taskrun-name>-pod -n tekton-pipelines -c step-<step-name>
 
 ### Phase 1: Webhook Reception
 ```
-GitHub Push → webhook.dev.cerebral.baerautotech.com → 
+GitHub Push → webhook.dev.cerebral.baerautotech.com →
 Custom Rust Receiver → HMAC validation → PipelineRun creation
 ```
 
@@ -144,7 +144,7 @@ kubectl logs ${LATEST}-pod -n tekton-pipelines -c step-clone
 
 ### Phase 3: Build Image
 ```
-Git workspace → Kaniko build → Docker image created → 
+Git workspace → Kaniko build → Docker image created →
 Push to registry
 ```
 
@@ -397,4 +397,3 @@ curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cpu \
 **Status**: ✅ MONITORING ACTIVE
 
 All systems are ready for production builds!
-

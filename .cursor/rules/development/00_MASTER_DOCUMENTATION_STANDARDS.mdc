@@ -1,0 +1,372 @@
+# 🎯 MASTER DOCUMENTATION STANDARDS
+
+**Status**: AUTHORITATIVE | **Priority**: P0 (MASTER RULE)
+**Scope**: ALL documentation organization, naming, and file placement
+**Effective**: November 5, 2025
+
+---
+
+## ⚠️ CONFLICT RESOLUTION NOTICE
+
+This rule **SUPERSEDES and CONSOLIDATES** the following previously conflicting rules:
+- ~~00_MANDATORY_DOCUMENTATION_NAMING_ENFORCEMENT.mdc~~ (DEPRECATED)
+- ~~00_MANDATORY_FILE_ORGANIZATION_ENFORCEMENT.mdc~~ (DEPRECATED)
+- ~~00_DOCUMENTATION_RULES_MEMORY_ALIGNMENT.mdc~~ (PARTS RETAINED)
+- ~~FILE_ORGANIZATION_STANDARDS.mdc~~ (PARTS RETAINED)
+- ~~00_DOCUMENTATION_ORGANIZATION_STANDARD.mdc~~ (SUPERSEDED BY THIS)
+
+**Why Consolidation Was Necessary:**
+- 4 rules with same priority (00_) created undefined behavior
+- Conflicting assumptions about root file placement
+- Different naming schemes (CEREBRAL_XXX_ vs action-subject-scope)
+- Different directory structures (flat vs hierarchical)
+- Alphabetical load order created implicit precedence (wrong)
+
+---
+
+## 🎯 SINGLE SOURCE OF TRUTH
+
+### **CORE PRINCIPLE: All Documentation → docs/ Directory**
+
+**NO EXCEPTIONS** for AI-generated documentation:
+- ✅ All `.md` files created by AI agents → `docs/`
+- ✅ All planning documents → `docs/`
+- ✅ All analysis → `docs/`
+- ✅ All reports → `docs/`
+- ❌ NOTHING documentation-related stays in root
+
+### **Root Directory - Strict Allowlist ONLY**
+
+The ONLY files permitted in repository root are:
+
+```
+README.md                    ← Project overview (permanent)
+CLAUDE.md                    ← Cursor integration (auto-loaded)
+.cursorrules                 ← Cursor config
+.env / .env.example         ← Configuration files
+pyproject.toml              ← Build config
+package.json                ← Node config
+Dockerfile                  ← Root service only
+docker-compose.yml          ← Root only
+Makefile / justfile         ← Build automation
+.gitignore / .gitattributes ← Git configuration
+LICENSE                     ← Legal
+.cursor/                    ← Directory (Cursor config)
+.git/                       ← Directory (Git)
+.github/                    ← Directory (GitHub)
+.mdc files in .cursor/rules/← Cursor rules
+```
+
+**CRITICAL**: No other `.md` files are permitted in root. PERIOD.
+
+---
+
+## 📋 HIERARCHICAL DOCUMENTATION STRUCTURE
+
+All documentation MUST follow this hierarchical structure:
+
+```
+docs/
+├── 00-QUICK-START/          # Getting started, rapid reference
+│   ├── README.md
+│   └── *.md
+├── 01-DEPLOYMENT/           # CI/CD, build, deployment
+│   ├── tekton/
+│   ├── kubernetes/
+│   └── *.md
+├── 02-OBSERVABILITY/        # Monitoring, logging, tracing
+│   ├── dashboards/
+│   ├── alerts/
+│   └── *.md
+├── 03-SECURITY/             # Security policies, audit
+│   ├── audit/
+│   └── *.md
+├── 04-OPERATIONS/           # Runbooks, troubleshooting
+│   ├── runbooks/
+│   ├── troubleshooting/
+│   └── *.md
+├── 05-ARCHITECTURE/         # Design, patterns, decisions
+│   ├── microservices/
+│   ├── data-layer/
+│   └── *.md
+├── 06-COMPLIANCE/           # Regulatory, standards
+│   ├── soc2/
+│   ├── hipaa/
+│   └── *.md
+├── 07-REFERENCE/            # API specs, quick refs
+│   ├── api-contracts/
+│   └── *.md
+├── archive/
+│   ├── phase-archive/       # Completed phases
+│   ├── epic-archive/        # Completed epics
+│   ├── session-archive/     # Session summaries
+│   ├── implementation-archive/ # Historical plans
+│   └── historical-reports/  # Old reports
+└── README.md                # Navigation hub
+```
+
+---
+
+## 📝 NAMING CONVENTION
+
+All documentation files MUST follow this pattern:
+
+```
+{action}-{subject}-{scope}-{date}.md
+
+Components:
+  action  = What kind of doc (plan, guide, report, audit, runbook, etc.)
+  subject = Main topic (cleanup, deployment, security, performance, etc.)
+  scope   = What it covers (backend, mobile, platform, microservices, etc.)
+  date    = YYYY-MM-DD (optional but recommended for reports)
+```
+
+### **Examples**
+
+✅ CORRECT:
+- `cleanup-plan-directory-structure-2025-11-05.md`
+- `runbook-incident-response-api-gateway.md`
+- `audit-report-soc2-compliance-2025-q4.md`
+- `guide-database-migration-kubernetes.md`
+- `dashboard-performance-metrics-platform.md`
+
+❌ INCORRECT:
+- `FINAL_CLEANUP_PLAN.md` (all caps, no structure)
+- `phase1.md` (too vague)
+- `report.md` (no context)
+- `CEREBRAL_001_CLEANUP_PLAN.md` (numbered scheme - DEPRECATED)
+
+---
+
+## 🚀 PLACEMENT DECISION TREE
+
+When creating documentation:
+
+```
+Is this AI-generated content?
+├── YES → Goes to docs/
+│   ├── What category? (01-07)
+│   ├── What subcategory?
+│   ├── Proper naming: action-subject-scope.md
+│   └── ✅ CREATE IN docs/{category}/{subcategory}/
+│
+└── NO → Check allowlist
+    ├── Is it in root allowlist? (README, .env, etc.)
+    │   └── YES → Keep in root
+    └── Is it a Cursor rule?
+        └── YES → Goes to .cursor/rules/
+```
+
+---
+
+## ⚙️ ENFORCEMENT MECHANISMS
+
+### **Pre-Creation Checklist (MANDATORY)**
+
+Before creating ANY documentation file, verify:
+
+```
+□ Is this AI-generated documentation?
+□ If YES: Does it go in docs/ with proper organization?
+□ Have I identified the correct category (01-07)?
+□ Have I identified the correct subcategory?
+□ Is my filename following action-subject-scope pattern?
+□ Have I updated docs/README.md with navigation link?
+□ Am I about to create in root? → STOP, move to docs/
+□ Is this in my allowlist? → Exception allowed
+```
+
+### **Git Commit Validation**
+
+Commits MUST follow this pattern:
+
+```
+✅ CORRECT:
+  docs: Add cleanup plan to 05-ARCHITECTURE
+
+✅ CORRECT:
+  docs: Create incident response runbook for API gateway
+
+❌ INCORRECT:
+  docs: Add FINAL_CLEANUP_PLAN.md  (no structure)
+
+❌ INCORRECT:
+  Added documentation in root (violates standard)
+```
+
+### **Root File Validation**
+
+Any `.md` file found in root MUST:
+1. Match the allowlist (README.md, CLAUDE.md only)
+2. Be a Cursor rule file (`.cursor/rules/*.mdc`)
+3. Have explicit user approval
+
+**VIOLATION**: File found in root → IMMEDIATELY MOVE to docs/
+
+---
+
+## 🔄 LEGACY DIRECTORY CONSOLIDATION
+
+### **Current Situation**
+
+This rule was created November 5, 2025 to define the **ideal future state** of documentation organization.
+
+However, the `docs/` directory currently contains **~90 directories** accumulated over months of ad-hoc organization. This consolidation plan maps all legacy directories to the new structure.
+
+### **Consolidation Mapping**
+
+See: `docs/DOCS-CONSOLIDATION-MAPPING.md` for complete mapping of:
+- All 90 current directories → new 01-07 + archive structure
+- Which directories to merge
+- Which directories to move
+- Which directories to deprecate
+- Step-by-step bash commands for reorganization
+
+### **Quick Summary: 90 → 15**
+
+| From | To | Result |
+|------|-----|--------|
+| 90 scattered dirs | 8 categories + archive (15 total) | 83% reduction |
+| Multiple overlapping dirs | Single canonical location | No more conflicts |
+| Unclear hierarchy | Clear category-based organization | Easy navigation |
+
+### **Timeline**
+
+1. **Phase 1** (Immediate): Start directing NEW files to correct locations
+2. **Phase 2** (Week 1): Consolidate legacy directories using provided mappings
+3. **Phase 3** (Ongoing): Migrate files to new locations as they're accessed
+4. **Phase 4** (Complete): All 90 → 15, clean structure, no legacy dirs
+
+---
+
+## 🔄 MIGRATION RULES
+
+### **For Existing Root Files**
+
+If a documentation file currently exists in root:
+
+```
+1. Determine its category (01-07)
+2. Rename it: action-subject-scope-date.md
+3. Move to: docs/{category}/{subcategory}/
+4. Update docs/README.md with navigation
+5. Commit: "docs: Reorganize {filename} to {new-path}"
+```
+
+### **For Active Work Files (CAEF, ATOMIC, SRP)**
+
+Previously, these were kept in root for "active work" distinction:
+- ~~CAEF_*.md~~ → `docs/implementation-archive/` (when complete)
+- ~~ATOMIC_*.md~~ → `docs/implementation-archive/` (when complete)
+- ~~SRP_*.md~~ → `docs/05-ARCHITECTURE/` (ongoing)
+
+**New approach**: Even active work goes to docs/ in appropriate category.
+
+---
+
+## 📚 DOCUMENTATION TAXONOMY
+
+### **Primary Categories (01-07)**
+
+| Number | Category | Purpose | Examples |
+|--------|----------|---------|----------|
+| 00 | Quick Start | Rapid reference, getting started | 5-min intro, quick reference |
+| 01 | Deployment | CI/CD, build, deploy processes | Tekton, Kubernetes, build logs |
+| 02 | Observability | Monitoring, logging, tracing | Prometheus, Grafana, Loki setup |
+| 03 | Security | Security policies, audit trail | RBAC, secrets, compliance audit |
+| 04 | Operations | Runbooks, troubleshooting, incidents | Daily ops, incident response |
+| 05 | Architecture | System design, patterns, decisions | Microservices design, patterns |
+| 06 | Compliance | Regulatory, standards, reports | SOC2, HIPAA, audit reports |
+| 07 | Reference | API specs, quick references | API contracts, tech references |
+
+### **Archive Categories**
+
+| Archive | Purpose | Examples |
+|---------|---------|----------|
+| phase-archive/ | Completed project phases | PHASE_1_COMPLETE.md |
+| epic-archive/ | Completed epics | EPIC_3_SUMMARY.md |
+| session-archive/ | Development sessions | SESSION_OCT25_SUMMARY.md |
+| implementation-archive/ | Completed implementations | Old implementation plans |
+| historical-reports/ | Historical analysis | Old reports, completed analyses |
+
+---
+
+## ✅ VERIFICATION CHECKLIST
+
+After implementing this standard, verify:
+
+```bash
+# 1. Check no .md files in root except allowlist
+find . -maxdepth 1 -name "*.md" | grep -v README.md | grep -v CLAUDE.md
+# Should return: (nothing)
+
+# 2. Check all docs follow naming convention
+find docs -name "*.md" | grep -E "_" | head -5
+# Look for hyphens (good) not underscores (bad)
+
+# 3. Check proper categorization
+find docs -maxdepth 1 -type d | sort
+# Should show: 00-QUICK-START, 01-DEPLOYMENT, ... 07-REFERENCE, archive
+
+# 4. Check docs/README.md has navigation
+grep -c "^##" docs/README.md
+# Should have multiple section headers
+
+# 5. Verify no stray .md files in random directories
+find . -path ./node_modules -prune -o -name "*.md" -type f | \
+  grep -v "docs/" | grep -v ".cursor/" | grep -v ".git/" | \
+  grep -v root_allowed_files
+# Should only show allowlist files
+```
+
+---
+
+## 🚨 VIOLATION RESPONSE
+
+If a violation is detected:
+
+```
+1. STOP current task
+2. IDENTIFY violating file(s)
+3. MOVE to correct location (docs/ category/subcategory)
+4. RENAME to correct pattern (action-subject-scope.md)
+5. UPDATE docs/README.md
+6. COMMIT with clear message
+7. CONTINUE
+```
+
+---
+
+## 📖 RELATED DOCUMENTATION
+
+- `docs/README.md` - Central navigation hub
+- `.cursor/rules/development/` - All other Cursor rules
+- Memory: "MANDATORY: Documentation File Organization Standard"
+
+---
+
+## 🔐 ENFORCEMENT GUARANTEES
+
+This rule guarantees:
+
+✅ **Clean Repository**: No documentation clutter in root
+✅ **Easy Navigation**: Hierarchical structure by topic
+✅ **Consistent Naming**: Predictable file locations
+✅ **Scalability**: Grows with project size
+✅ **Compliance**: Organized for audit trails
+✅ **Clarity**: No ambiguity about where files go
+
+---
+
+## 📌 LAST UPDATED
+
+- **Date**: November 5, 2025
+- **Author**: System Consolidation
+- **Status**: ACTIVE (MASTER RULE - ALL CONFLICTING RULES DEPRECATED)
+- **Conflicts Resolved**: 4 prior contradictory rules consolidated
+- **Priority**: P0 (Highest)
+
+---
+
+**This is the SINGLE AUTHORITATIVE SOURCE for documentation organization.
+All other documentation-related rules are deprecated and should reference this rule.**

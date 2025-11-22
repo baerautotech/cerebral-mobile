@@ -1,6 +1,6 @@
 /**
  * useFeatureFlags Hook
- * 
+ *
  * React hook that manages feature flags with AsyncStorage caching
  * Provides offline support and manual refresh capability
  */
@@ -22,25 +22,25 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /**
  * useFeatureFlags Hook
- * 
+ *
  * Manages feature flags with caching:
  * 1. On startup, checks AsyncStorage for cached flags
  * 2. If cache is fresh (< 5 min), uses cached flags
  * 3. Otherwise, fetches fresh flags from backend
  * 4. Updates cache with new flags
  * 5. Falls back to expired cache if offline
- * 
+ *
  * @returns {Object} Feature flags state and methods
  * @returns {FeatureFlags} flags - Current feature flags
  * @returns {boolean} loading - Whether flags are loading
  * @returns {Function} refresh - Manually refresh flags from backend
  * @returns {number} lastUpdated - Timestamp of last update
- * 
+ *
  * @example
  * const { flags, loading, refresh } = useFeatureFlags();
- * 
+ *
  * if (loading) return <LoadingSpinner />;
- * 
+ *
  * return (
  *   <View>
  *     {flags.ai_features && <PremiumFeature />}
@@ -67,7 +67,7 @@ export function useFeatureFlags() {
       // If cache exists and is fresh, use it
       if (cachedFlags && cachedTime) {
         const cacheAge = Date.now() - parseInt(cachedTime, 10);
-        
+
         if (cacheAge < CACHE_TTL) {
           const parsedFlags = JSON.parse(cachedFlags);
           console.log('Using cached feature flags (age: ' + Math.floor(cacheAge / 1000) + 's)');
@@ -122,4 +122,3 @@ export function useFeatureFlags() {
     lastUpdated,
   };
 }
-

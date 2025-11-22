@@ -1,0 +1,43 @@
+---
+description: "Agentic rules integration and intelligent rule selection system"
+ruleType: "agent"
+category: "agentic"
+priority: 10
+agenticCapabilities:
+  - "rule_selection"
+  - "context_analysis"
+  - "intelligent_application"
+  - "feedback_learning"
+---
+
+# 🧠 Agentic Rules Integration
+
+## Intelligent Rule Selection System
+
+This system provides intelligent, context-aware rule selection and application using agentic reasoning.
+
+### Key Capabilities:
+
+**🎯 Context-Aware Rule Selection**
+- Analyzes current development context to select relevant rules
+- Uses multi-step reasoning to determine optimal rule combinations
+- Adapts rule application based on project state and requirements
+
+**🔄 Dynamic Rule Adaptation**
+- Learns from development patterns and feedback
+- Adjusts rule priorities based on effectiveness
+- Evolves rule application strategies over time
+
+**🤝 Multi-Agent Coordination**
+- Coordinates rule application across multiple development agents
+- Resolves rule conflicts using intelligent mediation
+- Ensures consistent rule enforcement across team members
+
+**📊 Continuous Improvement**
+- Monitors rule effectiveness and developer productivity
+- Provides feedback for rule optimization
+- Suggests improvements to rule structure and content
+
+### Integration with Agentic AutoDoc System:
+
+The rules system is fully integrated with the Agentic AutoDoc system for enhanced development assistance and intelligent documentation generation.

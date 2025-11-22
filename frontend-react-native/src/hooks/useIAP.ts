@@ -1,6 +1,6 @@
 /**
  * useIAP Hook
- * 
+ *
  * React hook for managing in-app purchases
  */
 
@@ -16,9 +16,9 @@ import { CustomerInfo } from '../types/iap';
 
 /**
  * useIAP Hook
- * 
+ *
  * Manages IAP state and provides purchase functionality
- * 
+ *
  * @returns {Object} IAP state and methods
  * @returns {string[]} purchasedSKUs - Array of purchased SKU identifiers
  * @returns {boolean} loading - Whether data is loading
@@ -27,14 +27,14 @@ import { CustomerInfo } from '../types/iap';
  * @returns {Function} restorePurchases - Restore previous purchases
  * @returns {Function} refresh - Refresh purchase status
  * @returns {Function} hasPurchase - Check if SKU is purchased
- * 
+ *
  * @example
  * const { purchasedSKUs, initiateCheckout } = useIAP();
- * 
+ *
  * if (purchasedSKUs.includes('premium_monthly')) {
  *   return <PremiumFeature />;
  * }
- * 
+ *
  * return <PurchaseButton onPress={() => initiateCheckout('premium_monthly')} />;
  */
 export function useIAP() {
@@ -48,10 +48,10 @@ export function useIAP() {
   const refresh = useCallback(async () => {
     try {
       setLoading(true);
-      
+
       const info = await getCustomerInfo();
       setCustomerInfo(info);
-      
+
       if (info) {
         const skus = getActivePurchasedSKUs(info);
         setPurchasedSKUs(skus);
@@ -79,7 +79,7 @@ export function useIAP() {
       try {
         console.log(`Starting purchase flow for: ${sku}`);
         const result = await purchaseSKU(sku);
-        
+
         if (result.success) {
           // Refresh purchases after successful purchase
           await refresh();
@@ -87,7 +87,7 @@ export function useIAP() {
         } else {
           console.warn(`Purchase failed: ${result.error}`);
         }
-        
+
         return result;
       } catch (error) {
         console.error('Error during checkout:', error);
@@ -108,7 +108,7 @@ export function useIAP() {
     try {
       console.log('Restoring purchases...');
       const info = await restorePurchasesService();
-      
+
       if (info) {
         setCustomerInfo(info);
         const skus = getActivePurchasedSKUs(info);
@@ -140,4 +140,3 @@ export function useIAP() {
     hasPurchase: hasPurchaseOf,
   };
 }
-

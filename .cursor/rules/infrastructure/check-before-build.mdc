@@ -1,0 +1,253 @@
+# 🚨 MANDATORY: Check Before Build - Infrastructure Verification
+
+**CRITICAL RULE**: Before planning ANY infrastructure deployment, verify what already exists and is operational.
+
+---
+
+## ⚠️ **THE PROBLEM THIS PREVENTS**
+
+**October 4, 2025 Incident**: AI agent researched and nearly recommended Apache AGE/Neo4j deployment ($60K-$180K/year) without discovering that:
+- ✅ Knowledge Graph already has **120,533 entities** and **63,746 relationships**
+- ✅ RAG system already has **41,415 embeddings**
+- ✅ All infrastructure is operational and requires **$0 additional deployment**
+
+**Impact**: Wasted 3+ hours researching solutions we don't need, almost made costly deployment mistake.
+
+**This rule prevents similar failures in future.**
+
+---
+
+## ✅ **MANDATORY PRE-PLANNING CHECKLIST**
+
+### Before Planning Infrastructure Deployment
+
+**STEP 1: Read SYSTEM_STATUS.md** (MANDATORY)
+```bash
+# This file shows what's already operational
+cat /Users/bbaer/Development/Cerebral/SYSTEM_STATUS.md
+```
+
+**What to Look For**:
+- Current system scales (entity counts, embedding counts, etc.)
+- Operational status of each system
+- Tables and services already deployed
+
+**STEP 2: Query Actual Database Tables** (MANDATORY)
+```python
+# Check what data actually exists
+from supabase import create_client
+import os
+
+supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
+
+# Check Knowledge Graph
+kg_count = supabase.table('kg_entities').select('*', count='exact').limit(1).execute()
+print(f"KG Entities: {kg_count.count}")
+
+# Check RAG
+rag_count = supabase.table('cerebral_rag').select('*', count='exact').limit(1).execute()
+print(f"RAG Embeddings: {rag_count.count}")
+
+# Check Tasks
+task_count = supabase.table('cerebral_tasks').select('*', count='exact').limit(1).execute()
+print(f"Tasks: {task_count.count}")
+```
+
+**STEP 3: Search Existing Services** (MANDATORY)
+```bash
+# Check if service already exists
+find backend-python/services -name "*kg*" -o -name "*graph*" -o -name "*rag*"
+
+# Search codebase
+grep -r "class.*KnowledgeGraph" backend-python/
+grep -r "class.*RAG" backend-python/
+```
+
+**STEP 4: Verify Gaps Exist** (MANDATORY)
+Only proceed with infrastructure planning if:
+- ✅ SYSTEM_STATUS.md confirms system missing
+- ✅ Database queries show no existing data
+- ✅ No existing service found in codebase
+- ✅ Gap is confirmed and documented
+
+---
+
+## ❌ **FORBIDDEN PATTERNS**
+
+### DON'T: Plan Without Checking
+```
+❌ User asks: "Where is our Knowledge Graph?"
+❌ AI responds: "Let me research cloud KG solutions..."
+   (WITHOUT checking SYSTEM_STATUS.md or querying kg_entities table)
+```
+
+### DO: Verify Then Respond
+```
+✅ User asks: "Where is our Knowledge Graph?"
+✅ AI responds:
+   1. Read SYSTEM_STATUS.md
+   2. Query kg_entities table: SELECT COUNT(*) -> 120,533 entities
+   3. "Your KG already exists with 120K entities in kg_entities table!"
+```
+
+---
+
+## ✅ **CORRECT WORKFLOW EXAMPLE**
+
+### Scenario: User Asks About Infrastructure
+
+**User**: "We need a Knowledge Graph for our codebase"
+
+**Correct AI Response**:
+```
+Step 1: Let me check SYSTEM_STATUS.md...
+  → KG shows 120,533 entities operational
+
+Step 2: Let me verify in database...
+  → Query kg_entities: 120,533 rows confirmed
+
+Step 3: Let me find the service...
+  → Found: backend-python/services/knowledge/existing_kg_service.py
+
+Response: "Your Knowledge Graph already exists with 120,533 entities!
+It's in the kg_entities table and accessible via existing_kg_service.py.
+Would you like me to show you how to use it?"
+```
+
+---
+
+## 🔍 **VERIFICATION COMMANDS**
+
+### Quick System Check
+```bash
+# Auto-generate current status
+./scripts/check_system_state.py
+
+# View status
+cat SYSTEM_STATUS.md
+```
+
+### Database Verification
+```bash
+# Knowledge Graph
+psql -c "SELECT COUNT(*) as entities FROM kg_entities;"
+psql -c "SELECT COUNT(*) as relationships FROM kg_relationships;"
+
+# RAG System
+psql -c "SELECT COUNT(*) as embeddings FROM cerebral_rag;"
+
+# Tasks
+psql -c "SELECT status, COUNT(*) FROM cerebral_tasks GROUP BY status;"
+```
+
+### Service Verification
+```bash
+# Test KG service
+uv run python backend-python/services/knowledge/existing_kg_service.py
+
+# Test RAG service
+uv run python backend-python/services/unified_enterprise_rag.py
+
+# Audit tasks
+uv run python scripts/audit_tasks.py
+```
+
+---
+
+## 📊 **DECISION TREE**
+
+```
+User asks about infrastructure
+         ↓
+    Check SYSTEM_STATUS.md
+         ↓
+    ┌─────────────────────┐
+    │ System exists?      │
+    └─────────────────────┘
+         ↓           ↓
+        YES          NO
+         ↓           ↓
+    Query DB     Query DB to
+    to verify    confirm gap
+         ↓           ↓
+    Show how     Plan new
+    to use it    infrastructure
+```
+
+---
+
+## 🎯 **COMMON SCENARIOS**
+
+### Scenario 1: Knowledge Graph Query
+**Before**: Research Neo4j, Apache AGE, cloud solutions
+**After**: Check SYSTEM_STATUS.md → 120K entities exist → Use existing service
+
+### Scenario 2: RAG System Query
+**Before**: Plan vector database deployment
+**After**: Check SYSTEM_STATUS.md → 41K embeddings exist → Use cerebral_rag table
+
+### Scenario 3: Task Management Query
+**Before**: Research task management solutions
+**After**: Check SYSTEM_STATUS.md → 1K tasks exist → Use cerebral_tasks table
+
+---
+
+## 💾 **AUTO-UPDATE PROCESS**
+
+**When to Update SYSTEM_STATUS.md**:
+1. After major deployments
+2. After data consolidations
+3. After infrastructure changes
+4. Quarterly review
+5. On demand: `./scripts/check_system_state.py`
+
+**Git Hook Integration**:
+```bash
+# In git-hooks/post-commit
+./scripts/check_system_state.py
+git add SYSTEM_STATUS.md
+# (Conditional commit if changed)
+```
+
+---
+
+## 📋 **ENFORCEMENT**
+
+### Code Review Checklist
+- [ ] If planning infrastructure, did you check SYSTEM_STATUS.md?
+- [ ] If planning infrastructure, did you query actual database?
+- [ ] If infrastructure exists, are you using it instead of rebuilding?
+- [ ] Did you document why new infrastructure is needed?
+
+### CI/CD Gates
+- Deployment PRs must reference SYSTEM_STATUS.md verification
+- Infrastructure plans must include "gap analysis" showing what doesn't exist
+
+---
+
+## 🎓 **LEARNING FROM INCIDENTS**
+
+### October 4, 2025: Apache AGE Research Incident
+**What Happened**: AI researched Apache AGE deployment for 3 hours
+**Reality**: KG already exists with 120K entities
+**Root Cause**: Didn't check SYSTEM_STATUS.md or query database
+**Prevention**: This rule + SYSTEM_STATUS.md at root
+**Savings**: Avoided $60K-$180K/year unnecessary deployment
+
+---
+
+## ✅ **SUCCESS CRITERIA**
+
+**This rule is working when**:
+- ✅ AI agents check SYSTEM_STATUS.md before planning
+- ✅ Database queries happen before architecture designs
+- ✅ Existing systems are used instead of rebuilt
+- ✅ No redundant infrastructure deployments
+- ✅ Cost savings from using what exists
+
+---
+
+**REMEMBER**: The fastest infrastructure to deploy is the one that already exists!
+
+**Status**: MANDATORY - Zero tolerance for violations
+**Severity**: CRITICAL - Prevents costly mistakes and wasted time

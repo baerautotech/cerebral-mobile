@@ -1,0 +1,57 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 📚 DOCUMENTATION REFERENCES - KEY RESOURCES
+
+## **Essential Documentation Files**
+
+### **Core Technical Documents**
+- `docs/CEREBRAL_005_CORE_TECHNICAL_ARCHITECTURE.md` - Complete technical architecture
+- `docs/CEREBRAL_010_CORE_NAMING_SPECIFICATION.md` - Development standards and file organization
+- `docs/CEREBRAL_065_TECHNICAL_DATABASE_SCHEMA.md` - Database schema and relationships
+- `docs/CEREBRAL_070_TECHNICAL_SECURITY_COMPLIANCE.md` - Security framework and SOC2 compliance
+
+### **Business & Product Documents**
+- `docs/CEREBRAL_001_CORE_MASTER_INDEX.md` - Complete documentation index
+- `docs/CEREBRAL_025_BUSINESS_MODEL.md` - Business model and pricing strategy
+- `docs/CEREBRAL_045_PRODUCT_FEATURE_MATRIX.md` - Feature breakdown by plan tier
+
+### **Performance & Optimization**
+- `docs/CEREBRAL_125_OPTIMIZATION_PERFORMANCE_COMPLETE.md` - Performance optimization achievements
+- `docs/CEREBRAL_130_OPTIMIZATION_FUTURE_PLAN.md` - Advanced optimization strategies
+
+### **AutoDoc & AI Integration**
+- `docs/CEREBRAL_145_AUTOMATION_AI_CONTEXT_SYSTEM.md` - AI context automation system
+- `docs/CEREBRAL_150_AUTOMATION_DOCUMENTATION_RAG.md` - RAG system documentation
+- `autodoc/README.md` - AutoDoc system overview
+- `autodoc/CODEBASE_RAG_SETUP.md` - Codebase RAG setup guide
+
+### **Quick Reference Commands**
+```bash
+# Get context for any topic
+npm run codebase:context "your topic"
+
+# Find implementation examples
+npm run codebase:code "pattern or feature"
+
+# Check system status
+npm run codebase:status
+
+# Authentication-specific context
+npm run codebase:auth
+```
+
+### **For Architecture Questions**
+Use RAG queries for real-time context:
+```bash
+npm run codebase:search "architecture patterns"
+npm run codebase:search "SOC2 compliance security"
+npm run codebase:search "naming conventions file structure"
+npm run codebase:search "performance optimization bundle"
+```
+
+---
+
+**Always use RAG system for current context - documentation may be outdated, but RAG includes latest code.**

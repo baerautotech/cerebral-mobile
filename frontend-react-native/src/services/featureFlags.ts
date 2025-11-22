@@ -1,6 +1,6 @@
 /**
  * Feature Flags Service
- * 
+ *
  * Handles fetching feature flags from the backend API
  */
 
@@ -8,10 +8,10 @@ import { FeatureFlags } from '../types/featureFlags';
 
 /**
  * Fetch feature flags from the backend
- * 
+ *
  * @returns Promise resolving to feature flags object
  * @throws Returns empty object on network error (offline support)
- * 
+ *
  * @example
  * const flags = await fetchFeatureFlags();
  * if (flags.ai_features) {
@@ -44,7 +44,7 @@ export async function fetchFeatureFlags(): Promise<FeatureFlags> {
 
 /**
  * Validate a feature flag
- * 
+ *
  * @param flags - Current feature flags
  * @param flagName - Name of the flag to check
  * @returns Boolean indicating if flag is enabled
@@ -52,4 +52,3 @@ export async function fetchFeatureFlags(): Promise<FeatureFlags> {
 export function isFlagEnabled(flags: FeatureFlags, flagName: string): boolean {
   return flags[flagName] === true;
 }
-

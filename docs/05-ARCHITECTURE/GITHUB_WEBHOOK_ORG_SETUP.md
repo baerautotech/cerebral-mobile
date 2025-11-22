@@ -19,7 +19,7 @@ This document explains how GitHub organization-level webhooks are configured for
 ## Organization-Level Webhook Configuration
 
 ### Location
-- **GitHub UI**: Organization Settings → Webhooks  
+- **GitHub UI**: Organization Settings → Webhooks
 - **Configured By**: Organization owners/admins (requires `admin:org_hook` scope)
 - **Scope**: Applies to ALL repositories in the organization
 
@@ -355,6 +355,5 @@ kubectl get secret github-webhook-secret -n tekton-pipelines -o jsonpath='{.data
 
 ---
 
-**This is the DEFINITIVE guide for GitHub organization webhook configuration.**  
+**This is the DEFINITIVE guide for GitHub organization webhook configuration.**
 **No other method will work for Cerebral Platform CI/CD.**
-

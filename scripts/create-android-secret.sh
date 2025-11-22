@@ -59,4 +59,3 @@ echo ""
 echo "Verify with:"
 echo "  kubectl get secret $SECRET_NAME -n $NAMESPACE"
 echo "  kubectl describe secret $SECRET_NAME -n $NAMESPACE"
-

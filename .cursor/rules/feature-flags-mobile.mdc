@@ -27,7 +27,7 @@ App Starts
     │  └─ Update cache with fresh flags
     │
     └─ Store in FeatureFlagContext
-       
+
 Screen Render:
     │
     ├─ <FeatureFlagGuard flag="new_feature">
@@ -114,7 +114,7 @@ export function useFeatureFlags() {
       // Check cache
       const cached = await AsyncStorage.getItem(CACHE_KEY);
       const cacheTime = await AsyncStorage.getItem(`${CACHE_KEY}_time`);
-      
+
       if (cached && cacheTime && Date.now() - parseInt(cacheTime) < CACHE_TTL) {
         setFlags(JSON.parse(cached));
         setLastUpdated(parseInt(cacheTime));
@@ -126,7 +126,7 @@ export function useFeatureFlags() {
       const newFlags = await fetchFeatureFlags();
       await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(newFlags));
       await AsyncStorage.setItem(`${CACHE_KEY}_time`, Date.now().toString());
-      
+
       setFlags(newFlags);
       setLastUpdated(Date.now());
     } catch (error) {
@@ -235,7 +235,7 @@ export function IAPFeature({ sku, children }: IAPFeatureProps) {
 
   if (!purchasedSKUs.includes(sku)) {
     return (
-      <UpgradeCTA 
+      <UpgradeCTA
         sku={sku}
         onPress={() => initiateCheckout(sku)}
       />
@@ -252,11 +252,11 @@ export function IAPFeature({ sku, children }: IAPFeatureProps) {
 ```typescript
 it('caches flags in AsyncStorage', async () => {
   const flags = await useFeatureFlags();
-  
+
   // First call fetches from backend
   const item1 = await AsyncStorage.getItem('feature_flags');
   expect(item1).toBeTruthy();
-  
+
   // Second call uses cache
   const item2 = await AsyncStorage.getItem('feature_flags');
   expect(item2).toEqual(item1);
@@ -267,13 +267,13 @@ it('caches flags in AsyncStorage', async () => {
 ```typescript
 it('allows enterprise users to access premium features', async () => {
   mockUserTier('enterprise');
-  
+
   const { getByText } = render(
     <TierGuard tier="standard">
       <Text>Premium Content</Text>
     </TierGuard>
   );
-  
+
   expect(getByText('Premium Content')).toBeTruthy();
 });
 ```

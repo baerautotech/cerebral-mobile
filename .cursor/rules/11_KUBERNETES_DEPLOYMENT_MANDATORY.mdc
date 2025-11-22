@@ -1,0 +1,67 @@
+# 🚨 MANDATORY: Kubernetes Deployment Procedures
+
+## Critical Requirement
+All production services (BMAD Method, backend microservices, API gateway, etc.) are deployed through the Tekton/Kaniko CI/CD pipeline. **Local changes do nothing** until they are committed and pushed. Manual kubectl or docker commands are prohibited.
+
+---
+
+## 1. Deployment Workflow (No Exceptions)
+1. `git status` → verify clean working tree or stage relevant changes.
+2. Run validation scripts and tests locally (ruff, mypy, pytest, security scans).
+3. `git commit` with compliant message.
+4. `git push origin <branch>` (typically `develop`).
+5. Tekton pipeline automatically builds the image with Kaniko, pushes by SHA digest, and updates Kubernetes deployments.
+6. Monitor pipeline status (`kubectl get pipelinerun -n cerebral-pipelines` or GitHub Checks).
+7. Verify rollout (`kubectl get pods -n cerebral-platform`, `kubectl logs deployment/<service>`).
+
+---
+
+## 2. Validation Checklist Before Push
+- [ ] Tests pass (unit, integration, security as applicable).
+- [ ] Linting/formatting tools succeed (ruff, mypy, formatting scripts).
+- [ ] Documentation updates captured in `plans-todo/…` or `docs/…`.
+- [ ] Secrets handled via Vault/External Secrets (no local .env commits).
+- [ ] Structured logging/metrics wired for new code.
+
+---
+
+## 3. Monitoring Deployed Services
+```bash
+# Pipelines
+kubectl get pipelinerun -n cerebral-pipelines
+kubectl logs -f pipelinerun/<name> -n cerebral-pipelines --container step-kaniko
+
+# Deployments
+kubectl get pods -n cerebral-platform
+kubectl logs -f deployment/<service-name> -n cerebral-platform
+kubectl rollout status deployment/<service-name> -n cerebral-platform
+```
+
+For BMAD services (namespace `cerebral-bmad`), use the same commands with that namespace.
+
+---
+
+## 4. Forbidden Practices
+- ❌ `kubectl apply` or `kubectl edit` for application deployments.
+- ❌ Manual docker image builds or pushes.
+- ❌ Direct edits inside running pods.
+- ❌ Bypassing Tekton/Kaniko for any production change.
+
+Attempting any of the above violates enterprise compliance rules and can trigger automated rollback.
+
+---
+
+## 5. Troubleshooting Tekton Deployments
+| Symptom | Action |
+| --- | --- |
+| Pipeline fails during Kaniko build | Inspect Kaniko step logs, fix Dockerfile or tests, recommit and push |
+| Deployment stuck rolling out | `kubectl describe deployment/<service>` and check pod logs |
+| Service failing health checks | Review structured logs, metrics, and revert via git if necessary |
+| Need to redeploy latest commit | `kubectl annotate deployment/<service> tekton.dev/manual-redeploy="$(date +%s)" -n cerebral-platform` |
+
+---
+
+## 6. Compliance Reminder
+All production environments rely on immutable SHA-based images built by Tekton. Following this workflow preserves audit trails (SOC2, HIPAA, GDPR, ISO27001, PCI). Document any deployment in the relevant story/task notes so Supabase `cerebral_tasks` reflects the change.
+
+**Result:** Every code change reaches production through a single, auditable path—commit → push → Tekton → Kubernetes—maintaining security, reliability, and compliance.

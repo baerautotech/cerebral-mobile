@@ -1,6 +1,6 @@
 /**
  * UpgradeCTA Component
- * 
+ *
  * Call-to-action for user upgrades
  * Used by TierGuard and IAPFeature to prompt upgrades
  */
@@ -12,43 +12,43 @@ import { TIER_CONFIGS, TierLevel } from '../types/tiers';
 export interface UpgradeCTAProps {
   /** Required tier or SKU */
   targetTier?: TierLevel;
-  
+
   /** SKU identifier if IAP-based */
   sku?: string;
-  
+
   /** Message to display */
   message?: string;
-  
+
   /** Callback when upgrade button pressed */
   onPress?: () => void;
-  
+
   /** Custom button text */
   buttonText?: string;
 }
 
 /**
  * UpgradeCTA Component
- * 
+ *
  * Reusable upgrade call-to-action component
  * Can be tier-based or IAP SKU-based
- * 
+ *
  * @param {TierLevel} [targetTier] - Target tier for upgrade
  * @param {string} [sku] - IAP SKU
  * @param {string} [message] - Custom message
  * @param {Function} [onPress] - Callback when upgrade clicked
  * @param {string} [buttonText] - Custom button text
  * @returns {JSX.Element} Upgrade CTA card
- * 
+ *
  * @example
  * // Tier-based upgrade
- * <UpgradeCTA 
+ * <UpgradeCTA
  *   targetTier="standard"
  *   onPress={() => navigateToUpgrade()}
  * />
- * 
+ *
  * @example
  * // Custom message and button
- * <UpgradeCTA 
+ * <UpgradeCTA
  *   message="Unlock advanced analytics"
  *   buttonText="Subscribe Now"
  *   onPress={handleSubscribe}
@@ -80,20 +80,20 @@ export function UpgradeCTA({
         <View style={styles.iconContainer}>
           <Text style={styles.icon}>✨</Text>
         </View>
-        
+
         <Text style={styles.title}>Premium Feature</Text>
-        
+
         <Text style={styles.message}>{displayMessage}</Text>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={styles.button}
           onPress={onPress}
           activeOpacity={0.7}
         >
           <Text style={styles.buttonText}>{buttonText}</Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={styles.dismissButton}
           onPress={() => {
             // User can dismiss
@@ -164,4 +164,3 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
-

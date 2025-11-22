@@ -1,0 +1,98 @@
+description: VEG framework integration with BMAD Method and Cursor - validated code-generation workflow
+globs: backend-python/**/*.py, frontend/**/*.ts, **/*.ts, **/*.tsx, **/*.md
+alwaysApply: false
+---
+
+# 🧬 VEG–BMAD–Cursor Integration Guide
+
+## 🎯 Objective
+Keep all Cursor development aligned with BMAD Method workflows while enforcing VEG (Validated Evolutionary Generation) standards—no legacy CerebraFlow tooling, no theater, full compliance.
+
+---
+
+## 1. Launch BMAD Workflow with VEG Context
+
+1. Initialize the workflow with the BMAD analyst agent using `*workflow-init`.
+2. If agents are offline, run `npx bmad-method workflow-init --project "$(pwd)"` from the repository root.
+3. Select the active story (`*sprint-planning`, `*start-story`) so Supabase `cerebral_tasks` remains the source of truth.
+4. In Cursor, load the required rules:
+   ```
+   @VEG_FRAMEWORK_CORE_PHILOSOPHY.mdc
+   @VEG_FRAMEWORK_FEATURE_TEMPLATE.mdc
+   @VEG_BMAD_CURSOR_INTEGRATION.mdc
+   ```
+
+---
+
+## 2. Execute in Cursor with the VEG Template
+
+Before writing code, prepare the feature template:
+```
+**VEG Feature Request: [Feature Name]**
+
+1. Goal
+2. Interfaces (type hints required)
+3. Acceptance Tests (positive / edge / negative / compliance)
+4. Constraints (SRP, tenant isolation, observability, performance)
+5. Integration Points (Supabase, BMAD services, external APIs)
+6. Validation Checklist (tests, lint, docs, deployment)
+```
+
+Implementation guardrails:
+- Reuse enterprise shared libraries (structured logging, metrics, error handler, BMAD integrations).
+- No placeholders, TODO/FIXME, mocks, or artificial delays.
+- Maintain SRP and VEG requirements in every commit.
+- Update BMAD notes (`*add-notes`) so Supabase audit data and RAG stay in sync.
+
+---
+
+## 3. BMAD Enforcement Layers
+
+| Layer | Responsibility |
+| --- | --- |
+| BMAD workflow | Blocks story advancement until VEG checklist complete and writes notes to `cerebral_tasks`. |
+| Local tooling | Ruff, mypy, pytest, security scans, and enterprise validation scripts must pass. |
+| CI/CD (Tekton/Kaniko) | Deploys after commit/push once pipelines are online; never run manual kubectl. |
+
+CLI fallback when MCP or CI is unavailable:
+- `npx bmad-method workflow status`
+- `npx bmad-method workflow advance --stage ready-for-qa`
+
+---
+
+## 4. VEG Compliance Checklist
+
+| Area | Requirement |
+| --- | --- |
+| Tests | Unit + integration + (where applicable) performance and security suites.
+| Linting | Ruff, mypy, and enterprise validation scripts succeed without new `noqa` comments.
+| Observability | Structured logging (tenant/user IDs, correlation IDs) plus metrics and tracing hooks.
+| Documentation | Draft updates under `plans-todo/BMADv6-migration/` for eventual AutoDoc publication.
+| Deployment | Commit → push workflow; Tekton handles builds once CI is restored.
+
+Anti-theater guardrails:
+```python
+# ❌ Blocked patterns
+raise NotImplementedError("placeholder")
+# TODO: finish later
+return "fake-result"
+
+# ✅ Compliant example
+class TenantAuditService(BaseEnterpriseService):
+    def process(self, tenant_id: str) -> AuditResult:
+        result = self._run_checks(tenant_id)
+        self.metrics.record_latency("tenant_audit", ...)
+        return result
+```
+
+---
+
+## 5. Success Criteria
+
+- VEG template completed and linked in the BMAD story record.
+- BMAD workflow advanced with supporting notes and Supabase updates.
+- Tests, lint, and validation scripts pass without manual overrides.
+- Structured logging and metrics registered for the service.
+- Draft documentation saved in `plans-todo/BMADv6-migration/` ready for AutoDoc migration.
+
+**Result:** VEG principles stay synchronized with BMAD Method workflows and Cursor development, eliminating legacy CerebraFlow references and ensuring every deliverable is production-ready.

@@ -23,22 +23,22 @@ spec:
   workspaces:
     - name: shared-data
       description: Shared workspace for repository and build artifacts
-  
+
   steps:
     - name: clone-repo
       image: alpine/git:latest
       script: |
         #!/bin/sh
         set -e
-        
+
         echo "🔄 Cloning repository..."
         cd $(workspaces.shared-data.path)
         git clone -b $(params.repo-branch) $(params.repo-url) repo
         cd repo
-        
+
         echo "✅ Repository cloned successfully"
         git log --oneline -1
-    
+
     - name: setup-ios-environment
       image: ghcr.io/cirruslabs/macos-runner:latest
       env:
@@ -60,39 +60,39 @@ spec:
       script: |
         #!/bin/bash
         set -e
-        
+
         cd $(workspaces.shared-data.path)/repo/frontend-react-native
-        
+
         echo "🔄 Setting up iOS environment..."
-        
+
         # Install Node dependencies
         echo "📦 Installing Node dependencies..."
         npm install -g pnpm
         pnpm install --frozen-lockfile
-        
+
         # Install CocoaPods dependencies
         echo "📦 Installing CocoaPods dependencies..."
         cd ios
         pod install
         cd ..
-        
+
         # Import signing certificate
         echo "🔐 Importing iOS signing certificate..."
         mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
         cp "$CI_PROVISIONING_PROFILE" ~/Library/MobileDevice/Provisioning\ Profiles/
-        
+
         echo "✅ iOS environment setup complete"
-    
+
     - name: build-ios-archive
       image: ghcr.io/cirruslabs/macos-runner:latest
       script: |
         #!/bin/bash
         set -e
-        
+
         cd $(workspaces.shared-data.path)/repo/frontend-react-native
-        
+
         echo "🏗️  Building iOS archive..."
-        
+
         xcodebuild \
           -workspace ios/CerebralNative.xcworkspace \
           -scheme CerebralNative \
@@ -101,20 +101,20 @@ spec:
           -archivePath build/CerebralNative.xcarchive \
           -allowProvisioningUpdates \
           archive
-        
+
         echo "✅ iOS archive created successfully"
         ls -lh build/CerebralNative.xcarchive
-    
+
     - name: export-ipa
       image: ghcr.io/cirruslabs/macos-runner:latest
       script: |
         #!/bin/bash
         set -e
-        
+
         cd $(workspaces.shared-data.path)/repo/frontend-react-native
-        
+
         echo "📦 Exporting IPA..."
-        
+
         # Create ExportOptions.plist if it doesn't exist
         if [ ! -f ios/ExportOptions.plist ]; then
           cat > ios/ExportOptions.plist << 'EOF'
@@ -136,26 +136,26 @@ spec:
 </plist>
 EOF
         fi
-        
+
         xcodebuild \
           -exportArchive \
           -archivePath build/CerebralNative.xcarchive \
           -exportOptionsPlist ios/ExportOptions.plist \
           -exportPath build/output
-        
+
         echo "✅ IPA exported successfully"
         ls -lh build/output/CerebralNative.ipa
-    
+
     - name: verify-build
       image: alpine:latest
       script: |
         #!/bin/sh
         set -e
-        
+
         echo "🔍 Verifying build artifacts..."
-        
+
         IPA_FILE=$(workspaces.shared-data.path)/repo/frontend-react-native/build/output/CerebralNative.ipa
-        
+
         if [ -f "$IPA_FILE" ]; then
           FILE_SIZE=$(stat -f%z "$IPA_FILE" 2>/dev/null || stat -c%s "$IPA_FILE" 2>/dev/null || echo "unknown")
           echo "✅ Build verification passed"
@@ -165,4 +165,3 @@ EOF
           echo "❌ Build verification failed: IPA file not found"
           exit 1
         fi
-

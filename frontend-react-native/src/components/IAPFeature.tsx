@@ -1,6 +1,6 @@
 /**
  * IAPFeature Component
- * 
+ *
  * Conditionally renders content based on in-app purchase status
  */
 
@@ -11,21 +11,21 @@ import { UpgradeCTA } from './UpgradeCTA';
 
 /**
  * IAPFeature Component
- * 
+ *
  * Wraps content behind an in-app purchase requirement
  * Shows purchase prompt if user hasn't purchased the SKU
- * 
+ *
  * @param {string} sku - Required SKU for this feature
  * @param {ReactNode} children - Content to show if user has purchased
  * @param {ReactNode} [fallback] - Optional custom UI if user hasn't purchased
  * @returns {ReactNode} Content or purchase prompt
- * 
+ *
  * @example
  * // Show premium analytics only to subscribers
  * <IAPFeature sku="analytics_addon">
  *   <AdvancedAnalytics />
  * </IAPFeature>
- * 
+ *
  * @example
  * // With custom fallback
  * <IAPFeature
@@ -79,4 +79,3 @@ export function IAPFeature({
     />
   );
 }
-

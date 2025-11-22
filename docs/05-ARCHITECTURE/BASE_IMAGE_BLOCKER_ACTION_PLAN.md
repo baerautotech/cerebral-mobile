@@ -1,7 +1,7 @@
 # 🚨 CRITICAL BLOCKER: Missing Base Image
 
-**Date**: October 25, 2025  
-**Status**: ❌ BLOCKING ALL BUILDS  
+**Date**: October 25, 2025
+**Status**: ❌ BLOCKING ALL BUILDS
 **Root Cause**: `cerebral/ai-base:cuda` does NOT exist in internal registry
 
 ---
@@ -24,12 +24,12 @@
 ### Infrastructure Team Must:
 
 1. **Build the base image locally or obtain it**
-   
+
    Option A: Build from Dockerfile
    ```bash
    # Find Dockerfile for ai-base
    find . -name "Dockerfile*" -path "*/ai-base/*" -o -name "*ai-base*Dockerfile"
-   
+
    # Build the image
    docker build -t cerebral/ai-base:cuda -f <path-to-dockerfile> .
    ```
@@ -44,7 +44,7 @@
    ```bash
    # Tag for internal registry
    docker tag cerebral/ai-base:cuda 10.34.0.202:5000/cerebral/ai-base:cuda
-   
+
    # Push to internal registry
    docker push 10.34.0.202:5000/cerebral/ai-base:cuda
    ```
@@ -53,7 +53,7 @@
    ```bash
    # Check if image is now available
    curl http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
-   
+
    # Should return: {"name":"cerebral/ai-base","tags":["cuda"]}
    ```
 
@@ -190,7 +190,7 @@ curl http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
 
 ---
 
-**Status**: 🚨 BLOCKED - Waiting for infrastructure team  
-**Blocker**: Missing base image in internal registry  
-**Solution**: Infrastructure team must build and push `cerebral/ai-base:cuda`  
+**Status**: 🚨 BLOCKED - Waiting for infrastructure team
+**Blocker**: Missing base image in internal registry
+**Solution**: Infrastructure team must build and push `cerebral/ai-base:cuda`
 **Retry**: Ready immediately once base image available

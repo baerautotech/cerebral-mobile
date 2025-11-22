@@ -1,0 +1,274 @@
+---
+description: "Quick reference card for agents - rule precedence and Phase 0 requirements"
+globs: "**/*"
+alwaysApply: true
+priority: 1
+---
+
+# ⚡ FRAMEWORK QUICK REFERENCE - AGENTS START HERE
+
+## 🎯 BEFORE STARTING ANY WORK
+
+**MANDATORY CHECKLIST** (5 minutes):
+
+- [ ] **Step 1**: Check `@00_MASTER_RULE_HIERARCHY.mdc` for rule precedence
+- [ ] **Step 2**: Review `@development/00_BROWNFIELD_FIRST_MANDATORY.mdc` for Phase 0 requirements
+- [ ] **Step 3**: Use BMAD-Cloud MCP to query KG/RAG for existing implementations
+- [ ] **Step 4**: Map cross-repository dependencies (cerebral/, cerebral-deployment/, KG/RAG)
+- [ ] **Step 5**: Make build vs. integrate decision with justification
+
+**You cannot proceed without Phase 0 complete.**
+
+---
+
+## 📚 RULE PRECEDENCE (When Rules Conflict)
+
+**Quick version:**
+
+```
+PRIORITY 0 wins over everything else (Constitutional rules)
+  ↓ These can only be overridden by other P0 rules
+PRIORITY 1 wins over 2, 3, 4 (Foundational rules)
+  ↓ These implement Constitutional principles
+PRIORITY 2 wins over 3, 4 (Operational rules)
+  ↓ These implement Foundational rules
+PRIORITY 3 wins over 4 (Contextual language/framework rules)
+PRIORITY 4 (Advisory - best practices)
+```
+
+**In practice:**
+
+| Question | Answer |
+|----------|--------|
+| "Can I use mock objects?" | NO - VEG Framework (P1) prohibits them |
+| "Where do docs go?" | docs/ directory - Master Docs (P0) requires it |
+| "Which Supabase method?" | client.rpc("run_sql", {...}) - Authoritative (P2) method |
+| "Do I need Phase 0?" | YES - Brownfield-First (P1) mandatory, no exceptions |
+| "Should I check existing code?" | YES - RAG Usage (P1) requires it before coding |
+
+---
+
+## 🌍 PHASE 0 BROWNFIELD ANALYSIS
+
+**What**: Mandatory analysis before ANY planning/coding
+**When**: Before every feature, bug fix, architecture change
+**Who**: All agents, no exceptions
+**Time**: 30-90 minutes (depending on scope)
+
+### Quick Phase 0 Workflow
+
+```
+1. QUERY KG/RAG (10 minutes)
+   mcp_bmad-cloud_bmad_analyst task="Find existing implementations of [feature]"
+   mcp_bmad-cloud_bmad_architect task="What is current architecture for [component]?"
+
+2. SCAN REPOS (15 minutes)
+   - cerebral/ → backend_python/, microservices/
+   - cerebral-deployment/ → kubernetes/, tekton/
+   - Supabase → schema, functions
+
+3. MAP DEPENDENCIES (10 minutes)
+   - List all existing implementations
+   - Document integration paths
+   - Identify cross-repo dependencies
+
+4. DECIDE (5 minutes)
+   Build new: Why existing won't work? [reason]
+   Integrate: How to integrate existing? [effort]
+   Hybrid: What build, what integrate? [plan]
+
+5. DOCUMENT (5 minutes)
+   Complete Phase 0 template (in brownfield-first rule)
+```
+
+### Phase 0 Template (Copy & Complete)
+
+```markdown
+# Phase 0 Analysis - [Feature Name]
+
+## KG/RAG Queries
+- Query 1: [what I searched]
+  Result: [what I found]
+
+- Query 2: [what I searched]
+  Result: [what I found]
+
+## Existing Implementations
+- Implementation 1: [path, status, complexity]
+- Implementation 2: [path, status, complexity]
+
+## Cross-Repository Dependencies
+- Dependency 1: [repo, impact]
+- Dependency 2: [repo, impact]
+
+## Decision: Build / Integrate / Hybrid
+[Your chosen approach with justification]
+
+## Effort Estimate
+- Integration paths: X hours
+- New code: Y hours
+- Testing: Z hours
+```
+
+---
+
+## 🚫 COMMON MISTAKES TO AVOID
+
+| ❌ WRONG | ✅ RIGHT |
+|---------|---------|
+| Plan without Phase 0 | Complete Phase 0 first, then plan |
+| Assume nothing exists | Query KG/RAG for existing code |
+| Build new from scratch | Check for integration paths |
+| Use mock/fake code | Implement real functionality |
+| Add TODOs to commit | Implement complete solution |
+| Store docs in root | Put all docs in docs/ subdirectories |
+| Write .md files directly | Use AutoDoc service for documentation |
+| Skip validation | Run validation script before pushing |
+
+---
+
+## 📞 WHEN TO REFERENCE WHAT
+
+| Need | Reference |
+|------|-----------|
+| "Which rule applies?" | `00_MASTER_RULE_HIERARCHY.mdc` |
+| "Do I need Phase 0?" | `development/00_BROWNFIELD_FIRST_MANDATORY.mdc` |
+| "How to query Supabase?" | `development/03_SUPABASE_OPERATIONS_AUTHORITATIVE.mdc` |
+| "Production standards?" | `core/01_PRODUCTION_STANDARDS.mdc` |
+| "File organization?" | `development/00_MASTER_DOCUMENTATION_STANDARDS.mdc` |
+| "How to handle conflicts?" | `00_MASTER_RULE_HIERARCHY.mdc` → CONFLICT_RESOLUTION_ALGORITHM |
+| "Enterprise patterns?" | `.trae/rules/enterprise_methodology.md` |
+| "Full solution details?" | `docs/01-DEPLOYMENT/framework-audit-rules-enforcement-complete.md` |
+
+---
+
+## ✅ VALIDATION CHECKLIST
+
+Before committing code, verify:
+
+```bash
+□ Rule Compliance
+  ├─ No mock/fake/placeholder code
+  ├─ No TODOs in production code
+  ├─ All imports from shared library (not duplicates)
+  └─ Type hints on all functions
+
+□ Brownfield Context
+  ├─ Phase 0 analysis completed
+  ├─ KG/RAG queries documented
+  ├─ Existing implementations leveraged
+  └─ Build vs. integrate decision justified
+
+□ Documentation
+  ├─ .md files in docs/ (not root)
+  ├─ Proper naming: action-subject-scope.md
+  ├─ Category correct (01-07)
+  └─ Navigation links updated
+
+□ Testing
+  ├─ Unit tests written
+  ├─ Integration tests for external deps
+  ├─ Performance tests if >10s
+  └─ >85% code coverage
+```
+
+---
+
+## 🔄 TYPICAL AGENT WORKFLOW
+
+```
+1. RECEIVE TASK
+   ↓
+2. PHASE 0 ANALYSIS (mandatory)
+   ├─ Query KG/RAG
+   ├─ Scan repositories
+   ├─ Document findings
+   └─ Decide build vs. integrate
+   ↓
+3. REFERENCE RULES
+   ├─ Check Master Hierarchy
+   ├─ Identify applicable P0-P1 rules
+   ├─ Review compliance requirements
+   └─ Note any conflicts
+   ↓
+4. PLAN IMPLEMENTATION
+   ├─ Use existing code where possible
+   ├─ Follow enterprise patterns
+   ├─ Design for compliance
+   └─ Document approach
+   ↓
+5. IMPLEMENT CODE
+   ├─ Follow VEG framework (no theater)
+   ├─ Write comprehensive tests
+   ├─ Add structured logging
+   ├─ Use circuit breaker patterns
+   └─ Full error handling
+   ↓
+6. VALIDATE
+   ├─ Run validation script
+   ├─ Fix all violations
+   ├─ Check rule compliance
+   ├─ Verify documentation
+   └─ Test extensively
+   ↓
+7. COMMIT & PUSH
+   ├─ Clear commit message
+   ├─ Reference rules/memories
+   ├─ Link to task
+   └─ Push to develop
+```
+
+---
+
+## 🎯 FIRST-TIME SUCCESS FACTORS
+
+To achieve 90-95% first-pass success (up from 40-50%):
+
+1. ✅ **Phase 0 is mandatory** - 100% platform context before planning
+2. ✅ **Rules are clear** - Master hierarchy eliminates conflicts
+3. ✅ **Code is real** - VEG framework prohibits theater
+4. ✅ **Architecture is enterprise** - SRP, DI, monitoring, circuit breakers
+5. ✅ **Testing is comprehensive** - >85% coverage, all scenarios
+6. ✅ **Compliance is built-in** - SOC2/HIPAA/GDPR/ISO27001/PCI from start
+7. ✅ **Validation is automated** - Catches gaps immediately
+
+---
+
+## 📌 KEY PHRASES TO REMEMBER
+
+- **"Phase 0 first"** - Always start with brownfield analysis
+- **"Query KG/RAG"** - Before any coding, check what exists
+- **"Build vs. integrate"** - Every feature needs this decision
+- **"P0 rules win"** - When in doubt, check Constitutional level
+- **"Real functionality"** - No mocks, theater, or TODOs
+- **"Enterprise patterns"** - SRP, DI, monitoring, circuit breaker
+- **"Comprehensive validation"** - Commit script catches gaps
+
+---
+
+## 🚨 IMMEDIATE ACTION
+
+### RIGHT NOW:
+1. ✅ Read this quick reference (5 min)
+2. ✅ Reference `.cursor/rules/00_MASTER_RULE_HIERARCHY.mdc` (5 min)
+3. ✅ Bookmark `.cursor/rules/development/00_BROWNFIELD_FIRST_MANDATORY.mdc` (quick reference for Phase 0)
+
+### BEFORE YOUR NEXT TASK:
+1. ✅ Complete Phase 0 analysis (30-90 min, depending on scope)
+2. ✅ Use BMAD-Cloud MCP to query KG/RAG
+3. ✅ Map existing implementations
+4. ✅ Make build vs. integrate decision
+5. ✅ Document everything
+6. ✅ Proceed to planning with 100% context
+
+### AFTER IMPLEMENTATION:
+1. ✅ Run validation script
+2. ✅ Fix any violations
+3. ✅ Commit with clear message
+4. ✅ Push to develop
+
+---
+
+**This framework audit solution ensures first-time success through mandatory brownfield analysis, explicit rule hierarchy, and automated validation. No more gap-fill sessions.**
+
+**Start with Phase 0. Always. No exceptions.**

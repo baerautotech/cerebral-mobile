@@ -1,0 +1,43 @@
+# 🚨 MANDATORY TENANT-FIRST DEVELOPMENT - ZERO TOLERANCE
+
+**Rule Type**: CRITICAL ENFORCEMENT
+**Violation Level**: IMMEDIATE STOP REQUIRED
+**Scope**: ALL Feature Implementation, Services, Database Operations
+
+## 🏗️ MANDATORY TENANT ARCHITECTURE REQUIREMENTS
+
+### **BEFORE IMPLEMENTING ANY FEATURE, SERVICE, OR INTEGRATION**
+
+**I MUST consider multi-tenant architecture FIRST and validate tenant integration.**
+
+#### **🔍 MANDATORY PRE-IMPLEMENTATION CHECKLIST**
+
+**1. RAG SEARCH FOR TENANT INFRASTRUCTURE**
+```bash
+# ALWAYS search existing tenant infrastructure first
+tsx .cerebral/rag/rag-enhanced-query.ts search "TenantManager TenantService tenant infrastructure"
+```
+
+**2. USER FEATURE REQUIREMENTS**
+- **MUST** use `TenantManager.getUserTenantAssignment()` for user features
+- **MUST** validate user belongs to tenant before operations
+- **MUST** support default tenant for individual users
+
+**3. ORGANIZATION FEATURE REQUIREMENTS**
+- **MUST** create `Enterprise[Feature]TenantService.ts` for organization-level features
+- **MUST** implement tenant-scoped operations
+- **MUST** validate enterprise tenant permissions
+
+**4. DATABASE OPERATION REQUIREMENTS**
+- **MUST** include `tenant_id` in ALL database operations
+- **MUST** implement tenant policy checking (RLS)
+- **MUST** validate tenant isolation in queries
+
+**5. DUAL TENANT SUPPORT REQUIREMENTS**
+- **MUST** support both enterprise tenants AND default tenant
+- **MUST** handle tenant switching gracefully
+- **MUST** maintain tenant context throughout request lifecycle
+
+---
+
+**CRITICAL REMINDER**: The Cerebral Platform serves Fortune 500 enterprise customers with strict multi-tenant requirements. Every violation creates security, compliance, and business risks. **NO EXCEPTIONS** are permitted.

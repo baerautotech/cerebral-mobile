@@ -1,0 +1,511 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Cerebral Platform Comprehensive Development Guidelines
+*Enterprise Production Platform with Integrated AutoDoc & RAG System*
+
+## 🚨 PRODUCTION PROJECT DECLARATION
+
+**THIS IS A PRODUCTION PROJECT - NOT A PROTOTYPE**
+
+The Cerebral Platform is an enterprise-grade, revenue-generating SaaS application built for real customers with real business needs. Every line of code written must meet production standards from day one.
+
+**Key Production Requirements:**
+- ✅ **Enterprise-grade quality only** - No prototyping shortcuts or "good enough" solutions
+- ✅ **Real customer revenue** - This platform generates actual revenue and serves paying customers
+- ✅ **SOC2 compliance mandatory** - Security and compliance are non-negotiable requirements
+- ✅ **Production deployment ready** - All code must be production-deployment ready
+- ✅ **Enterprise customer expectations** - Fortune 500 companies depend on this platform
+- ✅ **Zero downtime tolerance** - System reliability is mission-critical
+- ✅ **Performance optimized** - 99.97% bundle size reduction achieved, enterprise-grade performance
+- ✅ **AutoDoc Integration** - AI-powered documentation automation and RAG system
+
+## 🤖 INTEGRATED AUTODOC & RAG SYSTEM
+
+### **Automatic Context Integration (MANDATORY)**
+Before ANY development work, the AutoDoc system provides automatic context loading:
+
+#### **RAG System Commands**
+```bash
+# Load schema context
+tsx .cerebral/rag/rag-query.ts "database schema migration"
+
+# Load architecture context
+tsx .cerebral/rag/rag-query.ts "core architecture patterns"
+
+# Load performance context
+tsx .cerebral/rag/rag-query.ts "optimization bundle performance"
+
+# Load security context
+tsx .cerebral/rag/rag-query.ts "SOC2 compliance security"
+```
+
+#### **Automatic Context Loading**
+The system automatically loads context from:
+- **RAG System**: `.cerebral/rag/` for semantic search
+- **Documentation**: Current docs from `docs/CEREBRAL_*.md`
+- **Bundle Analysis**: `.cerebral/rag/chunks/bundle-analysis-chunks.json`
+- **Schema Context**: `CEREBRAL_065_TECHNICAL_DATABASE_SCHEMA.md`
+- **Architecture Context**: `CEREBRAL_005_CORE_TECHNICAL_ARCHITECTURE.md`
+
+#### **AutoDoc System Architecture**
+```
+.cerebral/
+├── scripts/doc-sync.ts      # Documentation synchronization engine
+├── rag/                     # RAG system with semantic search
+│   ├── chunks/             # Processed documentation chunks
+│   ├── vectors/            # Vector embeddings
+│   ├── rag-query.ts        # RAG query interface
+│   └── auto-update.sh      # Automated updates
+├── config/                 # Configuration files
+├── hooks/                  # Git hooks for automation
+└── docs/                   # CerebraFlow system documentation
+```
+
+### **Documentation Workflow Integration**
+1. **Pre-Development**: RAG system loads relevant context automatically
+2. **During Development**: Real-time documentation sync via Git hooks
+3. **Post-Development**: Automatic documentation updates and validation
+4. **AI Context**: Seamless AI assistant context from documentation corpus
+
+## 🚀 PERFORMANCE OPTIMIZATION ACHIEVEMENTS
+
+**BREAKTHROUGH PERFORMANCE OPTIMIZATION COMPLETE** - The Cerebral Platform has achieved extraordinary performance optimization results that exceed all industry standards:
+
+### Bundle Size Optimization
+- **Main Bundle**: 2.2MB → 0.7KB (99.97% reduction)
+- **CSS Bundle**: ~400KB → 129KB (68% reduction)
+- **Total Assets**: 2.6MB+ → 130KB (95% reduction)
+- **Build Success**: 306 failing → 3202 successful modules (1000%+ improvement)
+
+### Performance Standards
+- **Build Time**: 3.5s → 2.37s (32% faster)
+- **Load Time**: 99.97% improvement (instant loading)
+- **Reliability**: 100% build success rate
+- **Chunking**: 12 optimized chunks with intelligent splitting
+
+### Optimization Infrastructure
+- ✅ **Advanced lazy loading** system with enterprise-grade Suspense boundaries
+- ✅ **Terser minification** with production-grade compression
+- ✅ **Enhanced tree shaking** (moduleSideEffects: false)
+- ✅ **Intelligent chunking** strategy for large components
+- ✅ **External dependency management** for Node.js modules
+- ✅ **Bundle analysis tooling** with AutoDoc integration
+
+## 📚 Documentation Library & AutoDoc Integration
+
+This project maintains comprehensive documentation in the `docs/` directory with full AutoDoc automation. **All developers must use the AutoDoc/RAG system for context loading before writing any code.**
+
+### Core Business & Strategy Documents
+- **[CEREBRAL_001_CORE_MASTER_INDEX](mdc:docs/CEREBRAL_001_CORE_MASTER_INDEX.md)** - Complete documentation index and platform overview
+- **[CEREBRAL_025_BUSINESS_MODEL](mdc:docs/CEREBRAL_025_BUSINESS_MODEL.md)** - Business model, pricing, and revenue strategy
+- **[CEREBRAL_030_BUSINESS_GO_TO_MARKET](mdc:docs/CEREBRAL_030_BUSINESS_GO_TO_MARKET.md)** - Go-to-market strategy and launch plan
+- **[CEREBRAL_035_BUSINESS_TARGET_MARKETS](mdc:docs/CEREBRAL_035_BUSINESS_TARGET_MARKETS.md)** - Target market analysis and customer segments
+
+### Technical Architecture & Implementation
+- **[CEREBRAL_005_CORE_TECHNICAL_ARCHITECTURE](mdc:docs/CEREBRAL_005_CORE_TECHNICAL_ARCHITECTURE.md)** - Complete technical architecture and implementation standards
+- **[CEREBRAL_070_TECHNICAL_SECURITY_COMPLIANCE](mdc:docs/CEREBRAL_070_TECHNICAL_SECURITY_COMPLIANCE.md)** - Security framework and compliance requirements
+- **[CEREBRAL_085_INTEGRATION_STRATEGY](mdc:docs/CEREBRAL_085_INTEGRATION_STRATEGY.md)** - API strategy and third-party integrations
+- **[CEREBRAL_010_CORE_NAMING_SPECIFICATION](mdc:docs/CEREBRAL_010_CORE_NAMING_SPECIFICATION.md)** - Development standards and file organization
+- **[CEREBRAL_015_CORE_PLATFORM_ARCHITECTURE_LAYERS](mdc:docs/CEREBRAL_015_CORE_PLATFORM_ARCHITECTURE_LAYERS.md)** - Platform architecture layers and dependencies
+- **[CEREBRAL_125_OPTIMIZATION_PERFORMANCE_COMPLETE](mdc:docs/CEREBRAL_125_OPTIMIZATION_PERFORMANCE_COMPLETE.md)** - **Complete performance optimization achievements**
+
+### Product & Features
+- **[CEREBRAL_045_PRODUCT_FEATURE_MATRIX](mdc:docs/CEREBRAL_045_PRODUCT_FEATURE_MATRIX.md)** - Complete feature breakdown by plan tier
+- **[CEREBRAL_090_INTEGRATION_AI_CAPABILITIES](mdc:docs/CEREBRAL_090_INTEGRATION_AI_CAPABILITIES.md)** - AI provider management and capabilities
+- **[CEREBRAL_050_PRODUCT_USER_EXPERIENCE](mdc:docs/CEREBRAL_050_PRODUCT_USER_EXPERIENCE.md)** - UX design and user journey mapping
+
+### Implementation & Deployment
+- **[CEREBRAL_115_OPERATIONS_IMPLEMENTATION_ROADMAP](mdc:docs/CEREBRAL_115_OPERATIONS_IMPLEMENTATION_ROADMAP.md)** - Development roadmap and production milestones
+- **[CEREBRAL_120_OPERATIONS_MODULE_REQUIREMENTS](mdc:docs/CEREBRAL_120_OPERATIONS_MODULE_REQUIREMENTS.md)** - Detailed requirements for all platform modules
+- **[CEREBRAL_130_OPTIMIZATION_FUTURE_PLAN](mdc:docs/CEREBRAL_130_OPTIMIZATION_FUTURE_PLAN.md)** - Advanced optimization strategies and future enhancements
+
+### AutoDoc & AI Integration Documents
+- **[CEREBRAL_145_AUTOMATION_AI_CONTEXT_SYSTEM](mdc:docs/CEREBRAL_145_AUTOMATION_AI_CONTEXT_SYSTEM.md)** - AI context automation system
+- **[CEREBRAL_150_AUTOMATION_DOCUMENTATION_RAG](mdc:docs/CEREBRAL_150_AUTOMATION_DOCUMENTATION_RAG.md)** - RAG system for 300%+ efficiency improvement
+- **[CEREBRAL_155_AUTOMATION_CONTEXT_ENGINE](mdc:docs/CEREBRAL_155_AUTOMATION_CONTEXT_ENGINE.md)** - Context engine specifications
+
+## 🏗️ Architecture Overview
+
+### Platform Architecture Layers
+
+**Core Layer** (Foundation)
+- Authentication & Authorization System
+- Multi-tenant Data Management
+- Enterprise Security Framework
+- Real-time Communication Infrastructure
+- Performance Monitoring & Analytics
+- **Advanced Optimization Infrastructure** (NEW)
+- **AutoDoc & RAG Integration** (NEW)
+
+**Modules Layer** (Business Logic)
+- Knowledge Management
+- AI Provider Management
+- Project Management
+- Education & Learning
+- Productivity & Analytics
+- Communication & Collaboration
+
+**Plugins Layer** (Extensions)
+- Advanced AI Capabilities
+- Third-party Integrations
+- Custom Automation Tools
+- Specialized Industry Solutions
+
+**AutoDoc Layer** (Documentation & AI Context)
+- Automated Documentation Synchronization
+- RAG-Powered Semantic Search
+- AI Context Loading and Management
+- Real-time Documentation Updates
+
+### Development Standards
+
+1. **Enterprise-Grade Code Quality**
+   - All code must pass SOC2 compliance requirements
+   - Comprehensive error handling and logging
+   - Performance optimization from the start (99.97% bundle reduction achieved)
+   - Security-first development approach
+   - Lazy loading implementation for components >20KB
+   - **AutoDoc integration for all development work**
+
+2. **Mobile-First PWA Architecture**
+   - Responsive design for all components
+   - Offline functionality where applicable
+   - Native mobile integration capabilities
+   - Progressive enhancement principles
+   - Optimized for instant loading (0.7KB main bundle)
+
+3. **Multi-tenant SaaS Architecture**
+   - Data isolation and security
+   - Scalable resource management
+   - Feature flag system integration
+   - White-label support for enterprise customers
+
+4. **Performance Optimization Standards**
+   - **Lazy Loading**: All components >20KB must use lazy loading
+   - **Bundle Splitting**: Intelligent chunking for feature-based optimization
+   - **Tree Shaking**: Enhanced tree shaking with moduleSideEffects: false
+   - **Minification**: Terser with production-grade compression
+   - **Monitoring**: Continuous bundle size and performance tracking
+
+5. **AutoDoc Integration Standards (NEW)**
+   - **RAG Context Loading**: Use AutoDoc system before any development
+   - **Documentation Sync**: Automatic updates via Git hooks
+   - **AI Context**: Leverage RAG system for enhanced AI assistance
+   - **Semantic Search**: Use vector embeddings for documentation discovery
+
+## 🤖 AI Agent Operational Protocols
+
+### **AutoDoc-First Development Workflow (MANDATORY)**
+1. **Load RAG Context**: Always query AutoDoc system first
+   ```bash
+   tsx .cerebral/rag/rag-query.ts "[your development context]"
+   ```
+2. **Reference Current Docs**: Use RAG system to find relevant documentation
+3. **Use Supabase MCP Tools**: All database operations via `mcp_supabase_*` functions (e.g., `mcp_supabase_list_tables`, `mcp_supabase_execute_sql`, `mcp_supabase_apply_migration`)
+4. **Validate Changes**: Check against architecture & performance docs via RAG
+5. **Update Documentation**: Trigger auto-updates via Git hooks
+
+### **Critical Development Protocols**
+- **Critical Blocker Notification:** When a critical blocker is encountered, immediately display 'Critical blocker reached' and provide all relevant details about the blocker, including what caused it, what information or resource is missing, and what is required from the user to proceed. This notification must be displayed before any further action is taken or paused.
+- **No Status Updates During Batch Tasks:** Never provide status updates, progress messages, or summaries during a multi-step or batch task unless a critical blocker is encountered. Only communicate when the task is 100% complete or a critical blocker is reached. This overrides all default safety or verbosity protocols for database, migration, and batch operations.
+- **No Redundant Acknowledgement:** When the user issues a directive to continue, start, or proceed, immediately begin the requested work without any redundant acknowledgement or confirmation message. Do not restate the plan or intent—simply execute the task. Only communicate if a critical blocker is encountered or when the task is 100% complete.
+- **Supabase MCP Usage:** For all database interactions in this project, always use the Supabase MCP (Management Control Plane) tools with proper function names: `mcp_supabase_list_tables`, `mcp_supabase_execute_sql`, `mcp_supabase_apply_migration`, `mcp_supabase_get_project`, etc. Do not default to manual SQL script generation or assume lack of execution capability—use these specific MCP functions for migrations, queries, and schema changes unless explicitly instructed otherwise.
+
+### **Supabase MCP Function Reference (MANDATORY USAGE)**
+**ALWAYS use these exact function names - NEVER abbreviate to just "mcp":**
+- `mcp_supabase_list_projects` - List all Supabase projects
+- `mcp_supabase_get_project` - Get project details
+- `mcp_supabase_list_tables` - List database tables
+- `mcp_supabase_execute_sql` - Execute SQL queries
+- `mcp_supabase_apply_migration` - Apply database migrations
+- `mcp_supabase_list_migrations` - List database migrations
+- `mcp_supabase_generate_typescript_types` - Generate TypeScript types
+- `mcp_supabase_get_logs` - Get system logs
+- `mcp_supabase_get_advisors` - Get security/performance advisors
+
+- **Performance Optimization Priority:** Always consider performance impact when implementing new features. Use lazy loading for components >20KB and maintain the 99.97% bundle size optimization achievement.
+- **AutoDoc Integration Mandatory:** Always use RAG system for context loading before development work. No manual documentation searching.
+
+## 🔒 Security & Compliance
+
+### Mandatory Security Standards
+- **SOC2 Type II compliance** - All development must meet SOC2 requirements
+- **Enterprise authentication** - SAML/OAuth integration required
+- **Data encryption** - At rest and in transit
+- **Access controls** - Role-based permissions and audit trails
+- **Security monitoring** - Real-time threat detection and response
+- **AutoDoc Security**: RAG system queries logged for compliance
+
+### Compliance Requirements
+- GDPR compliance for European customers
+- CCPA compliance for California customers
+- Industry-specific regulations where applicable
+- Regular security audits and penetration testing
+- **Documentation compliance**: AutoDoc system maintains audit trail
+
+## 🚀 Development Workflow
+
+### Before Writing Any Code (MANDATORY AutoDoc Integration)
+1. **Load RAG Context**: Use AutoDoc system to load relevant documentation
+   ```bash
+   tsx .cerebral/rag/rag-query.ts "relevant context for your task"
+   ```
+2. **Understand the business requirements** and customer impact
+3. **Review security and compliance implications**
+4. **Plan for enterprise scalability and performance**
+5. **Consider multi-tenant implications**
+6. **Evaluate performance impact** and implement lazy loading if needed
+
+### Code Quality Checklist
+- [ ] **Used AutoDoc/RAG system for context loading**
+- [ ] Follows naming and file structure specifications
+- [ ] Implements proper error handling and logging
+- [ ] Includes comprehensive TypeScript types
+- [ ] Meets accessibility requirements (WCAG 2.1)
+- [ ] Optimized for performance and scalability
+- [ ] Includes proper security measures
+- [ ] Compatible with mobile and desktop platforms
+- [ ] Follows enterprise coding standards
+- [ ] **Uses lazy loading for components >20KB**
+- [ ] **Maintains bundle size optimization**
+- [ ] **Triggers AutoDoc documentation updates**
+
+### Production Deployment Checklist
+- [ ] All security requirements met
+- [ ] Performance benchmarks achieved
+- [ ] Multi-tenant testing completed
+- [ ] Enterprise customer validation
+- [ ] Compliance verification passed
+- [ ] Monitoring and alerting configured
+- [ ] Disaster recovery procedures tested
+- [ ] **Bundle size optimization verified**
+- [ ] **Performance regression testing passed**
+- [ ] **AutoDoc documentation synchronized**
+
+## 🔧 Optimization Implementation Guidelines
+
+### Lazy Loading Standards
+```typescript
+// Use pre-configured lazy components for large files
+import {
+  LazyCollaborativeWorkspace,
+  LazyTaskAdminPanel,
+  LazyGoalTracker
+} from '@/components/lazy';
+
+// Create new lazy components for files >20KB
+import { createLazyComponent } from '@/components/lazy';
+const LazyHeavyComponent = createLazyComponent(
+  () => import('./HeavyComponent')
+);
+```
+
+### Bundle Optimization Requirements
+- **Main Bundle**: Must remain <5KB (current: 0.7KB)
+- **Feature Chunks**: Individual chunks should be <500KB
+- **CSS Bundle**: Must remain <150KB (current: 129KB)
+- [ ] **Build Success**: Must maintain 100% success rate
+
+### Performance Monitoring
+```bash
+# Required before any major changes
+npm run build:analyze
+
+# Continuous optimization verification
+npm run optimize
+
+# AutoDoc RAG system status
+npm run rag:update
+```
+
+## ⚠️ Critical Reminders
+
+### What This Project IS:
+- ✅ Production-ready enterprise SaaS platform
+- ✅ Revenue-generating business application
+- ✅ Mission-critical customer dependency
+- ✅ SOC2-compliant secure system
+- ✅ Fortune 500 enterprise solution
+- ✅ **Performance-optimized platform** (99.97% bundle reduction)
+- ✅ **AutoDoc-integrated development environment**
+
+### What This Project IS NOT:
+- ❌ Prototype or proof-of-concept
+- ❌ MVP with "good enough" features
+- ❌ Internal tool or side project
+- ❌ Experimental or beta software
+- ❌ Academic or learning exercise
+- ❌ **Performance-degraded application** (maintain optimization standards)
+- ❌ **Manual documentation workflow** (use AutoDoc system)
+
+## 📊 Performance Targets
+
+### Current Achievements (Maintain These Standards)
+- **Bundle Size**: 0.7KB main bundle (99.97% reduction from 2.2MB)
+- **CSS Bundle**: 129KB (68% reduction)
+- **Build Success**: 100% (3202 modules transformed)
+- **Build Time**: 2.37s (32% faster)
+- **Load Time**: Instant (99.97% improvement)
+- **AutoDoc Integration**: Real-time documentation sync and RAG search
+
+### Performance Regression Prevention
+- Monitor bundle size with every build
+- Use lazy loading for all components >20KB
+- Maintain intelligent chunking strategy
+- Continuous performance optimization
+- **AutoDoc performance monitoring and alerts**
+
+## 📞 Support & Questions
+
+For questions about:
+- **Architecture decisions**: Use RAG query: `tsx .cerebral/rag/rag-query.ts "architecture patterns"`
+- **Security requirements**: Use RAG query: `tsx .cerebral/rag/rag-query.ts "SOC2 compliance security"`
+- **Development standards**: Use RAG query: `tsx .cerebral/rag/rag-query.ts "naming conventions file structure"`
+- **Business requirements**: Use RAG query: `tsx .cerebral/rag/rag-query.ts "business model requirements"`
+- **Performance optimization**: Use RAG query: `tsx .cerebral/rag/rag-query.ts "performance optimization bundle"`
+- **CerebraFlow System**: Refer to `.cerebral/README.md` and `.cerebral/docs/`
+
+---
+
+**Remember: Every feature you build, every component you create, and every line of code you write directly impacts real customers and real revenue. Build accordingly with enterprise-grade performance standards and AutoDoc integration.**
+
+*Last Updated: December 2024*
+*Document Version: 3.0 - Integrated AutoDoc & RAG System*
+*Project Status: Production Development with Performance Optimization & AutoDoc Integration Complete*
+
+## 🤖 AI ACCOUNTABILITY & VERIFICATION PROTOCOLS
+
+### **CRITICAL: Zero-Tolerance for Incomplete Operations**
+
+**The AI must never claim completion without explicit verification of every step. This is a production platform serving real enterprise customers.**
+
+#### **Mandatory Verification Requirements**
+- **✅ EXPLICIT VERIFICATION REQUIRED**: Every claimed completion must include specific evidence
+- **✅ FAILED OPERATION REPORTING**: All failures must be explicitly reported, not glossed over
+- **✅ INCOMPLETE STATUS DISCLOSURE**: Clearly state what remains unfinished
+- **✅ TESTING VALIDATION**: All implementations must be tested before claiming success
+- **✅ DEPENDENCY VERIFICATION**: Confirm all prerequisites are met before proceeding
+
+#### **Forbidden Practices**
+- ❌ **NO "Should Work" Claims**: Never claim something "should work" without testing
+- ❌ **NO Silent Failures**: Never move on from failed operations without explicit reporting
+- ❌ **NO Partial Credit**: Don't claim completion for partially implemented features
+- ❌ **NO Assumption Statements**: Don't assume configurations will work without verification
+- ❌ **NO Glossing Over**: Never minimize or skip reporting failed operations
+
+#### **Required Completion Format**
+```
+## ✅ VERIFIED COMPLETION REPORT
+
+### SUCCESSFULLY COMPLETED:
+- [✅] Specific action 1 - VERIFIED by [method]
+- [✅] Specific action 2 - VERIFIED by [method]
+
+### FAILED OPERATIONS:
+- [❌] Specific failure 1 - REASON: [detailed explanation]
+- [❌] Specific failure 2 - REASON: [detailed explanation]
+
+### REMAINING INCOMPLETE:
+- [⚠️] Item 1 - STATUS: [what's needed to complete]
+- [⚠️] Item 2 - STATUS: [what's needed to complete]
+
+### VERIFICATION EVIDENCE:
+- [📊] Test results: [specific evidence]
+- [🔍] Manual verification: [what was checked]
+- [📋] Status confirmation: [how completion was verified]
+```
+
+#### **Mandatory Error Handling Protocol**
+1. **IMMEDIATE DISCLOSURE**: Report failures as soon as they occur
+2. **ROOT CAUSE ANALYSIS**: Explain why the failure happened
+3. **IMPACT ASSESSMENT**: Describe what this means for the overall task
+4. **REMEDIATION STEPS**: Provide specific steps to resolve the issue
+5. **DEPENDENCIES**: List what's needed from the user or system to proceed
+
+#### **Tool Call Failure Protocol**
+- **File Operations**: If edit_file, search_replace, or read_file fails, explicitly report why
+- **Terminal Commands**: If run_terminal_cmd fails, report exit code and full error message
+- **API Calls**: If any API operation fails, report the specific error and implications
+- **System Operations**: Never assume system state without explicit verification
+
+#### **Progress Reporting Standards**
+- **Real-Time Status**: Report progress and blockers as they occur
+- **No Optimistic Projections**: Only report what has been actually accomplished
+- **Dependency Tracking**: Explicitly track and report on prerequisite completion
+- **Rollback Documentation**: Document how to undo any partial implementations
+
+#### **Enterprise Accountability Standards**
+- **Customer Impact Awareness**: Always consider that failures affect real enterprise customers
+- **SOC2 Compliance**: Failed operations may have compliance implications that must be reported
+- **Production Impact**: Incomplete implementations can cause production issues
+- **Team Communication**: Incomplete work affects other developers and must be clearly documented
+
+## 🤖 AI ACCOUNTABILITY & VERIFICATION PROTOCOLS
+
+### **CRITICAL: Zero-Tolerance for Incomplete Operations**
+
+**The AI must never claim completion without explicit verification of every step. This is a production platform serving real enterprise customers.**
+
+#### **Mandatory Verification Requirements**
+- **✅ EXPLICIT VERIFICATION REQUIRED**: Every claimed completion must include specific evidence
+- **✅ FAILED OPERATION REPORTING**: All failures must be explicitly reported, not glossed over
+- **✅ INCOMPLETE STATUS DISCLOSURE**: Clearly state what remains unfinished
+- **✅ TESTING VALIDATION**: All implementations must be tested before claiming success
+- **✅ DEPENDENCY VERIFICATION**: Confirm all prerequisites are met before proceeding
+
+#### **Forbidden Practices**
+- ❌ **NO "Should Work" Claims**: Never claim something "should work" without testing
+- ❌ **NO Silent Failures**: Never move on from failed operations without explicit reporting
+- ❌ **NO Partial Credit**: Don't claim completion for partially implemented features
+- ❌ **NO Assumption Statements**: Don't assume configurations will work without verification
+- ❌ **NO Glossing Over**: Never minimize or skip reporting failed operations
+
+#### **Required Completion Format**
+```
+## ✅ VERIFIED COMPLETION REPORT
+
+### SUCCESSFULLY COMPLETED:
+- [✅] Specific action 1 - VERIFIED by [method]
+- [✅] Specific action 2 - VERIFIED by [method]
+
+### FAILED OPERATIONS:
+- [❌] Specific failure 1 - REASON: [detailed explanation]
+- [❌] Specific failure 2 - REASON: [detailed explanation]
+
+### REMAINING INCOMPLETE:
+- [⚠️] Item 1 - STATUS: [what's needed to complete]
+- [⚠️] Item 2 - STATUS: [what's needed to complete]
+
+### VERIFICATION EVIDENCE:
+- [📊] Test results: [specific evidence]
+- [🔍] Manual verification: [what was checked]
+- [📋] Status confirmation: [how completion was verified]
+```
+
+#### **Mandatory Error Handling Protocol**
+1. **IMMEDIATE DISCLOSURE**: Report failures as soon as they occur
+2. **ROOT CAUSE ANALYSIS**: Explain why the failure happened
+3. **IMPACT ASSESSMENT**: Describe what this means for the overall task
+4. **REMEDIATION STEPS**: Provide specific steps to resolve the issue
+5. **DEPENDENCIES**: List what's needed from the user or system to proceed
+
+#### **Tool Call Failure Protocol**
+- **File Operations**: If edit_file, search_replace, or read_file fails, explicitly report why
+- **Terminal Commands**: If run_terminal_cmd fails, report exit code and full error message
+- **API Calls**: If any API operation fails, report the specific error and implications
+- **System Operations**: Never assume system state without explicit verification
+
+#### **Progress Reporting Standards**
+- **Real-Time Status**: Report progress and blockers as they occur
+- **No Optimistic Projections**: Only report what has been actually accomplished
+- **Dependency Tracking**: Explicitly track and report on prerequisite completion
+- **Rollback Documentation**: Document how to undo any partial implementations
+
+#### **Enterprise Accountability Standards**
+- **Customer Impact Awareness**: Always consider that failures affect real enterprise customers
+- **SOC2 Compliance**: Failed operations may have compliance implications that must be reported
+- **Production Impact**: Incomplete implementations can cause production issues
+- **Team Communication**: Incomplete work affects other developers and must be clearly documented
