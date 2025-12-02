@@ -1,24 +1,24 @@
-#!/bin/env sh
+#!/bin/sh
 . "$(dirname -- "$0")/_/husky.sh"
+
+set -euo pipefail
 
 echo "🧪 Running pre-push quality checks..."
 echo ""
 
-# Run all tests
-echo "🧪 Testing..."
-npm test -- --bail --findRelatedTests
+echo "🧪 Testing (workspace)..."
+pnpm run test -- --passWithNoTests
 
-# Full lint
 echo ""
 echo "📝 Linting..."
-npm run lint
+for workspace in apps/native apps/tablet apps/wearable; do
+  pnpm --filter "$workspace" lint
+done
 
-# Type check
 echo ""
 echo "🔍 Type checking..."
-npm run type-check
+pnpm exec tsc --noEmit
 
-# Pre-commit hooks
 echo ""
 echo "🛡️ Running pre-commit validation..."
 pre-commit run --all-files

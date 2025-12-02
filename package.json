@@ -6,7 +6,6 @@
   "type": "module",
   "packageManager": "pnpm@9.0.0",
   "scripts": {
-    "install": "pnpm install",
     "build": "pnpm -r build",
     "dev": "pnpm -r --parallel dev",
     "test": "pnpm -r test",
@@ -55,6 +54,7 @@
     "pnpm": ">=9.0.0"
   },
   "dependencies": {
+    "@cerebral/contracts": "link:../cerebral/packages/cerebral-contracts",
     "@react-native-async-storage/async-storage": "^1.21.0"
   }
 }
