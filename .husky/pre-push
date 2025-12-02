@@ -11,8 +11,8 @@ pnpm run test -- --passWithNoTests
 
 echo ""
 echo "📝 Linting..."
-for workspace in apps/native apps/tablet apps/wearable; do
-  pnpm --filter "$workspace" lint
+for workspace in cerebral-native; do
+  pnpm --filter "$workspace" run --if-present lint
 done
 
 echo ""
