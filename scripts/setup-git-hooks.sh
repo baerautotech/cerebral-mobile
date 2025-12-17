@@ -1,32 +1,27 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "🔧 Installing git hooks..."
-mkdir -p .git/hooks
+# Configure repo-managed git hooks.
+# This sets: core.hooksPath=.githooks (local repo config).
+#
+# Safe to re-run; idempotent.
 
-# Copy and make executable
-for hook in .git-hooks/*.sh; do
-    if [ -f "$hook" ]; then
-        hook_name=$(basename "$hook")
-        cp "$hook" ".git/hooks/$hook_name"
-        chmod +x ".git/hooks/$hook_name"
-        echo "✅ Installed: $hook_name"
-    fi
-done
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cd "$ROOT"
 
-# Create commit-msg hook that runs our validators
-cat > .git/hooks/commit-msg << 'COMMIT_MSG_HOOK'
-#!/bin/bash
-.git/hooks/validate-commit-message.sh
-COMMIT_MSG_HOOK
-chmod +x .git/hooks/commit-msg
+if [[ ! -d ".githooks" ]]; then
+  echo "❌ Missing .githooks/ directory. Run from repo root." >&2
+  exit 1
+fi
 
-# Create pre-push hook
-cat > .git/hooks/pre-push << 'PREPUSH_HOOK'
-#!/bin/bash
-.git/hooks/validate-branch.sh
-.git/hooks/validate-changed-files.sh
-PREPUSH_HOOK
-chmod +x .git/hooks/pre-push
+chmod +x .githooks/pre-commit .githooks/pre-push
 
+git config core.hooksPath .githooks
+
+echo "✅ Configured repo-managed hooks:"
+echo "   core.hooksPath=$(git config --get core.hooksPath)"
 echo ""
-echo "✅ All git hooks installed successfully"
+echo "Next steps:"
+echo " - Ensure pre-commit is installed: pipx install pre-commit (or your preferred method)"
+echo " - Run: pre-commit install --hook-type pre-commit --hook-type pre-push"
+echo "   (Optional: pre-commit autoupdate)"

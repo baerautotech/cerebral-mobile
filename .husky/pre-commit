@@ -324,6 +324,17 @@ fi
 echo ""
 echo "🔍 Running universal validations..."
 
+# Guardrails (staged-change)
+if [ -f "tools/guardrails/check-staged.mjs" ]; then
+    echo "  🛡️  Running staged guardrails..."
+    if ! node tools/guardrails/check-staged.mjs; then
+        echo "  ❌ Guardrails failed"
+        EXIT_CODE=1
+    else
+        echo "  ✅ Guardrails passed"
+    fi
+fi
+
 # TypeScript check (if applicable)
 if [ -f "tsconfig.json" ] && command -v tsc &> /dev/null; then
     echo "  📘 Checking TypeScript..."

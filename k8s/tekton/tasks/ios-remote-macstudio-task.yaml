@@ -1,0 +1,67 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: cerebral-mobile-ios-remote-macstudio
+  namespace: tekton-pipelines
+  labels:
+    app: cerebral-mobile
+    component: ios-build-remote
+spec:
+  description: >
+    Build iOS on a developer Mac Studio (interim topology) via SSH.
+    This avoids trying to run Xcode builds inside Kubernetes containers.
+
+  params:
+    - name: repo-url
+      type: string
+      description: Git repository URL
+    - name: repo-branch
+      type: string
+      default: main
+      description: Git branch to build
+    - name: mac-host
+      type: string
+      description: SSH host (DNS or IP) of the Mac Studio runner (e.g. macstudio-01.local)
+    - name: mac-user
+      type: string
+      default: build
+      description: SSH username on the Mac Studio
+    - name: mac-workdir
+      type: string
+      default: /Users/build/ci/cerebral-mobile
+      description: Directory on the Mac Studio where the repo will be cloned/built
+
+  steps:
+    - name: remote-build
+      image: alpine:3.20
+      script: |
+        #!/bin/sh
+        set -euo pipefail
+
+        apk add --no-cache openssh-client git bash
+
+        HOST="$(params.mac-host)"
+        USER="$(params.mac-user)"
+        WORKDIR="$(params.mac-workdir)"
+        REPO_URL="$(params.repo-url)"
+        BRANCH="$(params.repo-branch)"
+
+        if [ -z "$HOST" ]; then
+          echo "❌ mac-host param is required"
+          exit 1
+        fi
+
+        echo "🔐 Connecting to $USER@$HOST"
+        echo "📁 Remote workdir: $WORKDIR"
+        echo "🌿 Branch: $BRANCH"
+
+        ssh -o StrictHostKeyChecking=accept-new "$USER@$HOST" "bash -lc '
+          set -euo pipefail
+
+          mkdir -p \"$WORKDIR\"
+          cd \"$WORKDIR\"
+
+          if [ ! -d repo/.git ]; then
+            echo \"🔄 Cloning repo...\"\n+            rm -rf repo\n+            git clone \"$REPO_URL\" repo\n+          fi\n+\n+          cd repo\n+          echo \"🔄 Fetching...\"\n+          git fetch --all --prune\n+          git checkout \"$BRANCH\"\n+          git reset --hard \"origin/$BRANCH\" || true\n+\n+          echo \"✅ Repo at: $(git rev-parse HEAD)\"\n+\n+          # Validate Xcode CLI is present\n+          xcodebuild -version\n+\n+          # Install JS deps (monorepo)\n+          if command -v pnpm >/dev/null 2>&1; then\n+            echo \"📦 pnpm already installed\"\n+          else\n+            echo \"📦 Installing pnpm\"\n+            corepack enable || true\n+            npm install -g pnpm@9\n+          fi\n+\n+          echo \"📦 Installing deps\"\n+          pnpm install --frozen-lockfile\n+\n+          # iOS build (CLI, no Xcode UI required)\n+          cd frontend-react-native\n+\n+          echo \"📦 Installing CocoaPods\"\n+          (cd ios && pod install)\n+\n+          echo \"🏗️  Building iOS archive\"\n+          xcodebuild \\\n+            -project ios/CerebralNative.xcodeproj \\\n+            -scheme CerebralNative \\\n+            -configuration Release \\\n+            -derivedDataPath build \\\n+            -archivePath build/CerebralNative.xcarchive \\\n+            -allowProvisioningUpdates \\\n+            archive\n+\n+          echo \"✅ Remote iOS archive complete\"\n+        '"
+
+

@@ -12,7 +12,10 @@
     "lint": "pnpm -r lint",
     "format": "pnpm -r format",
     "clean": "pnpm -r --parallel exec rm -rf dist node_modules",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "guardrails:staged": "node tools/guardrails/check-staged.mjs",
+    "guardrails:diff": "node tools/guardrails/check-diff.mjs",
+    "guardrails:module": "node tools/guardrails/check-module.mjs"
   },
   "workspaces": [
     "packages/*",

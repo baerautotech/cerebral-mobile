@@ -35,6 +35,20 @@ spec:
       type: string
       default: ios-signing-cert
       description: Kubernetes secret containing iOS signing certificate
+    - name: ios-runner-host
+      type: string
+      default: ""
+      description: Mac Studio SSH host for remote iOS builds (empty = use in-cluster iOS task)
+
+    - name: ios-runner-user
+      type: string
+      default: build
+      description: Mac Studio SSH user
+
+    - name: ios-runner-workdir
+      type: string
+      default: /Users/build/ci/cerebral-mobile
+      description: Remote workdir on Mac Studio
 
     - name: android-keystore-secret
       type: string
@@ -49,56 +63,37 @@ spec:
     # Task 1: Clone repository
     - name: git-clone
       taskRef:
-        name: git-clone
+        name: cerebral-mobile-clone-repo
       params:
-        - name: url
+        - name: repo-url
           value: $(params.repo-url)
-        - name: revision
+        - name: repo-branch
           value: $(params.repo-branch)
-        - name: deleteExisting
-          value: "true"
       workspaces:
         - name: output
           workspace: shared-workspace
 
-    # Task 2: Run tests
-    - name: run-tests
+    # Task 2: Quality gates
+    - name: quality-gates
       runAfter:
         - git-clone
       taskRef:
-        name: npm
-      params:
-        - name: ARGS
-          value:
-            - test
-            - --passWithNoTests
+        name: cerebral-mobile-quality-gates
       workspaces:
         - name: source
           workspace: shared-workspace
 
-    # Task 3: Lint code
-    - name: lint-code
-      runAfter:
-        - git-clone
-      taskRef:
-        name: npm
-      params:
-        - name: ARGS
-          value:
-            - lint
-      workspaces:
-        - name: source
-          workspace: shared-workspace
-
-    # Task 4: Build iOS (conditional)
+    # Task 3: Build iOS (conditional) (conditional)
     - name: build-ios
       when:
         - input: $(params.build-target)
           operator: in
           values: ["ios", "all"]
+        - input: $(params.ios-runner-host)
+          operator: in
+          values: [""]
       runAfter:
-        - run-tests
-        - lint-code
+        - quality-gates
       taskRef:
         name: ios-build-task
       params:
@@ -113,14 +108,38 @@ spec:
           workspace: shared-workspace
 
     # Task 5: Build Android (conditional)
+
+    # Task: Build iOS on remote Mac Studio (conditional)
+    - name: build-ios-remote
+      when:
+        - input: $(params.build-target)
+          operator: in
+          values: ["ios", "all"]
+        - input: $(params.ios-runner-host)
+          operator: notin
+          values: [""]
+      runAfter:
+        - quality-gates
+      taskRef:
+        name: cerebral-mobile-ios-remote-macstudio
+      params:
+        - name: repo-url
+          value: $(params.repo-url)
+        - name: repo-branch
+          value: $(params.repo-branch)
+        - name: mac-host
+          value: $(params.ios-runner-host)
+        - name: mac-user
+          value: $(params.ios-runner-user)
+        - name: mac-workdir
+          value: $(params.ios-runner-workdir)
     - name: build-android
       when:
         - input: $(params.build-target)
           operator: in
           values: ["android", "all"]
       runAfter:
-        - run-tests
-        - lint-code
+        - quality-gates
       taskRef:
         name: android-build-task
       params:
@@ -138,6 +157,7 @@ spec:
     - name: build-docker-image
       runAfter:
         - build-ios
+        - build-ios-remote
         - build-android
       taskRef:
         name: kaniko

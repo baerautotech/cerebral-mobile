@@ -25,20 +25,6 @@ spec:
       description: Shared workspace for repository and build artifacts
 
   steps:
-    - name: clone-repo
-      image: alpine/git:latest
-      script: |
-        #!/bin/sh
-        set -e
-
-        echo "🔄 Cloning repository..."
-        cd $(workspaces.shared-data.path)
-        git clone -b $(params.repo-branch) $(params.repo-url) repo
-        cd repo
-
-        echo "✅ Repository cloned successfully"
-        git log --oneline -1
-
     - name: setup-android-environment
       image: mcr.microsoft.com/devcontainers/android:latest
       env:

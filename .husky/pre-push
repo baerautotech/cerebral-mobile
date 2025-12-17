@@ -20,7 +20,15 @@ pnpm exec tsc --noEmit
 
 echo ""
 echo "🛡️ Running pre-commit validation..."
-pre-commit run --all-files
+echo ""
+echo "🛡️ Guardrails (diff-based ratchet)..."
+FROM_REF="$(git rev-parse HEAD~1 2>/dev/null || printf '')"
+TO_REF="$(git rev-parse HEAD)"
+if [ -n "$FROM_REF" ]; then
+  node tools/guardrails/check-diff.mjs --base "$FROM_REF" --head "$TO_REF"
+else
+  echo "ℹ️  No base ref available; skipping diff guardrails"
+fi
 
 echo ""
 echo "✅ Pre-push checks passed!"
