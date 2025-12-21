@@ -26,11 +26,14 @@ export const IAPContext = createContext<IAPContextType | null>(null);
  * @returns {JSX.Element} Provider wrapper
  *
  * @example
- * <IAPProvider apiKey="your_revenuecat_key">
+ * <IAPProvider apiKey={apiKey}>
  *   <App />
  * </IAPProvider>
  */
-export function IAPProvider({ apiKey, children }: IAPProviderProps): JSX.Element {
+export function IAPProvider({
+  apiKey,
+  children,
+}: IAPProviderProps): JSX.Element {
   const {
     purchasedSKUs,
     loading,
@@ -43,7 +46,7 @@ export function IAPProvider({ apiKey, children }: IAPProviderProps): JSX.Element
 
   // Initialize IAP on mount
   useEffect(() => {
-    initializeIAP(apiKey).catch((error) => {
+    initializeIAP(apiKey).catch(error => {
       console.error('Failed to initialize IAP:', error);
     });
   }, [apiKey]);

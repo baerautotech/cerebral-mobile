@@ -1,3 +1,4 @@
+import { env } from './src/config/env';
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
@@ -11,8 +12,8 @@ import { FeatureFlagProvider } from './src/providers/FeatureFlagProvider';
 import { TierProvider } from './src/providers/TierProvider';
 import { IAPProvider } from './src/providers/IAPProvider';
 
-// TODO: Set your RevenueCat API key here
-const REVENUECAT_API_KEY = 'your_revenuecat_api_key_here';
+// RevenueCat SDK key (configured via env; do not hardcode)
+const REVENUECAT_API_KEY = env.PUBLIC_API_KEY ?? '';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -22,7 +23,9 @@ function App() {
       <TierProvider>
         <IAPProvider apiKey={REVENUECAT_API_KEY}>
           <View style={styles.container}>
-            <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+            <StatusBar
+              barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+            />
             <NewAppScreen templateFileName="App.tsx" />
           </View>
         </IAPProvider>

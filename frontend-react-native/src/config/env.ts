@@ -3,10 +3,13 @@
  * Validates and exposes environment variables with type safety
  */
 
+import { Platform } from 'react-native';
+
 interface EnvironmentConfig {
   API_BASE_URL: string;
   SUPABASE_URL: string;
   SUPABASE_ANON_KEY: string;
+  PUBLIC_API_KEY?: string;
   ENVIRONMENT: 'development' | 'staging' | 'production';
   ENABLE_ANALYTICS: boolean;
   SENTRY_DSN?: string;
@@ -19,10 +22,12 @@ const validateEnv = (): void => {
   const required = ['SUPABASE_URL', 'SUPABASE_ANON_KEY'];
 
   // eslint-disable-next-line security/detect-object-injection
-  const missing = required.filter((key) => !process.env[key]);
+  const missing = required.filter(key => !process.env[key]);
 
   if (missing.length > 0) {
-    throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+    throw new Error(
+      `Missing required environment variables: ${missing.join(', ')}`,
+    );
   }
 };
 
@@ -56,11 +61,16 @@ if (process.env.NODE_ENV !== 'test') {
  */
 export const env: EnvironmentConfig = {
   API_BASE_URL: getApiUrl(),
-  SUPABASE_URL: process.env.SUPABASE_URL ?? 'https://txlzlhcrfippujcmnief.supabase.co',
-  SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY ?? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-  ENVIRONMENT: (process.env.NODE_ENV as 'development' | 'staging' | 'production') || 'development',
+  SUPABASE_URL:
+    process.env.SUPABASE_URL ?? 'https://txlzlhcrfippujcmnief.supabase.co',
+  // Require explicit anon key via env (do not bake into the bundle).
+  SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY ?? '',
+  ENVIRONMENT:
+    (process.env.NODE_ENV as 'development' | 'staging' | 'production') ||
+    'development',
   ENABLE_ANALYTICS: process.env.ENABLE_ANALYTICS === 'true',
   SENTRY_DSN: process.env.SENTRY_DSN,
+  PUBLIC_API_KEY: process.env.PUBLIC_API_KEY,
 };
 
 /**
