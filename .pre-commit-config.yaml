@@ -40,7 +40,7 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
-        exclude: ^(k8s/|microservices/)  # K8s manifests use multi-document YAML
+        exclude: ^(k8s/|microservices/) # K8s manifests use multi-document YAML
       - id: check-added-large-files
         args: [--maxkb=1000]
       - id: check-json
@@ -56,7 +56,7 @@ repos:
     hooks:
       - id: bandit
         args: [-c, pyproject.toml]
-        additional_dependencies: ["bandit[toml]"]
+        additional_dependencies: ['bandit[toml]']
 
   # Python-specific checks
   - repo: https://github.com/pre-commit/pygrep-hooks
@@ -94,7 +94,7 @@ repos:
         language: system
         types: [text]
         pass_filenames: false
-        description: "Use @cerebral/core BackendClient instead of direct fetch/axios calls"
+        description: 'Use @cerebral/core BackendClient instead of direct fetch/axios calls'
 
       # TypeScript Compilation Check (Native App)
       - id: tsc-check
@@ -103,7 +103,7 @@ repos:
         language: system
         files: \.(ts|tsx)$
         pass_filenames: false
-        description: "Ensure code compiles cleanly"
+        description: 'Ensure code compiles cleanly'
 
       # ESLint Check
       - id: eslint-check
@@ -112,4 +112,13 @@ repos:
         language: system
         files: \.(ts|tsx|js|jsx)$
         pass_filenames: false
-        description: "Ensure code follows linting rules"
+        description: 'Ensure code follows linting rules'
+
+      - id: supabase-migrations-must-apply
+        name: Supabase Migrations MUST Apply (P0)
+        entry: bash scripts/validation/ensure_migrations_applied.sh
+        language: system
+        stages: [pre-commit]
+        pass_filenames: false
+        files: ^supabase/migrations/.*\.sql$
+        description: Block commit if Supabase migrations are added here (migrations should live/apply via backend repo)
