@@ -594,9 +594,7 @@ curl -X POST https://webhook.dev.cerebral.baerautotech.com/ \
 kubectl get ingress cerebral-github-listener -n cerebral-development -o yaml | grep "number:"
 
 # Should show: number: 3000
-# If showing: number: 80, regenerate ingress
-
-kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml
+# If showing: number: 80, fix the canonical ingress in cerebral-deployment (do not apply from this repo)
 ```
 
 ### Issue: Webhook not being received
@@ -682,8 +680,11 @@ kubectl apply -f old-config-with-port-80.yaml
 ### ✅ Edit source file and apply
 
 ```bash
-vim k8s/ci-cd/webhook-receiver-ingress.yaml
-kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml
+cd ../cerebral-deployment
+# edit appropriate file(s) under:
+# - k8s/webhook-receiver/
+# - k8s/ingress/
+# then commit + push from cerebral-deployment (automation reconciles the cluster)
 ```
 
 ### ✅ Validate after changes

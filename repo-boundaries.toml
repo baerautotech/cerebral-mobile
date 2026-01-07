@@ -1,0 +1,19 @@
+[repo]
+type = "app"
+
+[paths]
+forbid = []
+
+[docs]
+roots = ["docs"]
+archive_globs = ["docs/archive/**"]
+allowlist = []
+forbid_snippets = [
+  "backend_python/services/",
+  "from services.",
+  "import services.",
+  "kubectl apply -f k8s/",
+  "k8s/sealed-secrets/",
+  "k8s/externalsecrets/",
+]
+

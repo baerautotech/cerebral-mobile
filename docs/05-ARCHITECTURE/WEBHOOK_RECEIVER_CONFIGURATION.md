@@ -22,16 +22,14 @@ Tekton Pipeline: [git-clone] → [kaniko-build] → [deploy]
 
 ## Source of Truth
 
-**DO NOT** manually patch the ingress in the cluster. The source of truth is:
+**DO NOT** apply Kubernetes manifests from this repo. Infrastructure is owned by
+`cerebral-deployment`.
 
-```
-k8s/ci-cd/webhook-receiver-ingress.yaml
-```
+Canonical sources:
 
-This file is committed to git. If the ingress ever reverts, regenerate it:
-
-```bash
-kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml
+```text
+cerebral-deployment/k8s/webhook-receiver/
+cerebral-deployment/k8s/ingress/
 ```
 
 ## Critical Configuration
@@ -75,9 +73,8 @@ Set in GitHub repository settings → Webhooks:
 
 **Fix**:
 
-1. Edit `k8s/ci-cd/webhook-receiver-ingress.yaml` (ensure port is 3000)
-2. Commit to git
-3. Run: `kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml`
+1. Update the canonical manifests in `cerebral-deployment` (ensure port is 3000)
+2. Commit + push in `cerebral-deployment` (GitOps/automation reconciles the cluster)
 
 ### Issue: Webhook not being received
 
@@ -104,11 +101,7 @@ kubectl run -it --rm test-curl --image=curlimages/curl --restart=Never -- \
 
 **Cause**: Ingress routing to wrong port (probably 80 instead of 3000)
 
-**Fix**: Regenerate the ingress
-
-```bash
-kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml
-```
+**Fix**: Update the canonical ingress in `cerebral-deployment` (do not apply from this repo).
 
 ## Verification Checklist
 
@@ -123,10 +116,9 @@ kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml
 
 The permanent solution to prevent reversion:
 
-1. **Git is the source of truth**: `k8s/ci-cd/webhook-receiver-ingress.yaml`
-2. **Apply from git**: Always use `kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml`
-3. **Never manually patch**: Avoid `kubectl patch` or `kubectl edit`
-4. **CI/CD automation**: Configure a GitOps tool (ArgoCD/Flux) to enforce the git state
+1. **Git is the source of truth**: `cerebral-deployment/k8s/webhook-receiver/` + `cerebral-deployment/k8s/ingress/`
+2. **Never apply from app repos**: app repos only ship application code
+3. **Avoid cluster-side drift edits**: prefer changes in `cerebral-deployment` so automation can reconcile
 
 ## References
 

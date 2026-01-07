@@ -195,7 +195,7 @@ docker buildx build --platform linux/amd64,linux/arm64 \
 
 - Webhook receiver runs on port 3000 (NOT 80!)
 - Ingress routes to `github-webhook-receiver:3000`
-- All config in `k8s/ci-cd/webhook-receiver-ingress.yaml`
+- Canonical config is owned by `cerebral-deployment` (do not apply from this repo)
 - Validate with: `./scripts/validate-webhook-receiver.sh`
 
 **Read**: `WEBHOOK_RECEIVER_CONFIGURATION.md` (Full reference)
@@ -219,12 +219,13 @@ docker buildx build --platform linux/amd64,linux/arm64 \
 ### 1. Ingress Configuration
 
 ```
-k8s/ci-cd/webhook-receiver-ingress.yaml
+cerebral-deployment/k8s/webhook-receiver/
+cerebral-deployment/k8s/ingress/
 ```
 
 - **What**: Routes webhook.dev.cerebral.baerautotech.com to port 3000
 - **When to edit**: If changing webhook URL, port, or certificate
-- **How to apply**: `kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml`
+- **How to apply**: Update manifests in `cerebral-deployment`, commit + push (do not apply from this repo)
 
 ### 2. Webhook Receiver Deployment
 
@@ -278,8 +279,7 @@ Tasks:
 kubectl get ingress cerebral-github-listener -n cerebral-development -o yaml | grep number
 
 # Should show: number: 3000
-# If showing: number: 80, regenerate ingress
-kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml
+# If showing: number: 80, fix the canonical ingress in cerebral-deployment (do not apply from this repo)
 ```
 
 ### Issue: Webhook not being received
@@ -329,19 +329,19 @@ kubectl apply -f pipelinerun-manual.yaml
 ## ✅ What TO Do
 
 ```bash
-# ✅ Edit config file
-vim k8s/ci-cd/webhook-receiver-ingress.yaml
-
-# ✅ Apply from git
-kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml
+# ✅ Edit canonical config in infra repo
+cd ../cerebral-deployment
+# edit appropriate file(s) under:
+# - k8s/webhook-receiver/
+# - k8s/ingress/
 
 # ✅ Validate changes
 ./scripts/validate-webhook-receiver.sh
 
 # ✅ Commit to git
-git add k8s/ci-cd/webhook-receiver-ingress.yaml
-git commit -m "fix: Update webhook ingress configuration"
-git push origin main
+git add -A
+git commit -m "ci: update webhook receiver/ingress manifests"
+git push
 ```
 
 ---
@@ -378,12 +378,12 @@ git push origin main
 
 ### Common Issues
 
-| Issue                 | Command                                                    |
-| --------------------- | ---------------------------------------------------------- |
-| Ingress not routing   | `kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml` |
-| Webhook not received  | Check GitHub webhook settings + logs                       |
-| Build failed          | `kubectl logs -n tekton-pipelines <pipelinerun-name> -f`   |
-| Image not in registry | Check Kaniko build logs                                    |
+| Issue                 | Command                                                                                           |
+| --------------------- | ------------------------------------------------------------------------------------------------- |
+| Ingress not routing   | Fix manifests in `cerebral-deployment/k8s/webhook-receiver/` + `cerebral-deployment/k8s/ingress/` |
+| Webhook not received  | Check GitHub webhook settings + logs                                                              |
+| Build failed          | `kubectl logs -n tekton-pipelines <pipelinerun-name> -f`                                          |
+| Image not in registry | Check Kaniko build logs                                                                           |
 
 ---
 

@@ -3,6 +3,11 @@
 # Date: November 22, 2025
 
 repos:
+  - repo: https://github.com/baerautotech/cerebral-deployment
+    rev: bfbf7181617eec6b43636f90f1dc612e76d928e0
+    hooks:
+      - id: repo-boundaries
+
   # Ruff - Fast Python linter and formatter (for scripts/tools)
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.0

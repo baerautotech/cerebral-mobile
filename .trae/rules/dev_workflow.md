@@ -49,6 +49,19 @@ For new projects or when users are getting started, operate within the `master` 
 
 ---
 
+## Migration Safety Gate (All Repos)
+
+When database migrations change, they **must be applied successfully** before they can be committed.
+
+- For Supabase migrations (canonical location: `cerebral/supabase/migrations/`):
+  - Commits that modify `supabase/migrations/*.sql` must pass the pre-commit gate which runs:
+    - `python3 scripts/supabase/align_migrations.py` (keeps local history aligned with remote)
+    - `supabase db push --yes` (must succeed; no `--include-all`)
+- For non-canonical repos (`cerebral-frontend`, `cerebral-mobile`, `cerebral-deployment`):
+  - If `supabase/migrations/*.sql` is staged, the commit should fail and the migration should be moved to the canonical repo.
+
+This policy prevents “migrations exist but were never applied” drift and keeps `supabase/migrations/` inline with Supabase’s remote migration history.
+
 ## Leveling Up: Agent-Led Multi-Context Workflows
 
 While the basic workflow is powerful, your primary opportunity to add value is by identifying when to introduce **Tagged Task Lists**. These patterns are your tools for creating a more organized and efficient development environment for the user, especially if you detect agentic or parallel development happening across the same session.

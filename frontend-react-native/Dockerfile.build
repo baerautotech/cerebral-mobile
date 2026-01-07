@@ -33,6 +33,14 @@ RUN npm install -g serve
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/web ./web
 
+# Copy runtime entrypoint
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Default runtime configuration
+ENV PORT=3000 \
+    NODE_ENV=production
+
 # Expose port for web server
 EXPOSE 3000 8081
 
@@ -40,5 +48,5 @@ EXPOSE 3000 8081
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
-# Default command
-CMD ["serve", "-s", "dist", "-l", "3000"]
+# Fail-fast entrypoint validates runtime env then starts server
+ENTRYPOINT ["/entrypoint.sh"]
