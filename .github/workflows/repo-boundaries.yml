@@ -22,16 +22,5 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install pre-commit
-        run: python -m pip install --upgrade pip pre-commit
-
-      - name: Configure git auth for pre-commit hook repos
-        shell: bash
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
-
-      - name: Run repo-boundaries validation
-        run: pre-commit run repo-boundaries --all-files --show-diff-on-failure
+      - name: Validate repo boundaries (repo-boundaries.toml)
+        run: python3 scripts/validate_repo_boundaries_ci.py
