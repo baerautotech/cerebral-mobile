@@ -20,6 +20,8 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   ScrollView,
+  Platform,
+  Linking,
 } from 'react-native';
 
 import { AuthService } from '../../services/supabase';
@@ -29,10 +31,13 @@ interface LoginScreenProps {
   onNavigateToSignup?: () => void;
 }
 
-export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onNavigateToSignup }) => {
+export const LoginScreen: React.FC<LoginScreenProps> = ({
+  onLoginSuccess,
+  onNavigateToSignup,
+}) => {
   const { width } = useWindowDimensions();
   const isWeb = Platform.OS === 'web';
-  const _isMobile = width < 768;
+  const isMobile = width < 768;
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -42,7 +47,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onNavi
   const handleLogin = async (): Promise<void> => {
     setError(null);
 
-    if (!email ?? !password) {
+    if (!email || !password) {
       setError('Please enter email and password');
       return;
     }
@@ -50,7 +55,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onNavi
     _setLoading(true);
 
     try {
-      const { user, session, error: signInError } = await AuthService.signIn(email, password);
+      const {
+        user,
+        session,
+        error: signInError,
+      } = await AuthService.signIn(email, password);
 
       if (signInError) {
         setError(signInError.message ?? 'Login failed');
@@ -70,7 +79,33 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onNavi
     }
   };
 
-  const containerStyle = [styles.container, isWeb && !isMobile && styles.containerDesktop];
+  const handleSSOLogin = async (): Promise<void> => {
+    setError(null);
+    _setLoading(true);
+    try {
+      const { url, error: ssoErr } = await AuthService.signInWithSSOKeycloak();
+      if (ssoErr) {
+        setError(ssoErr.message ?? 'SSO login failed');
+        return;
+      }
+      if (!url) {
+        setError('SSO login failed (no redirect URL returned)');
+        return;
+      }
+      // Native: open browser for OIDC; deep link should return to the app.
+      await Linking.openURL(url);
+    } catch (err) {
+      setError('SSO login failed');
+      if (__DEV__) console.error('SSO login error:', err);
+    } finally {
+      _setLoading(false);
+    }
+  };
+
+  const containerStyle = [
+    styles.container,
+    isWeb && !isMobile && styles.containerDesktop,
+  ];
 
   const formStyle = [styles.form, isWeb && !isMobile && styles.formDesktop];
 
@@ -135,6 +170,16 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onNavi
               )}
             </TouchableOpacity>
 
+            {!isWeb && (
+              <TouchableOpacity
+                style={[styles.button, loading && styles.buttonDisabled]}
+                onPress={handleSSOLogin}
+                disabled={loading}
+              >
+                <Text style={styles.buttonText}>Login with SSO</Text>
+              </TouchableOpacity>
+            )}
+
             {/* Footer Links */}
             <View style={styles.footer}>
               <TouchableOpacity
@@ -155,7 +200,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onNavi
           </View>
 
           {/* Platform Badge */}
-          {isWeb && <Text style={styles.platformBadge}>Web · Powered by React Native Web</Text>}
+          {isWeb && (
+            <Text style={styles.platformBadge}>
+              Web · Powered by React Native Web
+            </Text>
+          )}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
