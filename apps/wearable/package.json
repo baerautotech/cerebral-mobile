@@ -8,8 +8,8 @@
     "build": "tsc --noEmit && echo 'Build successful'",
     "dev": "react-native start",
     "test": "jest",
-    "lint": "eslint src --ext .ts,.tsx",
-    "format": "prettier --write src",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write .",
     "wearos": "react-native run-android",
     "watchos": "react-native run-ios"
   },

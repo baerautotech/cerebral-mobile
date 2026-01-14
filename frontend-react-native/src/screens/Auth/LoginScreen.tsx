@@ -83,7 +83,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
     setError(null);
     _setLoading(true);
     try {
-      const { url, error: ssoErr } = await AuthService.signInWithSSOKeycloak();
+      const { url, error: ssoErr } = await AuthService.signInWithSSO();
       if (ssoErr) {
         setError(ssoErr.message ?? 'SSO login failed');
         return;

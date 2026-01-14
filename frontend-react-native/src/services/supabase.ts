@@ -39,10 +39,23 @@ const createWebMemoryStorage = (): StorageAdapter => {
 };
 
 // Storage configuration for auth tokens
-const getStorage = (): StorageAdapter => {
-  if (Platform.OS === 'web') return createWebMemoryStorage();
+//
+// SECURITY PLANE v1 default: do not persist auth tokens client-side.
+// - Web: never use localStorage/sessionStorage for tokens
+// - Native: do not store refresh/access tokens in AsyncStorage
+//
+// This uses in-memory storage on all platforms by default.
+//
+// Break-glass (dev only): if SUPABASE_INSECURE_PERSIST_SESSION=true, we allow AsyncStorage-based
+// persistence on native platforms only. This MUST NOT be enabled in shared/staging/prod.
+const allowInsecurePersist =
+  Platform.OS !== 'web' &&
+  process.env.SUPABASE_INSECURE_PERSIST_SESSION === 'true';
 
-  // Use AsyncStorage for mobile
+const getStorage = (): StorageAdapter => {
+  if (!allowInsecurePersist) return createWebMemoryStorage();
+
+  // Insecure storage fallback (dev only).
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const AsyncStorage =
     require('@react-native-async-storage/async-storage').default;
@@ -61,8 +74,8 @@ export const supabase: SupabaseClient = createClient(
     auth: {
       storage: getStorage(),
       // Browser portals must not persist tokens; cookie auth is the platform contract.
-      autoRefreshToken: Platform.OS !== 'web',
-      persistSession: Platform.OS !== 'web',
+      autoRefreshToken: allowInsecurePersist,
+      persistSession: allowInsecurePersist,
       // Web still needs to process auth fragments, but only in-memory.
       detectSessionInUrl: Platform.OS === 'web',
     },
@@ -127,7 +140,7 @@ export class AuthService {
     return { user: data.user, session: data.session, error: null };
   }
 
-  static async signInWithSSOKeycloak(options?: {
+  static async signInWithSSO(options?: {
     redirectTo?: string;
   }): Promise<{ url?: string; error: Error | null }> {
     const redirectTo =
