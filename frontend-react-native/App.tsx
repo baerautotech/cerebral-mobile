@@ -6,11 +6,13 @@ import { env } from './src/config/env';
  * @format
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
 import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+
+import StepUpRequiredModal from './src/components/StepUpRequiredModal';
+import RootNavigator from './src/navigation/RootNavigator';
 import { FeatureFlagProvider } from './src/providers/FeatureFlagProvider';
-import { TierProvider } from './src/providers/TierProvider';
 import { IAPProvider } from './src/providers/IAPProvider';
+import { TierProvider } from './src/providers/TierProvider';
 
 // RevenueCat SDK key (configured via env; do not hardcode)
 const REVENUECAT_API_KEY = env.PUBLIC_API_KEY ?? '';
@@ -26,7 +28,8 @@ function App() {
             <StatusBar
               barStyle={isDarkMode ? 'light-content' : 'dark-content'}
             />
-            <NewAppScreen templateFileName="App.tsx" />
+            <RootNavigator />
+            <StepUpRequiredModal />
           </View>
         </IAPProvider>
       </TierProvider>

@@ -102,6 +102,25 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
     }
   };
 
+  const handleForgotPassword = async (): Promise<void> => {
+    setError(null);
+    if (!email) {
+      setError('Enter your email to reset your password');
+      return;
+    }
+    try {
+      const { error } = await AuthService.resetPassword(email);
+      if (error) {
+        setError(error.message ?? 'Password reset failed');
+        return;
+      }
+      setError('Password reset email sent');
+    } catch (err) {
+      setError('Password reset failed');
+      if (__DEV__) console.error('Password reset error:', err);
+    }
+  };
+
   const containerStyle = [
     styles.container,
     isWeb && !isMobile && styles.containerDesktop,
@@ -176,17 +195,13 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 onPress={handleSSOLogin}
                 disabled={loading}
               >
-                <Text style={styles.buttonText}>Login with SSO</Text>
+                <Text style={styles.buttonText}>Login with SSO (Zitadel)</Text>
               </TouchableOpacity>
             )}
 
             {/* Footer Links */}
             <View style={styles.footer}>
-              <TouchableOpacity
-                onPress={() => {
-                  /* TODO: Reset password */
-                }}
-              >
+              <TouchableOpacity onPress={handleForgotPassword}>
                 <Text style={styles.linkText}>Forgot password?</Text>
               </TouchableOpacity>
 

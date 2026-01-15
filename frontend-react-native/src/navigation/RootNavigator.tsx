@@ -13,7 +13,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { Platform, Text, StyleSheet } from 'react-native';
 
 // Import screens
 import ARViewScreen from '../screens/ARViewScreen';
@@ -22,6 +22,7 @@ import SignupScreen from '../screens/Auth/SignupScreen';
 import CreateTaskScreen from '../screens/CreateTask';
 import DashboardScreen from '../screens/Dashboard';
 import LiveDashboardScreen from '../screens/LiveDashboardScreen';
+import NotificationsScreen from '../screens/Notifications/NotificationsScreen';
 import TaskDetailScreen from '../screens/TaskDetail';
 import TasksScreen from '../screens/Tasks';
 import { AuthService } from '../services/supabase';
@@ -42,6 +43,7 @@ export type AuthStackParamList = {
 export type MainTabParamList = {
   Dashboard: undefined;
   Tasks: undefined;
+  Notifications: undefined;
   CreateTask: undefined;
   TaskDetail: { taskId: string };
   ARView: undefined;
@@ -113,6 +115,15 @@ const MainNavigator = (): void => {
         }}
       />
 
+      <MainTabs.Screen
+        name="Notifications"
+        component={NotificationsScreen}
+        options={{
+          title: 'Notifications',
+          tabBarIcon: NotificationsIcon,
+        }}
+      />
+
       {/* Modal/Detail screens - hidden from tabs */}
       <MainTabs.Screen
         name="CreateTask"
@@ -169,9 +180,11 @@ export const RootNavigator = (): void => {
     checkAuthState();
 
     // Listen for auth changes
-    const { data: authListener } = AuthService.onAuthStateChange((event, session) => {
-      setIsAuthenticated(session !== null);
-    });
+    const { data: authListener } = AuthService.onAuthStateChange(
+      (event, session) => {
+        setIsAuthenticated(session !== null);
+      },
+    );
 
     return () => {
       authListener?.subscription.unsubscribe();
@@ -207,6 +220,7 @@ export const RootNavigator = (): void => {
           screens: {
             Dashboard: 'app/dashboard',
             Tasks: 'app/tasks',
+            Notifications: 'app/notifications',
             ARView: 'app/ar',
             LiveDashboard: 'app/live',
           },
@@ -248,9 +262,20 @@ const styles = StyleSheet.create({
 });
 
 // Stable tab icon components (defined outside render)
-const DashboardIcon = (): React.JSX.Element => <Text style={styles.tabIcon}>📊</Text>;
-const TasksIcon = (): React.JSX.Element => <Text style={styles.tabIcon}>📝</Text>;
-const ARViewIcon = (): React.JSX.Element => <Text style={styles.tabIcon}>🥽</Text>;
-const LiveDashboardIcon = (): React.JSX.Element => <Text style={styles.tabIcon}>⚡</Text>;
+const DashboardIcon = (): React.JSX.Element => (
+  <Text style={styles.tabIcon}>📊</Text>
+);
+const TasksIcon = (): React.JSX.Element => (
+  <Text style={styles.tabIcon}>📝</Text>
+);
+const NotificationsIcon = (): React.JSX.Element => (
+  <Text style={styles.tabIcon}>🔔</Text>
+);
+const ARViewIcon = (): React.JSX.Element => (
+  <Text style={styles.tabIcon}>🥽</Text>
+);
+const LiveDashboardIcon = (): React.JSX.Element => (
+  <Text style={styles.tabIcon}>⚡</Text>
+);
 
 export default RootNavigator;
