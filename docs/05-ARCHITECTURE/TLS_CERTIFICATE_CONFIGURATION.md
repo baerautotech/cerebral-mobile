@@ -49,7 +49,7 @@ All 9 IngressRoutes now use the same wildcard certificate:
 | cerebral-backend-traefik    | cerebral-development | api.dev.cerebral.baerautotech.com           | websecure   | dev-wildcard-tls ✅ |
 | minio-console-traefik       | cerebral-development | minio-console.dev.cerebral.baerautotech.com | websecure   | dev-wildcard-tls ✅ |
 | minio-public-assets-traefik | cerebral-development | assets.dev.cerebral.baerautotech.com        | websecure   | dev-wildcard-tls ✅ |
-| oauth2-proxy-traefik        | cerebral-development | auth.dev.cerebral.baerautotech.com          | websecure   | dev-wildcard-tls ✅ |
+| oauth2-proxy-traefik        | cerebral-development | auth.baerautotech.com                       | websecure   | dev-wildcard-tls ✅ |
 | rag-webhook-traefik         | cerebral-development | rag.dev.cerebral.baerautotech.com           | websecure   | dev-wildcard-tls ✅ |
 
 ---

@@ -34,7 +34,7 @@
 | 5   | github-webhook-receiver     | webhook.dev.cerebral.baerautotech.com       | github-webhook-receiver | 3000 | dev-wildcard-tls      | ✅     |
 | 6   | minio-console-traefik       | minio-console.dev.cerebral.baerautotech.com | minio                   | 9001 | traefik-dashboard-tls | ✅     |
 | 7   | minio-public-assets-traefik | assets.dev.cerebral.baerautotech.com        | minio                   | 9000 | traefik-dashboard-tls | ✅     |
-| 8   | oauth2-proxy-traefik        | auth.dev.cerebral.baerautotech.com          | oauth2-proxy            | 4180 | traefik-dashboard-tls | ✅     |
+| 8   | oauth2-proxy-traefik        | auth.baerautotech.com                       | oauth2-proxy            | 4180 | traefik-dashboard-tls | ✅     |
 | 9   | rag-webhook-traefik         | rag.dev.cerebral.baerautotech.com           | knowledge-rag-service   | 8080 | traefik-dashboard-tls | ✅     |
 
 ---
@@ -139,7 +139,7 @@ traefik-dashboard-tls (8 routes):
   - api.dev.cerebral.baerautotech.com (backend)
   - minio-console.dev.cerebral.baerautotech.com
   - assets.dev.cerebral.baerautotech.com
-  - auth.dev.cerebral.baerautotech.com
+  - auth.baerautotech.com
   - rag.dev.cerebral.baerautotech.com
 
 dev-wildcard-tls (1 route):
