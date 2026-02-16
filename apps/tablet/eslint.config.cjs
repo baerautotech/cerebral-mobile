@@ -3,6 +3,7 @@ const tseslint = require('typescript-eslint');
 const reactPlugin = require('eslint-plugin-react');
 
 module.exports = [
+  { ignores: ['eslint.config.cjs'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
