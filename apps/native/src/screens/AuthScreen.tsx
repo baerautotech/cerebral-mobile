@@ -18,6 +18,7 @@ import {
   Linking,
 } from 'react-native';
 import { AuthService } from '@cerebral/core';
+import { appColors } from '../config/colors';
 
 export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => void }) {
   const [authMode, setAuthMode] = useState<'login' | 'signup' | 'oauth'>('oauth');
@@ -37,8 +38,7 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
     checkAuth();
 
     // Listen to auth state changes
-    const unsubscribe = AuthService.onAuthStateChange((event, session) => {
-      console.log('[AuthScreen] Auth event:', event);
+    const unsubscribe = AuthService.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
       onAuthStateChange?.();
     });
@@ -65,7 +65,6 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
       if (error) {
         setError(error.message);
       } else if (user) {
-        console.log('✅ Logged in:', user.email);
         setEmail('');
         setPassword('');
         onAuthStateChange?.();
@@ -92,7 +91,6 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
       if (error) {
         setError(error.message);
       } else if (user) {
-        console.log('✅ Account created:', user.email);
         setAuthMode('login');
         setPassword('');
       }
@@ -113,8 +111,6 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
       if (error) {
         setError(error.message);
       } else if (url) {
-        console.log('🔗 GitHub OAuth URL:', url);
-
         if (Platform.OS === 'web') {
           // Web: redirect to GitHub
           window.location.href = url;
@@ -140,8 +136,6 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
       if (error) {
         setError(error.message);
       } else if (url) {
-        console.log('🔗 Google OAuth URL:', url);
-
         if (Platform.OS === 'web') {
           // Web: redirect to Google
           window.location.href = url;
@@ -164,7 +158,6 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
     if (error) {
       setError(error.message);
     } else {
-      console.log('✅ Logged out');
       setUser(null);
       onAuthStateChange?.();
     }
@@ -174,22 +167,26 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
 
   if (user) {
     return (
-      <ScrollView style={{ flex: 1, padding: 16, backgroundColor: '#f5f5f5' }}>
+      <ScrollView style={{ flex: 1, padding: 16, backgroundColor: appColors.background }}>
         <View style={{ marginTop: 20 }}>
           <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>Welcome!</Text>
 
           <View
             style={{
-              backgroundColor: 'white',
+              backgroundColor: appColors.surface,
               padding: 16,
               borderRadius: 8,
               marginBottom: 16,
             }}
           >
-            <Text style={{ fontSize: 14, color: '#666', marginBottom: 8 }}>Email</Text>
+            <Text style={{ fontSize: 14, color: appColors.textSecondary, marginBottom: 8 }}>
+              Email
+            </Text>
             <Text style={{ fontSize: 16, fontWeight: '500', marginBottom: 16 }}>{user.email}</Text>
 
-            <Text style={{ fontSize: 14, color: '#666', marginBottom: 8 }}>User ID</Text>
+            <Text style={{ fontSize: 14, color: appColors.textSecondary, marginBottom: 8 }}>
+              User ID
+            </Text>
             <Text style={{ fontSize: 12, fontFamily: 'monospace', marginBottom: 16 }}>
               {user.id}
             </Text>
@@ -198,16 +195,16 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
               onPress={handleLogout}
               disabled={loading}
               style={{
-                backgroundColor: '#ff3b30',
+                backgroundColor: appColors.danger,
                 padding: 12,
                 borderRadius: 6,
                 alignItems: 'center',
               }}
             >
               {loading ? (
-                <ActivityIndicator color="white" />
+                <ActivityIndicator color={appColors.surface} />
               ) : (
-                <Text style={{ color: 'white', fontWeight: '600' }}>Logout</Text>
+                <Text style={{ color: appColors.surface, fontWeight: '600' }}>Logout</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -217,12 +214,19 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
   }
 
   return (
-    <ScrollView style={{ flex: 1, padding: 16, backgroundColor: '#f5f5f5' }}>
+    <ScrollView style={{ flex: 1, padding: 16, backgroundColor: appColors.background }}>
       <View style={{ marginTop: 40 }}>
         <Text style={{ fontSize: 28, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
           Cerebral
         </Text>
-        <Text style={{ fontSize: 14, color: '#666', marginBottom: 32, textAlign: 'center' }}>
+        <Text
+          style={{
+            fontSize: 14,
+            color: appColors.textSecondary,
+            marginBottom: 32,
+            textAlign: 'center',
+          }}
+        >
           Authenticate to continue
         </Text>
 
@@ -233,7 +237,7 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
               onPress={handleGitHubLogin}
               disabled={loading}
               style={{
-                backgroundColor: '#1f2937',
+                backgroundColor: appColors.github,
                 padding: 14,
                 borderRadius: 8,
                 alignItems: 'center',
@@ -241,9 +245,11 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
               }}
             >
               {loading ? (
-                <ActivityIndicator color="white" />
+                <ActivityIndicator color={appColors.surface} />
               ) : (
-                <Text style={{ color: 'white', fontWeight: '600' }}>Sign in with GitHub</Text>
+                <Text style={{ color: appColors.surface, fontWeight: '600' }}>
+                  Sign in with GitHub
+                </Text>
               )}
             </TouchableOpacity>
 
@@ -251,7 +257,7 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
               onPress={handleGoogleLogin}
               disabled={loading}
               style={{
-                backgroundColor: '#4285f4',
+                backgroundColor: appColors.google,
                 padding: 14,
                 borderRadius: 8,
                 alignItems: 'center',
@@ -259,9 +265,11 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
               }}
             >
               {loading ? (
-                <ActivityIndicator color="white" />
+                <ActivityIndicator color={appColors.surface} />
               ) : (
-                <Text style={{ color: 'white', fontWeight: '600' }}>Sign in with Google</Text>
+                <Text style={{ color: appColors.surface, fontWeight: '600' }}>
+                  Sign in with Google
+                </Text>
               )}
             </TouchableOpacity>
 
@@ -272,21 +280,21 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
                 marginVertical: 16,
               }}
             >
-              <View style={{ flex: 1, height: 1, backgroundColor: '#ccc' }} />
-              <Text style={{ marginHorizontal: 8, color: '#666' }}>or</Text>
-              <View style={{ flex: 1, height: 1, backgroundColor: '#ccc' }} />
+              <View style={{ flex: 1, height: 1, backgroundColor: appColors.separator }} />
+              <Text style={{ marginHorizontal: 8, color: appColors.textSecondary }}>or</Text>
+              <View style={{ flex: 1, height: 1, backgroundColor: appColors.separator }} />
             </View>
 
             <TouchableOpacity
               onPress={() => setAuthMode('login')}
               style={{
-                backgroundColor: '#f3f4f6',
+                backgroundColor: appColors.background,
                 padding: 14,
                 borderRadius: 8,
                 alignItems: 'center',
               }}
             >
-              <Text style={{ color: '#1f2937', fontWeight: '600' }}>Email & Password</Text>
+              <Text style={{ color: appColors.github, fontWeight: '600' }}>Email & Password</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -302,12 +310,12 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
               autoCapitalize="none"
               editable={!loading}
               style={{
-                backgroundColor: 'white',
+                backgroundColor: appColors.surface,
                 padding: 12,
                 borderRadius: 6,
                 marginBottom: 12,
                 borderWidth: 1,
-                borderColor: '#e5e7eb',
+                borderColor: appColors.border,
               }}
             />
 
@@ -318,12 +326,12 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
               secureTextEntry
               editable={!loading}
               style={{
-                backgroundColor: 'white',
+                backgroundColor: appColors.surface,
                 padding: 12,
                 borderRadius: 6,
                 marginBottom: 16,
                 borderWidth: 1,
-                borderColor: '#e5e7eb',
+                borderColor: appColors.border,
               }}
             />
 
@@ -331,7 +339,7 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
               onPress={authMode === 'login' ? handleEmailLogin : handleEmailSignup}
               disabled={loading}
               style={{
-                backgroundColor: '#3b82f6',
+                backgroundColor: appColors.brand,
                 padding: 14,
                 borderRadius: 8,
                 alignItems: 'center',
@@ -339,9 +347,9 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
               }}
             >
               {loading ? (
-                <ActivityIndicator color="white" />
+                <ActivityIndicator color={appColors.surface} />
               ) : (
-                <Text style={{ color: 'white', fontWeight: '600' }}>
+                <Text style={{ color: appColors.surface, fontWeight: '600' }}>
                   {authMode === 'login' ? 'Login' : 'Sign Up'}
                 </Text>
               )}
@@ -350,14 +358,14 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
             <TouchableOpacity
               onPress={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')}
               style={{
-                backgroundColor: '#f3f4f6',
+                backgroundColor: appColors.background,
                 padding: 14,
                 borderRadius: 8,
                 alignItems: 'center',
                 marginBottom: 12,
               }}
             >
-              <Text style={{ color: '#1f2937', fontWeight: '600' }}>
+              <Text style={{ color: appColors.github, fontWeight: '600' }}>
                 {authMode === 'login'
                   ? "Don't have an account? Sign up"
                   : 'Already have an account? Login'}
@@ -365,7 +373,9 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setAuthMode('oauth')}>
-              <Text style={{ color: '#3b82f6', textAlign: 'center', fontWeight: '600' }}>Back</Text>
+              <Text style={{ color: appColors.brand, textAlign: 'center', fontWeight: '600' }}>
+                Back
+              </Text>
             </TouchableOpacity>
           </View>
         )}
@@ -374,13 +384,13 @@ export function AuthScreen({ onAuthStateChange }: { onAuthStateChange?: () => vo
         {error && (
           <View
             style={{
-              backgroundColor: '#fee2e2',
+              backgroundColor: appColors.errorBackground,
               padding: 12,
               borderRadius: 6,
               marginTop: 16,
             }}
           >
-            <Text style={{ color: '#dc2626' }}>{error}</Text>
+            <Text style={{ color: appColors.errorText }}>{error}</Text>
           </View>
         )}
       </View>

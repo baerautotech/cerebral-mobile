@@ -15,15 +15,11 @@ import { backendClient } from '@cerebral/core';
  */
 export async function initializeIAP(apiKey: string): Promise<void> {
   try {
-    console.log('Initializing IAP with RevenueCat...');
-
     // TODO: Initialize Purchases.configure() from 'react-native-purchases'
     // const Purchases = require('react-native-purchases').default;
     // await Purchases.configure({
     //   apiKey: apiKey,
     // });
-
-    console.log('IAP initialized successfully');
   } catch (error) {
     console.error('Error initializing IAP:', error);
     throw error;
@@ -61,8 +57,6 @@ export async function getCustomerInfo(): Promise<CustomerInfo | null> {
  */
 export async function purchaseSKU(sku: string): Promise<PurchaseResult> {
   try {
-    console.log(`Initiating purchase for SKU: ${sku}`);
-
     // TODO: Implement actual purchase flow
     // const Purchases = require('react-native-purchases').default;
     // const offerings = await Purchases.getOfferings();
@@ -88,8 +82,6 @@ export async function purchaseSKU(sku: string): Promise<PurchaseResult> {
  */
 export async function restorePurchases(): Promise<CustomerInfo | null> {
   try {
-    console.log('Restoring purchases...');
-
     // TODO: Call Purchases.restorePurchases()
     // const customerInfo = await Purchases.restorePurchases();
 
@@ -106,7 +98,9 @@ export async function restorePurchases(): Promise<CustomerInfo | null> {
  * @param customerInfo - Customer information
  * @returns Array of purchased SKU identifiers
  */
-export function getActivePurchasedSKUs(customerInfo: CustomerInfo | null): string[] {
+export function getActivePurchasedSKUs(
+  customerInfo: CustomerInfo | null,
+): string[] {
   if (!customerInfo) {
     return [];
   }
@@ -121,11 +115,13 @@ export function getActivePurchasedSKUs(customerInfo: CustomerInfo | null): strin
   });
 
   // Add active non-subscription purchases
-  Object.entries(customerInfo.nonSubscriptionPurchases).forEach(([sku, purchase]) => {
-    if (purchase.isActive) {
-      skus.push(sku);
-    }
-  });
+  Object.entries(customerInfo.nonSubscriptionPurchases).forEach(
+    ([sku, purchase]) => {
+      if (purchase.isActive) {
+        skus.push(sku);
+      }
+    },
+  );
 
   return skus;
 }
@@ -137,7 +133,10 @@ export function getActivePurchasedSKUs(customerInfo: CustomerInfo | null): strin
  * @param sku - SKU to check
  * @returns True if purchased and active
  */
-export function hasPurchased(customerInfo: CustomerInfo | null, sku: string): boolean {
+export function hasPurchased(
+  customerInfo: CustomerInfo | null,
+  sku: string,
+): boolean {
   if (!customerInfo) {
     return false;
   }
@@ -166,16 +165,20 @@ export function hasPurchased(customerInfo: CustomerInfo | null, sku: string): bo
 export async function verifyReceiptWithBackend(
   receipt: string,
   sku: string,
-  platform: 'ios' | 'android'
+  platform: 'ios' | 'android',
 ): Promise<{ valid: boolean; tier?: string }> {
   try {
     // Use backendClient from core
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result: any = await (backendClient as any).request('POST', '/api/iap/verify-receipt', {
-      receipt,
-      sku,
-      platform,
-    });
+    const result: any = await (backendClient as any).request(
+      'POST',
+      '/api/iap/verify-receipt',
+      {
+        receipt,
+        sku,
+        platform,
+      },
+    );
 
     return result;
   } catch (error) {

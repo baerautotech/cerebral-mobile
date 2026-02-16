@@ -35,7 +35,11 @@ import { UpgradeCTA } from './UpgradeCTA';
  *   <PremiumContent />
  * </IAPFeature>
  */
-export function IAPFeature({ sku, children, fallback }: IAPFeatureProps): ReactNode {
+export function IAPFeature({
+  sku,
+  children,
+  fallback,
+}: IAPFeatureProps): ReactNode {
   const { purchasedSKUs, loading, initiateCheckout } = useIAP();
 
   // Show nothing while loading
@@ -69,7 +73,6 @@ export function IAPFeature({ sku, children, fallback }: IAPFeatureProps): ReactN
       message={message}
       buttonText="Subscribe Now"
       onPress={() => {
-        console.log(`Initiating purchase for ${sku}`);
         initiateCheckout(sku);
       }}
     />

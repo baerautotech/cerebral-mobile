@@ -7,6 +7,7 @@
 import React, { ReactNode } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useUserTier } from '../hooks/useUserTier';
+import { appColors } from '../config/colors';
 import { TierGuardProps, formatTierName } from '../types/tiers';
 
 /**
@@ -35,7 +36,11 @@ import { TierGuardProps, formatTierName } from '../types/tiers';
  *   <AIFeaturesScreen />
  * </TierGuard>
  */
-export function TierGuard({ tier, children, fallback }: TierGuardProps): ReactNode {
+export function TierGuard({
+  tier,
+  children,
+  fallback,
+}: TierGuardProps): ReactNode {
   const { tier: userTier, loading, hasTier } = useUserTier();
 
   // Show nothing while loading
@@ -68,13 +73,7 @@ export function TierGuard({ tier, children, fallback }: TierGuardProps): ReactNo
             You are currently on {formatTierName(userTier)} tier
           </Text>
         )}
-        <TouchableOpacity
-          style={styles.upgradeButton}
-          onPress={() => {
-            // TODO: Navigate to upgrade/purchase screen
-            console.log('Navigate to upgrade screen');
-          }}
-        >
+        <TouchableOpacity style={styles.upgradeButton} onPress={() => {}}>
           <Text style={styles.upgradeButtonText}>Upgrade Now</Text>
         </TouchableOpacity>
       </View>
@@ -88,14 +87,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: appColors.background,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: appColors.surface,
     borderRadius: 12,
     padding: 20,
     marginBottom: 16,
-    shadowColor: '#000',
+    shadowColor: appColors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -106,29 +105,29 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 12,
-    color: '#333',
+    color: appColors.textPrimary,
   },
   description: {
     fontSize: 14,
-    color: '#666',
+    color: appColors.textSecondary,
     marginBottom: 12,
     textAlign: 'center',
   },
   currentTier: {
     fontSize: 12,
-    color: '#999',
+    color: appColors.textTertiary,
     marginBottom: 16,
     fontStyle: 'italic',
   },
   upgradeButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: appColors.brand,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
     marginTop: 8,
   },
   upgradeButtonText: {
-    color: '#fff',
+    color: appColors.surface,
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',

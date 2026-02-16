@@ -7,6 +7,7 @@
 
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { appColors } from '../config/colors';
 import { TIER_CONFIGS, TierLevel } from '../types/tiers';
 
 export interface UpgradeCTAProps {
@@ -85,17 +86,15 @@ export function UpgradeCTA({
 
         <Text style={styles.message}>{displayMessage}</Text>
 
-        <TouchableOpacity style={styles.button} onPress={onPress} activeOpacity={0.7}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={onPress}
+          activeOpacity={0.7}
+        >
           <Text style={styles.buttonText}>{buttonText}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.dismissButton}
-          onPress={() => {
-            // User can dismiss
-            console.log('Dismissed upgrade prompt');
-          }}
-        >
+        <TouchableOpacity style={styles.dismissButton} onPress={() => {}}>
           <Text style={styles.dismissText}>Maybe later</Text>
         </TouchableOpacity>
       </View>
@@ -108,10 +107,10 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: appColors.surface,
     borderRadius: 12,
     padding: 20,
-    shadowColor: '#000',
+    shadowColor: appColors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -128,17 +127,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 12,
-    color: '#333',
+    color: appColors.textPrimary,
   },
   message: {
     fontSize: 14,
-    color: '#666',
+    color: appColors.textSecondary,
     marginBottom: 16,
     textAlign: 'center',
     lineHeight: 20,
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: appColors.brand,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
@@ -147,7 +146,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   buttonText: {
-    color: '#fff',
+    color: appColors.surface,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -156,7 +155,7 @@ const styles = StyleSheet.create({
   },
   dismissText: {
     fontSize: 14,
-    color: '#999',
+    color: appColors.textTertiary,
     textDecorationLine: 'underline',
   },
 });

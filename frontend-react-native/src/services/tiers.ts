@@ -76,7 +76,6 @@ export function extractTierFromJWT(token: string | null): TierLevel {
     return 'free';
   }
 
-  console.log(`Tier extracted from JWT: ${tier}`);
   return tier as TierLevel;
 }
 
@@ -112,7 +111,10 @@ export function getTierLevel(tier: TierLevel): number {
  *   // Show premium features
  * }
  */
-export function hasTierAccess(userTier: TierLevel | null, requiredTier: TierLevel): boolean {
+export function hasTierAccess(
+  userTier: TierLevel | null,
+  requiredTier: TierLevel,
+): boolean {
   if (!userTier) {
     return requiredTier === 'free';
   }
@@ -132,7 +134,7 @@ export function hasTierAccess(userTier: TierLevel | null, requiredTier: TierLeve
 export function createUserTier(
   tier: TierLevel,
   expiresAt: string | null = null,
-  subscriptionType: 'monthly' | 'annual' | null = null
+  subscriptionType: 'monthly' | 'annual' | null = null,
 ): UserTier {
   return {
     tier,

@@ -70,7 +70,6 @@ export function useFeatureFlags() {
 
         if (cacheAge < CACHE_TTL) {
           const parsedFlags = JSON.parse(cachedFlags);
-          console.log('Using cached feature flags (age: ' + Math.floor(cacheAge / 1000) + 's)');
           setFlags(parsedFlags);
           setLastUpdated(parseInt(cachedTime, 10));
           setLoading(false);
@@ -79,7 +78,6 @@ export function useFeatureFlags() {
       }
 
       // Cache is stale or missing, fetch fresh flags from backend
-      console.log('Fetching fresh feature flags from backend...');
       const newFlags = await fetchFlagsFromBackend();
 
       // Update cache
@@ -88,7 +86,6 @@ export function useFeatureFlags() {
 
       setFlags(newFlags);
       setLastUpdated(Date.now());
-      console.log('Feature flags updated from backend');
     } catch (error) {
       console.error('Error loading feature flags:', error);
 

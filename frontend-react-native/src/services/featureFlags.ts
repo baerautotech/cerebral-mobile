@@ -25,7 +25,6 @@ export async function fetchFeatureFlags(): Promise<FeatureFlags> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const flags = await (backendClient as any).request('GET', '/api/flags');
 
-    console.log('Feature flags loaded from backend:', flags);
     return flags as FeatureFlags;
   } catch (error) {
     console.error('Error fetching feature flags:', error);

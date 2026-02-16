@@ -6,14 +6,23 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, Alert } from 'react-native';
 
-import { LoadingState, ErrorState, NotFoundState } from './components/TaskDetailStates';
-import { TaskField, StatusSelector, PrioritySelector } from './components/TaskField';
+import {
+  LoadingState,
+  ErrorState,
+  NotFoundState,
+} from './components/TaskDetailStates';
+import {
+  TaskField,
+  StatusSelector,
+  PrioritySelector,
+} from './components/TaskField';
 import { TaskHeader } from './components/TaskHeader';
 import { styles } from './styles';
 import { getStatusColor, getPriorityColor } from './utils';
 import { ApiClient } from '../../services/api';
 import { FeatureFlagGuard } from '../../components/FeatureFlagGuard';
 import { TierGuard } from '../../components/TierGuard';
+import { appColors } from '../../config/colors';
 
 interface TaskDetailScreenProps {
   taskId: string;
@@ -75,7 +84,9 @@ export const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({
     setError(null);
 
     try {
-      const { data, error: apiError } = await ApiClient.get<Task>(`/v1/tasks/${taskId}`);
+      const { data, error: apiError } = await ApiClient.get<Task>(
+        `/v1/tasks/${taskId}`,
+      );
 
       if (apiError) {
         setError('Failed to load task details');
@@ -122,7 +133,10 @@ export const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({
 
     try {
       const payload = buildUpdatePayload();
-      const { data, error: apiError } = await ApiClient.put<Task>(`/v1/tasks/${taskId}`, payload);
+      const { data, error: apiError } = await ApiClient.put<Task>(
+        `/v1/tasks/${taskId}`,
+        payload,
+      );
 
       if (apiError) {
         setError('Failed to update task');
@@ -173,7 +187,10 @@ export const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({
   };
 
   if (loading) return <LoadingState styles={styles} />;
-  if (error && !task) return <ErrorState error={error} onRetry={loadTaskDetails} styles={styles} />;
+  if (error && !task)
+    return (
+      <ErrorState error={error} onRetry={loadTaskDetails} styles={styles} />
+    );
   if (!task) return <NotFoundState styles={styles} />;
 
   return (
@@ -241,11 +258,24 @@ export const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({
 
         {/* Standard Tier: Data Export */}
         <TierGuard tier="standard">
-          <View style={{ padding: 16, backgroundColor: '#e8f4f8', borderRadius: 8, marginTop: 16 }}>
-            <Text style={{ color: '#006064', fontSize: 14, fontWeight: '600' }}>
+          <View
+            style={{
+              padding: 16,
+              backgroundColor: appColors.standardSurface,
+              borderRadius: 8,
+              marginTop: 16,
+            }}
+          >
+            <Text
+              style={{
+                color: 'rgb(0, 96, 100)',
+                fontSize: 14,
+                fontWeight: '600',
+              }}
+            >
               📊 Export Task Data
             </Text>
-            <Text style={{ color: '#00838f', fontSize: 12 }}>
+            <Text style={{ color: 'rgb(0, 131, 143)', fontSize: 12 }}>
               Available in Standard tier and above
             </Text>
           </View>
@@ -255,12 +285,24 @@ export const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({
         <FeatureFlagGuard flag="ai_suggestions">
           <TierGuard tier="enterprise">
             <View
-              style={{ padding: 16, backgroundColor: '#2a1a3a', borderRadius: 8, marginTop: 16 }}
+              style={{
+                padding: 16,
+                backgroundColor: appColors.aiSurface,
+                borderRadius: 8,
+                marginTop: 16,
+              }}
             >
-              <Text style={{ color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 8 }}>
+              <Text
+                style={{
+                  color: appColors.surface,
+                  fontSize: 14,
+                  fontWeight: '600',
+                  marginBottom: 8,
+                }}
+              >
                 🤖 AI Insights
               </Text>
-              <Text style={{ color: '#ccc', fontSize: 12 }}>
+              <Text style={{ color: appColors.mutedOnDark, fontSize: 12 }}>
                 Get AI-powered recommendations for this task
               </Text>
             </View>
@@ -271,12 +313,24 @@ export const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({
         <FeatureFlagGuard flag="workflow_automation">
           <TierGuard tier="enterprise">
             <View
-              style={{ padding: 16, backgroundColor: '#1a3a2a', borderRadius: 8, marginTop: 16 }}
+              style={{
+                padding: 16,
+                backgroundColor: appColors.automationSurface,
+                borderRadius: 8,
+                marginTop: 16,
+              }}
             >
-              <Text style={{ color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 8 }}>
+              <Text
+                style={{
+                  color: appColors.surface,
+                  fontSize: 14,
+                  fontWeight: '600',
+                  marginBottom: 8,
+                }}
+              >
                 ⚙️ Automation Rules
               </Text>
-              <Text style={{ color: '#ccc', fontSize: 12 }}>
+              <Text style={{ color: appColors.mutedOnDark, fontSize: 12 }}>
                 Set up automated workflows for this task type
               </Text>
             </View>

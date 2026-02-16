@@ -2,6 +2,8 @@
  * Utility functions for TaskDetail screen
  */
 
+import { appColors } from '../../config/colors';
+
 interface Task {
   status: 'pending' | 'in_progress' | 'completed' | 'blocked';
   priority: 'low' | 'medium' | 'high';
@@ -10,23 +12,23 @@ interface Task {
 export const getStatusColor = (status: Task['status']): string => {
   switch (status) {
     case 'completed':
-      return '#4CD964';
+      return appColors.success as string;
     case 'in_progress':
-      return '#007AFF';
+      return appColors.brand as string;
     case 'blocked':
-      return '#FF3B30';
+      return appColors.danger as string;
     default:
-      return '#FF9500';
+      return appColors.warning as string;
   }
 };
 
 export const getPriorityColor = (priority: Task['priority']): string => {
   switch (priority) {
     case 'high':
-      return '#FF3B30';
+      return appColors.danger as string;
     case 'medium':
-      return '#FF9500';
+      return appColors.warning as string;
     default:
-      return '#999';
+      return appColors.textTertiary as string;
   }
 };

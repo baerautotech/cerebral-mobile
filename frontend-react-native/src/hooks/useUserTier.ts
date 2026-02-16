@@ -65,8 +65,6 @@ export function useUserTier() {
         isActive: true,
       };
       setTierInfo(info);
-
-      console.log(`User tier loaded: ${extractedTier}`);
     } catch (error) {
       console.error('Error loading user tier:', error);
       // Fallback to free tier on error
@@ -95,7 +93,7 @@ export function useUserTier() {
     (requiredTier: TierLevel): boolean => {
       return hasTierAccess(tier, requiredTier);
     },
-    [tier]
+    [tier],
   );
 
   return {

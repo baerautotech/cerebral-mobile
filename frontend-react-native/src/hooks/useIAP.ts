@@ -55,7 +55,6 @@ export function useIAP() {
       if (info) {
         const skus = getActivePurchasedSKUs(info);
         setPurchasedSKUs(skus);
-        console.log('Purchased SKUs:', skus);
       }
     } catch (error) {
       console.error('Error refreshing IAP:', error);
@@ -77,13 +76,11 @@ export function useIAP() {
   const initiateCheckout = useCallback(
     async (sku: string) => {
       try {
-        console.log(`Starting purchase flow for: ${sku}`);
         const result = await purchaseSKU(sku);
 
         if (result.success) {
           // Refresh purchases after successful purchase
           await refresh();
-          console.log(`Purchase successful: ${sku}`);
         } else {
           console.warn(`Purchase failed: ${result.error}`);
         }
@@ -98,7 +95,7 @@ export function useIAP() {
         };
       }
     },
-    [refresh]
+    [refresh],
   );
 
   /**
@@ -106,14 +103,12 @@ export function useIAP() {
    */
   const restorePurchases = useCallback(async () => {
     try {
-      console.log('Restoring purchases...');
       const info = await restorePurchasesService();
 
       if (info) {
         setCustomerInfo(info);
         const skus = getActivePurchasedSKUs(info);
         setPurchasedSKUs(skus);
-        console.log('Purchases restored:', skus);
       }
     } catch (error) {
       console.error('Error restoring purchases:', error);
@@ -127,7 +122,7 @@ export function useIAP() {
     (sku: string): boolean => {
       return hasPurchased(customerInfo, sku);
     },
-    [customerInfo]
+    [customerInfo],
   );
 
   return {

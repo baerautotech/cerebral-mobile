@@ -20,6 +20,7 @@ import { styles } from './styles';
 import { AuthService } from '../../services/supabase';
 import { FeatureFlagGuard } from '../../components/FeatureFlagGuard';
 import { TierGuard } from '../../components/TierGuard';
+import { appColors } from '../../config/colors';
 
 interface DashboardStats {
   totalTasks: number;
@@ -67,7 +68,12 @@ export const DashboardScreen: React.FC = () => {
       if (__DEV__) {
         console.error('Failed to load dashboard data:', error);
       }
-      setStats({ totalTasks: 0, activeTasks: 0, completedTasks: 0, pendingTasks: 0 });
+      setStats({
+        totalTasks: 0,
+        activeTasks: 0,
+        completedTasks: 0,
+        pendingTasks: 0,
+      });
     }
   };
 
@@ -94,7 +100,11 @@ export const DashboardScreen: React.FC = () => {
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#007AFF" />
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          tintColor={appColors.brand}
+        />
       }
     >
       {/* Header */}
@@ -110,10 +120,26 @@ export const DashboardScreen: React.FC = () => {
 
       {/* Stats Grid */}
       <View style={styles.statsGrid}>
-        <StatsCard title="Total Tasks" value={stats.totalTasks} color="#007AFF" />
-        <StatsCard title="Active" value={stats.activeTasks} color="#4CD964" />
-        <StatsCard title="Completed" value={stats.completedTasks} color="#5856D6" />
-        <StatsCard title="Pending" value={stats.pendingTasks} color="#FF9500" />
+        <StatsCard
+          title="Total Tasks"
+          value={stats.totalTasks}
+          color={appColors.brand}
+        />
+        <StatsCard
+          title="Active"
+          value={stats.activeTasks}
+          color={appColors.success}
+        />
+        <StatsCard
+          title="Completed"
+          value={stats.completedTasks}
+          color={appColors.brandAlt}
+        />
+        <StatsCard
+          title="Pending"
+          value={stats.pendingTasks}
+          color={appColors.warning}
+        />
       </View>
 
       <QuickActions
@@ -124,11 +150,18 @@ export const DashboardScreen: React.FC = () => {
 
       {/* Standard Tier: Advanced Analytics */}
       <TierGuard tier="standard">
-        <View style={{ padding: 16, backgroundColor: '#e8f4f8', marginTop: 16, borderRadius: 8 }}>
+        <View
+          style={{
+            padding: 16,
+            backgroundColor: appColors.standardSurface,
+            marginTop: 16,
+            borderRadius: 8,
+          }}
+        >
           <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 8 }}>
             Advanced Analytics
           </Text>
-          <Text style={{ color: '#666' }}>
+          <Text style={{ color: appColors.textSecondary }}>
             Detailed insights and trends available in Standard tier
           </Text>
         </View>
@@ -138,11 +171,20 @@ export const DashboardScreen: React.FC = () => {
 
       {/* Enterprise Tier: AI Insights */}
       <TierGuard tier="enterprise">
-        <View style={{ padding: 16, backgroundColor: '#f0e8f8', marginTop: 16, borderRadius: 8 }}>
+        <View
+          style={{
+            padding: 16,
+            backgroundColor: appColors.enterpriseSurface,
+            marginTop: 16,
+            borderRadius: 8,
+          }}
+        >
           <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 8 }}>
             🤖 AI-Powered Insights
           </Text>
-          <Text style={{ color: '#666' }}>Personalized recommendations powered by AI</Text>
+          <Text style={{ color: appColors.textSecondary }}>
+            Personalized recommendations powered by AI
+          </Text>
         </View>
       </TierGuard>
     </ScrollView>
