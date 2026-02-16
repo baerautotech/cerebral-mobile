@@ -18,6 +18,8 @@ if [ ${#paths[@]} -eq 0 ]; then
 fi
 
 MATCHES="$(grep -RIn -E "\\bvault\\b" "${paths[@]}" 2>/dev/null || true)"
+# Ignore the name of this guard itself (and references to it).
+MATCHES="$(printf '%s\n' "$MATCHES" | grep -v "check-no-vault-docs\\.sh" || true)"
 if [ -n "$MATCHES" ]; then
   echo "❌ Vault references detected in docs/manifests. Use Sealed Secrets guidance instead."
   echo "$MATCHES"
