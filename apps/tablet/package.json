@@ -9,7 +9,7 @@
     "dev": "vite",
     "preview": "vite preview",
     "test": "jest",
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "eslint . --ext .ts,.tsx --no-error-on-unmatched-pattern",
     "format": "prettier --write ."
   },
   "dependencies": {
