@@ -1,0 +1,142 @@
+# 📅 MANDATORY: Documentation Date Prevention Protocol
+
+## **ZERO TOLERANCE RULES FOR AI ASSISTANTS**
+
+### **Rule 1: NEVER HARDCODE "LAST UPDATED" DATES**
+- ❌ **ABSOLUTELY FORBIDDEN**: `**Last Updated**: June 2025`, `**Last Updated**: January 2025`
+- ❌ **ABSOLUTELY FORBIDDEN**: `*Last Updated: [any hardcoded date]*`
+- ❌ **ABSOLUTELY FORBIDDEN**: `**📅 Last Updated**: [any hardcoded date]`
+- ❌ **ABSOLUTELY FORBIDDEN**: `**As of**: [any hardcoded date]`
+
+### **Rule 2: ALWAYS CHECK CURRENT DATE FIRST**
+```bash
+# MANDATORY: Always verify current date before ANY documentation work
+date
+```
+
+### **Rule 3: USE SYSTEM DATE TOOLS**
+- ✅ **REQUIRED**: Use `date` command to get current system date
+- ✅ **REQUIRED**: Use `mcp_cerebraflow-stdio_system` tool for timestamps
+- ✅ **REQUIRED**: Use `datetime.now()` in Python scripts (never hardcode)
+
+### **Rule 4: PRESERVE HISTORICAL COMPLETION DATES**
+- ✅ **ALLOWED**: `**Completion Date**: January 15, 2025` (in completion reports)
+- ✅ **ALLOWED**: `**Created**: January 10, 2025` (in historical CV_CAMPAIGN, CRITICAL_VIOLATION files)
+- ✅ **ALLOWED**: Research citations like "June 2025 Cognition AI research"
+
+## **APPROVED DOCUMENTATION PATTERNS**
+
+### ✅ **CORRECT: Dynamic Date Generation**
+```python
+# In Python files
+f"Created: {datetime.now().strftime('%B %d, %Y')}"
+
+# In documentation (use system tools)
+# Current date via system command: July 18, 2025
+```
+
+### ✅ **CORRECT: Omit "Last Updated" Entirely**
+```markdown
+# Document Title
+
+**Purpose**: Clear purpose statement
+**Scope**: What this covers
+**Status**: Current status
+
+## Content...
+```
+
+### ✅ **CORRECT: Historical References**
+```markdown
+**Completion Date**: January 15, 2025  <!-- Historical completion -->
+Based on June 2025 Cognition AI research  <!-- External research citation -->
+```
+
+## **FORBIDDEN PATTERNS**
+
+### ❌ **ABSOLUTELY FORBIDDEN**
+```markdown
+**Last Updated**: June 2025          <!-- HARDCODED -->
+**Last Updated**: January 2025       <!-- HARDCODED -->
+*Last Updated: July 2025*           <!-- HARDCODED -->
+**📅 Last Updated**: July 2025      <!-- HARDCODED -->
+**As of**: June 30, 2025            <!-- HARDCODED -->
+Created: June 30, 2025              <!-- HARDCODED (unless historical) -->
+```
+
+## **MANDATORY ENFORCEMENT PROTOCOL**
+
+### **Before Creating/Updating ANY Documentation:**
+1. **ALWAYS** run `date` command first to verify current date
+2. **NEVER** add "Last Updated" fields with hardcoded dates
+3. **USE** approved template from `.cerebraflow/templates/doc-template.md`
+4. **PRESERVE** historical dates only in completion reports
+
+### **When Editing Existing Documentation:**
+1. **REMOVE** any hardcoded "Last Updated" dates found
+2. **REPLACE** with dynamic generation or omit entirely
+3. **PRESERVE** legitimate historical completion dates
+4. **VERIFY** changes don't introduce new hardcoded dates
+
+### **Exception Handling:**
+- **Historical Files**: Files with `COMPLETION_`, `CV_CAMPAIGN`, `CRITICAL_VIOLATION`, `PHASE_` are exempt
+- **Research Citations**: External research dates (e.g., "June 2025 Cognition AI research") are allowed
+- **Version Tags**: Git-managed version dates are system-controlled
+
+## **VIOLATION CONSEQUENCES**
+
+### **Immediate Actions Required:**
+- **Pre-commit hooks** will block commits with hardcoded dates
+- **CI/CD pipeline** will fail on date violations
+- **Manual remediation** required before proceeding
+
+### **Remediation Commands:**
+```bash
+# Fix existing violations
+python fix_documentation_dates.py
+
+# Validate before commit
+python scripts/validate-documentation-dates.py
+
+# Check current system date
+date
+```
+
+## **AI ASSISTANT SPECIFIC REQUIREMENTS**
+
+### **MANDATORY Pre-Work Checklist:**
+- [ ] Run `date` command to verify current system date
+- [ ] Check if updating existing doc with hardcoded dates
+- [ ] Use approved template for new documentation
+- [ ] Omit "Last Updated" fields entirely
+
+### **CRITICAL Violation Prevention:**
+- **NEVER** assume what the current date is
+- **ALWAYS** use system tools to verify current date
+- **NEVER** copy "Last Updated" patterns from existing docs
+- **ALWAYS** follow the approved template patterns
+
+### **Memory Integration:**
+- Current date memory must always be verified with system tools
+- Never rely on stored date information without verification
+- Update date-related memories when system date changes
+
+## **TEMPLATE USAGE**
+
+### **For New Documentation:**
+```bash
+# Copy approved template
+cp .cerebraflow/templates/doc-template.md new_document.md
+
+# Edit content (do NOT add hardcoded dates)
+# Use system date commands for current references
+```
+
+### **Reference Documentation:**
+- **Protocol**: `.cerebraflow/documentation/DATE_PREVENTION_PROTOCOL.md`
+- **Template**: `.cerebraflow/templates/doc-template.md`
+- **Validation**: `scripts/validate-documentation-dates.py`
+
+---
+
+**⚠️ CRITICAL**: This rule has **ZERO TOLERANCE** for violations. Any hardcoded "Last Updated" dates will cause immediate CI/CD failure and require remediation before proceeding.

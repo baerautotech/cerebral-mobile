@@ -1,7 +1,7 @@
 # 🔐 TLS CERTIFICATE CONFIGURATION - COMPLETE GUIDE
 
-**Date**: October 25, 2025  
-**Status**: ✅ PRODUCTION READY  
+**Date**: October 25, 2025
+**Status**: ✅ PRODUCTION READY
 **Last Updated**: All IngressRoutes using dev-wildcard-tls
 
 ---
@@ -9,6 +9,7 @@
 ## 📋 CERTIFICATE OVERVIEW
 
 ### Primary Certificate: dev-wildcard-tls
+
 ```yaml
 Name: dev-wildcard-tls
 Namespace: cerebral-development ✅ (CORRECT LOCATION)
@@ -25,6 +26,7 @@ Auto-renewal: Enabled (via cert-manager)
 ```
 
 ### Certificate Manager
+
 ```yaml
 Manager: cert-manager
 Namespace: cert-manager
@@ -38,32 +40,34 @@ Renewal Window: 30 days before expiry
 
 All 9 IngressRoutes now use the same wildcard certificate:
 
-| IngressRoute | Namespace | Host | Entry Point | TLS Secret |
-|---|---|---|---|---|
-| webhook-receiver | cerebral-development | webhook.dev.cerebral.baerautotech.com | websecure | dev-wildcard-tls ✅ |
-| airflow-traefik | cerebral-development | airflow.dev.cerebral.baerautotech.com | websecure | dev-wildcard-tls ✅ |
-| api-dev-traefik | cerebral-development | api.dev.baerautotech.com | websecure | dev-wildcard-tls ✅ |
-| bmad-api-traefik | cerebral-development | bmad-api.dev.cerebral.baerautotech.com | websecure | dev-wildcard-tls ✅ |
-| cerebral-backend-traefik | cerebral-development | api.dev.cerebral.baerautotech.com | websecure | dev-wildcard-tls ✅ |
-| minio-console-traefik | cerebral-development | minio-console.dev.cerebral.baerautotech.com | websecure | dev-wildcard-tls ✅ |
-| minio-public-assets-traefik | cerebral-development | assets.dev.cerebral.baerautotech.com | websecure | dev-wildcard-tls ✅ |
-| oauth2-proxy-traefik | cerebral-development | auth.dev.cerebral.baerautotech.com | websecure | dev-wildcard-tls ✅ |
-| rag-webhook-traefik | cerebral-development | rag.dev.cerebral.baerautotech.com | websecure | dev-wildcard-tls ✅ |
+| IngressRoute                | Namespace            | Host                                        | Entry Point | TLS Secret          |
+| --------------------------- | -------------------- | ------------------------------------------- | ----------- | ------------------- |
+| webhook-receiver            | cerebral-development | webhook.dev.cerebral.baerautotech.com       | websecure   | dev-wildcard-tls ✅ |
+| airflow-traefik             | cerebral-development | airflow.dev.cerebral.baerautotech.com       | websecure   | dev-wildcard-tls ✅ |
+| api-dev-traefik             | cerebral-development | api.dev.baerautotech.com                    | websecure   | dev-wildcard-tls ✅ |
+| bmad-api-traefik            | cerebral-development | bmad-api.dev.cerebral.baerautotech.com      | websecure   | dev-wildcard-tls ✅ |
+| cerebral-backend-traefik    | cerebral-development | api.dev.cerebral.baerautotech.com           | websecure   | dev-wildcard-tls ✅ |
+| minio-console-traefik       | cerebral-development | minio-console.dev.cerebral.baerautotech.com | websecure   | dev-wildcard-tls ✅ |
+| minio-public-assets-traefik | cerebral-development | assets.dev.cerebral.baerautotech.com        | websecure   | dev-wildcard-tls ✅ |
+| oauth2-proxy-traefik        | cerebral-development | auth.baerautotech.com                       | websecure   | dev-wildcard-tls ✅ |
+| rag-webhook-traefik         | cerebral-development | rag.dev.cerebral.baerautotech.com           | websecure   | dev-wildcard-tls ✅ |
 
 ---
 
 ## ✅ CERTIFICATE LOCATION REQUIREMENTS
 
 ### Certificate Must Be In
+
 - **Namespace**: `cerebral-development` ✅
 - **Name**: `dev-wildcard-tls` ✅
 - **Type**: `kubernetes.io/tls` ✅
 
 ### IngressRoutes Reference Certificate Via
+
 ```yaml
 spec:
   tls:
-    secretName: dev-wildcard-tls  # Secret name
+    secretName: dev-wildcard-tls # Secret name
     # Note: Certificate MUST be in same namespace as IngressRoute
     # All IngressRoutes are in cerebral-development
     # Certificate is in cerebral-development
@@ -71,6 +75,7 @@ spec:
 ```
 
 ### Traefik Access
+
 ```
 Traefik Pods (cerebral-development namespace)
     ↓
@@ -86,40 +91,52 @@ TLS termination at entry point (websecure/443)
 ## 🔍 VERIFICATION CHECKLIST
 
 ### 1. Certificate Exists in Correct Namespace
+
 ```bash
 kubectl get certificate dev-wildcard-tls -n cerebral-development
 ```
+
 ✅ Expected: `NAME: dev-wildcard-tls, READY: True`
 
 ### 2. Secret Exists in Correct Namespace
+
 ```bash
 kubectl get secret dev-wildcard-tls -n cerebral-development
 ```
+
 ✅ Expected: `TYPE: kubernetes.io/tls`
 
 ### 3. Certificate Status is READY
+
 ```bash
 kubectl describe certificate dev-wildcard-tls -n cerebral-development | grep -A 5 "Status:"
 ```
+
 ✅ Expected: `Ready: True, Message: Certificate is up to date and has not expired`
 
 ### 4. All IngressRoutes Use dev-wildcard-tls
+
 ```bash
 kubectl get ingressroute -n cerebral-development -o json | \
   jq -r '.items[] | select(.spec.tls) | "\(.metadata.name): \(.spec.tls.secretName)"'
 ```
+
 ✅ Expected: All lines show `dev-wildcard-tls`
 
 ### 5. No Duplicates in Other Namespaces
+
 ```bash
 kubectl get secret dev-wildcard-tls -A
 ```
+
 ✅ Expected: ONLY in `cerebral-development`, NOT in `default` or other namespaces
 
 ### 6. Certificate Valid Until
+
 ```bash
 kubectl get certificate dev-wildcard-tls -n cerebral-development -o jsonpath='{.status.notAfter}'
 ```
+
 ✅ Expected: Date in 2026 (current: 2026-01-23)
 
 ---
@@ -127,6 +144,7 @@ kubectl get certificate dev-wildcard-tls -n cerebral-development -o jsonpath='{.
 ## 🔐 HOW TLS WORKS IN CI/CD
 
 ### Request Flow with TLS
+
 ```
 1. Client (Browser/Application)
    Sends HTTPS request to: webhook.dev.cerebral.baerautotech.com:443
@@ -172,6 +190,7 @@ kubectl patch ingressroute <route-name> \
 ```
 
 ### Example
+
 ```bash
 # Update airflow IngressRoute
 kubectl patch ingressroute airflow-traefik \
@@ -184,17 +203,17 @@ kubectl patch ingressroute airflow-traefik \
 
 ## 📝 INGRESSROUTE TEMPLATE
 
-When creating new IngressRoutes for *.dev.cerebral.baerautotech.com:
+When creating new IngressRoutes for \*.dev.cerebral.baerautotech.com:
 
 ```yaml
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: my-service-traefik
-  namespace: cerebral-development  # MUST be cerebral-development
+  namespace: cerebral-development # MUST be cerebral-development
 spec:
   entryPoints:
-    - websecure  # HTTPS/443
+    - websecure # HTTPS/443
   routes:
     - match: Host(`my-service.dev.cerebral.baerautotech.com`)
       kind: Rule
@@ -202,7 +221,7 @@ spec:
         - name: my-service
           port: 8000
   tls:
-    secretName: dev-wildcard-tls  # ALWAYS use this for *.dev.cerebral.baerautotech.com
+    secretName: dev-wildcard-tls # ALWAYS use this for *.dev.cerebral.baerautotech.com
 ```
 
 ---
@@ -210,6 +229,7 @@ spec:
 ## 🔄 CERTIFICATE RENEWAL (Automatic)
 
 ### How Renewal Works
+
 1. cert-manager monitors certificate expiry
 2. 30 days before expiry → requests renewal
 3. Let's Encrypt validates domain (HTTP-01 challenge)
@@ -218,11 +238,13 @@ spec:
 6. Traefik reloads certificate (no downtime)
 
 ### Current Renewal Schedule
+
 - Current expiry: 2026-01-23
 - Auto-renewal starts: ~2025-12-24
 - Expected new expiry: ~2026-04-23
 
 ### Monitor Renewal
+
 ```bash
 # Watch certificate status
 kubectl get certificate dev-wildcard-tls -n cerebral-development -w
@@ -236,6 +258,7 @@ kubectl logs -n cert-manager -l app=cert-manager -f | grep dev-wildcard
 ## 🚨 TROUBLESHOOTING
 
 ### Problem: "Certificate not found"
+
 ```bash
 # Check certificate exists
 kubectl get certificate dev-wildcard-tls -n cerebral-development
@@ -248,6 +271,7 @@ kubectl get ingressroute <name> -n cerebral-development -o yaml | grep namespace
 ```
 
 ### Problem: "Invalid certificate"
+
 ```bash
 # Check certificate details
 kubectl describe certificate dev-wildcard-tls -n cerebral-development
@@ -261,6 +285,7 @@ openssl s_client -connect webhook.dev.cerebral.baerautotech.com:443
 ```
 
 ### Problem: "HTTPS not working"
+
 ```bash
 # 1. Verify Traefik is running
 kubectl get pods -n cerebral-development -l app=traefik
@@ -276,6 +301,7 @@ kubectl get certificate dev-wildcard-tls -n cerebral-development
 ```
 
 ### Problem: "Certificate expires soon"
+
 ```bash
 # Check expiry date
 kubectl get certificate dev-wildcard-tls -n cerebral-development -o jsonpath='{.status.notAfter}'
@@ -294,15 +320,15 @@ kubectl logs -n cert-manager -l app=cert-manager --tail=100 | grep dev-wildcard
 
 **Last Verified**: October 25, 2025, 05:30 UTC
 
-| Item | Status | Details |
-|---|---|---|
-| Certificate Exists | ✅ | dev-wildcard-tls in cerebral-development |
-| Certificate Ready | ✅ | Status: Ready, valid through 2026-01-23 |
-| IngressRoutes Using Cert | ✅ | 9/9 routes using dev-wildcard-tls |
-| Duplicates | ✅ CLEANED | Removed from default namespace |
-| TLS Termination | ✅ | Traefik (websecure entry point) |
-| Auto-renewal | ✅ | Enabled via cert-manager |
-| Domain Coverage | ✅ | *.dev.cerebral.baerautotech.com |
+| Item                     | Status     | Details                                  |
+| ------------------------ | ---------- | ---------------------------------------- |
+| Certificate Exists       | ✅         | dev-wildcard-tls in cerebral-development |
+| Certificate Ready        | ✅         | Status: Ready, valid through 2026-01-23  |
+| IngressRoutes Using Cert | ✅         | 9/9 routes using dev-wildcard-tls        |
+| Duplicates               | ✅ CLEANED | Removed from default namespace           |
+| TLS Termination          | ✅         | Traefik (websecure entry point)          |
+| Auto-renewal             | ✅         | Enabled via cert-manager                 |
+| Domain Coverage          | ✅         | \*.dev.cerebral.baerautotech.com         |
 
 ---
 
@@ -318,35 +344,40 @@ kubectl logs -n cert-manager -l app=cert-manager --tail=100 | grep dev-wildcard
 ## 🎯 QUICK REFERENCE
 
 **Certificate Location**:
+
 ```bash
 kubectl get certificate dev-wildcard-tls -n cerebral-development
 ```
 
 **Check Certificate Status**:
+
 ```bash
 kubectl describe certificate dev-wildcard-tls -n cerebral-development
 ```
 
 **Check Secret**:
+
 ```bash
 kubectl get secret dev-wildcard-tls -n cerebral-development -o yaml
 ```
 
 **Verify All IngressRoutes Using Cert**:
+
 ```bash
 kubectl get ingressroute -n cerebral-development -o json | \
   jq '.items[] | select(.spec.tls) | {name: .metadata.name, tls: .spec.tls.secretName}'
 ```
 
 **Monitor Renewal**:
+
 ```bash
 kubectl get certificate dev-wildcard-tls -n cerebral-development -w
 ```
 
 ---
 
-**Status**: ✅ PRODUCTION READY  
-**Certificate**: dev-wildcard-tls in cerebral-development  
-**All IngressRoutes**: Using correct certificate ✅  
-**Last Updated**: October 25, 2025  
+**Status**: ✅ PRODUCTION READY
+**Certificate**: dev-wildcard-tls in cerebral-development
+**All IngressRoutes**: Using correct certificate ✅
+**Last Updated**: October 25, 2025
 **Confidence**: 99%

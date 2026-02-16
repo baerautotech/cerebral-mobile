@@ -1,0 +1,246 @@
+---
+description: "Cerebral deployment automation - CI/CD is fully automated via Tekton/Kaniko"
+ruleType: "operational"
+category: "deployment"
+priority: 10
+applicableAgents:
+  - "all"
+applicablePhases:
+  - "implementation"
+  - "deployment"
+  - "production"
+---
+
+# ✅ DEPLOYMENT AUTOMATION - CRITICAL CLARITY
+
+**Effective Date**: November 7, 2025
+**Applies To**: ALL agents working on Cerebral repository
+**Authority**: Production-critical requirement
+
+---
+
+## 🎯 THE TRUTH: DEPLOYMENT IS FULLY AUTOMATED
+
+### What This Means:
+
+```
+YOUR JOB:           Write code → Commit → Push
+CI/CD AUTOMATIC:    Build → Test → Deploy → Verify
+```
+
+**That's it. You do NOT:**
+- Build Docker images manually
+- Push images to registry manually
+- Run kubectl apply manually
+- Setup Tekton pipelines (already done in cerebral-deployment repo)
+- Trigger builds manually
+- Deploy manually
+
+---
+
+## 📋 THE PROTOCOL (ONLY METHOD THAT WORKS)
+
+### Step 1: Make Code Changes
+- Edit microservice files
+- Create/update code as needed
+- Ensure pre-commit hooks pass locally
+
+### Step 2: Commit to Git
+```bash
+git add [files]
+git commit -m "type: description"
+```
+
+### Step 3: Push to Develop
+```bash
+git push origin develop
+```
+
+### Step 4: CI/CD Takes Over (AUTOMATIC)
+- ✅ GitHub webhook fires
+- ✅ Tekton pipeline triggered
+- ✅ Kaniko builds Docker image
+- ✅ Image pushed to registry
+- ✅ Kubernetes deployment applied
+- ✅ Health checks verified
+- ✅ Service live in production
+
+**You do nothing after git push.**
+
+---
+
+## 🚫 WHAT NOT TO DO
+
+### ❌ DO NOT:
+
+| Command | Why Not | What To Do Instead |
+|---------|---------|-------------------|
+| `docker build ...` | Manual builds break automation | Just commit & push |
+| `docker push ...` | Registry push is automated | Just commit & push |
+| `kubectl apply ...` | Deployments automated by Tekton | Just commit & push |
+| Check for Tekton in this repo | It's in cerebral-deployment | Check cerebral-deployment repo |
+| Build services manually | Everything is automated | Trust the CI/CD system |
+| Trigger builds manually | Webhook handles it | Just commit & push |
+| Assume infrastructure missing | It's in cerebral-deployment | Trust the existing infrastructure |
+
+---
+
+## 🏗️ INFRASTRUCTURE: WHERE THINGS LIVE
+
+### This Repository (cerebral)
+- ✅ Application code (microservices, libraries)
+- ✅ Kubernetes manifests (deployments.yaml)
+- ✅ Dockerfiles (for each service)
+- ✅ Application tests
+
+### Cerebral-Deployment Repository
+- ✅ Tekton Pipelines (already deployed)
+- ✅ Webhook receivers (already running)
+- ✅ CI/CD orchestration (already configured)
+- ✅ Infrastructure code (Kubernetes resources)
+- ✅ Build templates (Kaniko build definitions)
+
+**Do NOT assume cerebral-deployment components are missing.** They exist and are operational.
+
+---
+
+## 🔍 HOW TO VERIFY IT'S WORKING
+
+### Verify Tekton is Operational (in cerebral-deployment repo)
+```bash
+cd /path/to/cerebral-deployment
+kubectl get pipeline -n cerebral-pipelines
+kubectl get task -n cerebral-pipelines
+kubectl get eventlistener -n cerebral-pipelines
+```
+
+### Verify Deployment Works (after you push)
+```bash
+# After git push origin develop:
+kubectl get pipelinerun -n cerebral-pipelines -w
+```
+
+---
+
+## 📝 WHEN YOU NEED TO DEPLOY
+
+### Scenario 1: Deploy New Service
+1. Create service code
+2. `git add microservices/[service]/`
+3. `git commit -m "feat: add [service]"`
+4. `git push origin develop`
+5. ✅ Tekton auto-builds and deploys
+
+### Scenario 2: Update Existing Service
+1. Edit service code
+2. `git add microservices/[service]/`
+3. `git commit -m "fix: [description]"`
+4. `git push origin develop`
+5. ✅ Tekton auto-builds and deploys
+
+### Scenario 3: Configuration Change
+1. Edit config/manifest files
+2. `git add [files]`
+3. `git commit -m "config: [description]"`
+4. `git push origin develop`
+5. ✅ Tekton auto-builds and deploys
+
+### For All Scenarios:
+**Result is the same: Commit → Push → Auto Deploy**
+
+---
+
+## ⚠️ WHY THIS MATTERS
+
+### Reason 1: Consistency
+Every deployment uses the same automated path → no errors from manual steps
+
+### Reason 2: Audit Trail
+Git history + Tekton logs = complete deployment record
+
+### Reason 3: Rollback Safety
+Every push is independently deployable → can revert individually
+
+### Reason 4: Team Coordination
+Automatic webhook means no manual coordination needed → just push
+
+### Reason 5: Production Reliability
+Terraform/Kustomize + Tekton = repeatable, reliable deployments
+
+---
+
+## 🎯 DECISION TREE
+
+```
+Do I need to deploy code?
+  ├─ YES: Need to deploy service
+  │   └─ Follow the protocol:
+  │       1. Make code changes
+  │       2. git add [files]
+  │       3. git commit -m "..."
+  │       4. git push origin develop
+  │       5. Done. ✅ Tekton handles it.
+  │
+  └─ NO: Don't deploy
+      └─ Just make changes locally
+          (Don't push until ready)
+```
+
+---
+
+## 🚀 CRITICAL REMINDERS
+
+1. **Tekton pipelines are operational** in cerebral-deployment repo
+2. **GitHub webhooks are configured** and monitoring develops branch
+3. **Everything after `git push` is automatic**
+4. **Do NOT assume infrastructure is missing** - check cerebral-deployment
+5. **Do NOT do manual deployment steps** - they break automation
+6. **Do NOT check for Tekton in this repo** - it's in cerebral-deployment
+
+---
+
+## ❓ FAQ
+
+**Q: How do I know if my deployment worked?**
+A: Check `kubectl get pods -n cerebral-platform` after ~2-3 minutes
+
+**Q: What if the deployment fails?**
+A: Check Tekton logs: `kubectl logs -n cerebral-pipelines -l pipelinerun=... -f`
+
+**Q: Do I need to build Docker images?**
+A: No. Tekton/Kaniko does it automatically after you push.
+
+**Q: Do I need to manually deploy to Kubernetes?**
+A: No. Tekton deployment task does it automatically after image build.
+
+**Q: Where are Tekton pipelines configured?**
+A: In cerebral-deployment repository (not this repo).
+
+**Q: Why do I see no Tekton resources in this repo?**
+A: Because Tekton infrastructure is in cerebral-deployment repo. This repo contains only application code.
+
+**Q: What if I want to change how deployment works?**
+A: Edit templates in cerebral-deployment repo and test in that repo first.
+
+---
+
+## ✅ FINAL RULE
+
+**ONLY WAY TO DEPLOY ANYTHING IN CEREBRAL:**
+
+```
+1. Make code changes
+2. git commit
+3. git push origin develop
+4. Walk away. CI/CD handles the rest.
+```
+
+Everything else (docker build, docker push, kubectl apply, triggering Tekton) happens automatically.
+
+**Trust the automation. It's already built and tested.**
+
+---
+
+**This rule prevents: manual deployment attempts, infrastructure investigation in wrong repo, misunderstandings about what's automated, and unnecessary troubleshooting.**
+
+**This rule enables: consistent deployments, clear audit trails, team efficiency, and production reliability.**

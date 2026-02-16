@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { TierGuard } from '../../components/TierGuard';
 // import { Canvas, Path } from '@shopify/react-native-skia';
 // import Animated, { useSharedValue } from 'react-native-reanimated';
 // import * as d3 from 'd3-shape';
 
-const LiveDashboardScreen = () => {
+const LiveDashboardContent = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Live AI/ML Dashboard</Text>
@@ -13,6 +14,14 @@ const LiveDashboardScreen = () => {
       </Text>
       {/* Placeholder for Skia Canvas */}
     </View>
+  );
+};
+
+const LiveDashboardScreen = () => {
+  return (
+    <TierGuard tier="standard">
+      <LiveDashboardContent />
+    </TierGuard>
   );
 };
 

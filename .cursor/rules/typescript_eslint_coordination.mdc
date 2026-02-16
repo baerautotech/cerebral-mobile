@@ -1,0 +1,37 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+## TypeScript + ESLint Coordination
+
+### **MANDATORY: Run Both Tools Before Code Changes**
+- Always run `npm run lint:ts-first` before implementing features
+- Fix TypeScript errors BEFORE ESLint errors (TypeScript is foundational)
+- Use `npm run lint:auto-fix` for safe automatic corrections
+
+### **Variable Naming Standards**
+- Prefix unused variables with `_` (e.g., `_unusedParam`)
+- Use descriptive names to avoid "defined but never used" errors
+- Remove truly unused imports and variables
+
+### **TypeScript Configuration Discipline**
+- NEVER add files to TypeScript exclude without team review
+- Files with >500 TypeScript errors require architectural review
+- Gradual re-inclusion of excluded files as errors are fixed
+
+### **ESLint Rule Compliance**
+- Use optional chaining (`?.`) instead of non-null assertions (`!`)
+- Handle all async operations with proper error handling
+- Follow established naming conventions consistently
+
+### **Error Prevention Workflow**
+1. Check existing files for similar patterns before implementing
+2. Run type checking during development (`npm run type-check:errors-only`)
+3. Use lint-staged for pre-commit validation
+4. Monitor correlation reports weekly
+
+### **Mass Changes Protocol**
+- Test mass fixes on <10 files first
+- Verify TypeScript compilation after mass changes
+- Check that ESLint errors don't increase after TypeScript fixes

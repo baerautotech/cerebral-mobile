@@ -57,7 +57,10 @@ class MonitoringService {
     Sentry.init(sentryConfig);
   }
 
-  private buildSentryConfig(config: { dsn: string; environment: string }): Sentry.ReactNativeOptions {
+  private buildSentryConfig(config: {
+    dsn: string;
+    environment: string;
+  }): Sentry.ReactNativeOptions {
     return {
       dsn: config.dsn,
       environment: config.environment,
@@ -89,9 +92,7 @@ class MonitoringService {
    */
   logError(error: Error, context?: ErrorContext): void {
     if (__DEV__) {
-
       console.error('Error:', error.message, context);
-
     }
 
     Sentry.captureException(error, {
@@ -224,10 +225,7 @@ export const addBreadcrumb = (
   monitoring.addBreadcrumb(message, category, data);
 };
 
-export const captureMessage = (
-  message: string,
-  level?: 'info' | 'warning' | 'error'
-): void => {
+export const captureMessage = (message: string, level?: 'info' | 'warning' | 'error'): void => {
   monitoring.captureMessage(message, level);
 };
 

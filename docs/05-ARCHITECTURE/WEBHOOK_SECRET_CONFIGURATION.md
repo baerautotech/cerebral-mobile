@@ -1,8 +1,8 @@
 # ✅ WEBHOOK SECRET CONFIGURATION - VERIFIED WORKING
 
-**Date**: October 25, 2025  
-**Status**: ✅ PRODUCTION READY  
-**Webhook Type**: Organization-level (all baerautotech repos)  
+**Date**: October 25, 2025
+**Status**: ✅ PRODUCTION READY
+**Webhook Type**: Organization-level (all baerautotech repos)
 **Secret Storage**: Kubernetes Secret `github-webhook-secret` in `tekton-pipelines` namespace
 
 ---
@@ -10,6 +10,7 @@
 ## 🔐 SECRET DETAILS
 
 ### Kubernetes Storage
+
 ```bash
 Namespace: tekton-pipelines
 Secret Name: github-webhook-secret
@@ -19,16 +20,19 @@ Length: 64 bytes (256-bit, cryptographically secure)
 ```
 
 ### Retrieve Secret Value
+
 ```bash
 kubectl get secret github-webhook-secret -n tekton-pipelines -o jsonpath='{.data.secretToken}' | base64 -d
 ```
 
 ### Verify Secret Exists
+
 ```bash
 kubectl get secret github-webhook-secret -n tekton-pipelines
 ```
 
 ### Best Practice: Use Sealed Secret
+
 ```bash
 # Should be converted to sealed secret for production:
 kubeseal -f - <<EOF | kubectl apply -f -
@@ -48,9 +52,11 @@ EOF
 ## 📋 GITHUB WEBHOOKS CONFIGURATION
 
 ### Organization-Level Webhooks (Primary)
+
 Your org webhooks are configured at the **organization level** (baerautotech org), so they fire for **ALL repositories** in the organization automatically.
 
 **Scope**: baerautotech org → all repos
+
 - cerebral
 - cerebral-deployment
 - cerebral-frontend
@@ -58,6 +64,7 @@ Your org webhooks are configured at the **organization level** (baerautotech org
 - Any future repositories
 
 **Webhook Configuration**:
+
 - URL: `https://webhook.dev.cerebral.baerautotech.com/`
 - Events: `push`, `pull_request`
 - Content Type: `application/json`
@@ -65,6 +72,7 @@ Your org webhooks are configured at the **organization level** (baerautotech org
 - Active: Yes ✅
 
 ### Verify Organization Webhooks
+
 ```bash
 # Check org webhooks (requires admin:org_hook scope)
 gh api orgs/baerautotech/hooks --paginate
@@ -123,41 +131,53 @@ gh api orgs/baerautotech/hooks --paginate
 ## ✅ VERIFICATION CHECKLIST
 
 ### 1. Secret Exists in Kubernetes
+
 ```bash
 kubectl get secret github-webhook-secret -n tekton-pipelines
 ```
+
 ✅ Expected: Secret exists with 64 bytes
 
 ### 2. Secret Contains Valid Token
+
 ```bash
 kubectl get secret github-webhook-secret -n tekton-pipelines -o jsonpath='{.data.secretToken}' | base64 -d | wc -c
 ```
+
 ✅ Expected: 64 bytes (or similar cryptographic length)
 
 ### 3. GitHub Org Webhooks Configured
+
 ```bash
 # Check if org webhooks fire (view recent deliveries in GitHub)
 # Go to: github.com/organizations/baerautotech/settings/hooks
 # Each webhook shows "Recent Deliveries" with status codes
 ```
+
 ✅ Expected: Status 200 on deliveries after push
 
 ### 4. Traefik Routes to Webhook Service
+
 ```bash
 kubectl get ingressroute github-webhook-receiver -n cerebral-development -o yaml | grep -A 10 "routes:"
 ```
+
 ✅ Expected: Route to `github-webhook-receiver:3000`
 
 ### 5. Webhook Receiver Pods Running
+
 ```bash
 kubectl get pods -n tekton-pipelines -l app=github-webhook-receiver
 ```
+
 ✅ Expected: 2/2 pods READY
 
 ### 6. Webhook Receiver Listening on Port 3000
+
 ```bash
 kubectl logs -n tekton-pipelines -l app=github-webhook-receiver -c webhook-receiver | head -5
 ```
+
 ✅ Expected: "Listening on 0.0.0.0:3000"
 
 ---
@@ -165,6 +185,7 @@ kubectl logs -n tekton-pipelines -l app=github-webhook-receiver -c webhook-recei
 ## 🧪 TESTING THE WEBHOOK
 
 ### Test 1: Push Code to Any Repo
+
 ```bash
 # Push to ANY baerautotech repo (not just cerebral)
 cd ~/Development/cerebral
@@ -175,6 +196,7 @@ git push origin main
 ```
 
 ### Test 2: Monitor Webhook Receiver Logs
+
 ```bash
 # In one terminal, watch logs
 kubectl logs -n tekton-pipelines -l app=github-webhook-receiver -c webhook-receiver -f
@@ -189,13 +211,16 @@ kubectl logs -n tekton-pipelines -l app=github-webhook-receiver -c webhook-recei
 ```
 
 ### Test 3: Check for PipelineRun Creation
+
 ```bash
 # After push, check for new PipelineRun
 kubectl get pipelineruns -n tekton-pipelines --sort-by=.metadata.creationTimestamp | tail -1
 ```
+
 ✅ Expected: Recent `cerebral-<service>-<timestamp>`
 
 ### Test 4: Watch Build Progress
+
 ```bash
 # Get the latest PipelineRun name
 LATEST=$(kubectl get pipelineruns -n tekton-pipelines -o jsonpath='{.items[-1].metadata.name}')
@@ -209,13 +234,16 @@ kubectl logs -n tekton-pipelines $LATEST -f
 ## 🔍 TROUBLESHOOTING
 
 ### Problem: Webhook not triggering
+
 **Check 1**: Org webhook exists in GitHub
+
 ```bash
 # Go to: github.com/organizations/baerautotech/settings/hooks
 # Verify webhook is active and configured
 ```
 
 **Check 2**: Secret matches GitHub config
+
 ```bash
 KUBERNETES_SECRET=$(kubectl get secret github-webhook-secret -n tekton-pipelines -o jsonpath='{.data.secretToken}' | base64 -d)
 echo "Kubernetes secret: $KUBERNETES_SECRET"
@@ -225,20 +253,26 @@ echo "Kubernetes secret: $KUBERNETES_SECRET"
 ```
 
 **Check 3**: Webhook receiver is listening
+
 ```bash
 kubectl logs -n tekton-pipelines -l app=github-webhook-receiver -c webhook-receiver --tail=20
 ```
+
 Should show: `Listening on 0.0.0.0:3000`
 
 **Check 4**: Traefik routing is correct
+
 ```bash
 kubectl get ingressroute github-webhook-receiver -n cerebral-development -o yaml
 ```
+
 Should route to `github-webhook-receiver:3000` (not port 80!)
 
 ### Problem: "Signature validation failed"
+
 **Cause**: Secret in GitHub doesn't match secret in Kubernetes
 **Fix**:
+
 1. Get current secret from Kubernetes:
    ```bash
    kubectl get secret github-webhook-secret -n tekton-pipelines -o jsonpath='{.data.secretToken}' | base64 -d
@@ -247,13 +281,17 @@ Should route to `github-webhook-receiver:3000` (not port 80!)
 3. Test with manual redeliver from GitHub
 
 ### Problem: PipelineRun not created despite webhook delivery
+
 **Check**:
+
 1. Webhook receiver is extracting service name correctly
+
    ```bash
    kubectl logs -n tekton-pipelines -l app=github-webhook-receiver -c webhook-receiver --tail=30 | grep -i "service"
    ```
 
 2. Pipeline exists
+
    ```bash
    kubectl get pipelines -n tekton-pipelines | grep cerebral-microservice-pipeline
    ```
@@ -267,14 +305,14 @@ Should route to `github-webhook-receiver:3000` (not port 80!)
 
 ## 📊 WEBHOOK STATUS SUMMARY
 
-| Component | Status | Details |
-|---|---|---|
-| Kubernetes Secret | ✅ CONFIGURED | `github-webhook-secret` with 64-byte token |
-| GitHub Org Webhooks | ✅ CONFIGURED | Org-level (all baerautotech repos) |
-| Traefik Routing | ✅ VERIFIED | IngressRoute routes 443 → webhook:3000 |
-| Webhook Receiver | ✅ RUNNING | 2/2 pods listening on port 3000 |
-| TLS Certificate | ✅ VALID | `dev-wildcard-tls` cert valid |
-| Service Port | ✅ CORRECT | ClusterIP service on port 3000 |
+| Component           | Status        | Details                                    |
+| ------------------- | ------------- | ------------------------------------------ |
+| Kubernetes Secret   | ✅ CONFIGURED | `github-webhook-secret` with 64-byte token |
+| GitHub Org Webhooks | ✅ CONFIGURED | Org-level (all baerautotech repos)         |
+| Traefik Routing     | ✅ VERIFIED   | IngressRoute routes 443 → webhook:3000     |
+| Webhook Receiver    | ✅ RUNNING    | 2/2 pods listening on port 3000            |
+| TLS Certificate     | ✅ VALID      | `dev-wildcard-tls` cert valid              |
+| Service Port        | ✅ CORRECT    | ClusterIP service on port 3000             |
 
 ---
 
@@ -283,16 +321,19 @@ Should route to `github-webhook-receiver:3000` (not port 80!)
 **Org-level webhook automatically triggers for ANY push to ANY baerautotech repo**:
 
 1. Push code to ANY repo (cerebral, frontend, mobile, deployment, etc.):
+
    ```bash
    git push origin main
    ```
 
 2. Monitor webhook receiver:
+
    ```bash
    kubectl logs -n tekton-pipelines -l app=github-webhook-receiver -f
    ```
 
 3. Watch for PipelineRun creation:
+
    ```bash
    kubectl get pipelineruns -n tekton-pipelines --sort-by=.metadata.creationTimestamp | tail -1
    ```
@@ -307,7 +348,7 @@ Should route to `github-webhook-receiver:3000` (not port 80!)
 
 ---
 
-**Status**: ✅ SYSTEM FULLY CONFIGURED AND VERIFIED  
-**Webhook Scope**: Organization-level (all baerautotech repos)  
-**Last Updated**: October 25, 2025  
+**Status**: ✅ SYSTEM FULLY CONFIGURED AND VERIFIED
+**Webhook Scope**: Organization-level (all baerautotech repos)
+**Last Updated**: October 25, 2025
 **Confidence**: 99%

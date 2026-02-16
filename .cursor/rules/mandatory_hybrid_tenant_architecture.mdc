@@ -1,0 +1,230 @@
+---
+description: "MANDATORY: Hybrid Tenant Architecture Compliance - Prevents dual identifier anti-patterns"
+globs: "backend-python/**/*.py, services/**/*.py, api/**/*.py"
+alwaysApply: false
+---
+
+# 🚨 MANDATORY: Hybrid Tenant Architecture Compliance
+
+**CRITICAL**: This rule prevents the catastrophic dual identifier anti-pattern that was discovered in the multi-tenant system. **ZERO TOLERANCE** for violations.
+
+## **REQUIRED USAGE PATTERNS**
+
+### ✅ **Hybrid Tenant Service (MANDATORY)**
+```python
+# ✅ CORRECT: Always use HybridTenantService for tenant operations
+from services.hybrid_tenant_service import HybridTenantService
+
+class YourService(BaseEnterpriseService):
+    def __init__(self):
+        self.tenant_service = HybridTenantService()
+
+    async def your_method(self, identifier: str):
+        # Context-aware resolution
+        tenant = await self.tenant_service.resolve_identifier(identifier)
+        return tenant
+```
+
+### ✅ **Context-Appropriate Identifier Usage**
+```python
+# ✅ CORRECT: Use appropriate identifier for context
+tenant = await HybridTenantService.resolve_identifier(request.tenant_identifier)
+
+# Security/Compliance context: Use UUID
+if context == "security_audit":
+    audit_log.record(tenant_id=tenant.id, action="data_access")  # UUID for SOC2/HIPAA
+
+# Developer/Debug context: Use tenant_key
+elif context == "debugging":
+    logger.info(f"Processing request for tenant: {tenant.tenant_key}")  # Human-readable
+
+# Public/URL context: Use public_slug
+elif context == "public_url":
+    return f"/app/{tenant.public_slug}/dashboard"  # Clean URLs
+```
+
+### ✅ **Proper Database Operations**
+```python
+# ✅ CORRECT: Always resolve identifier before database operations
+async def get_tenant_data(self, identifier: str):
+    tenant = await HybridTenantService.resolve_identifier(identifier)
+    return await self.db.execute(
+        select(SomeTable).where(SomeTable.tenant_id == tenant.id)  # Always use UUID for FK
+    )
+```
+
+## **FORBIDDEN PATTERNS** ❌
+
+### ❌ **Direct Tenant ID Hardcoding**
+```python
+# ❌ FORBIDDEN: Hardcoded UUIDs in application code
+tenant_id = "00000000-0000-0000-0000-000000000100"  # VIOLATION
+
+# ❌ FORBIDDEN: Hardcoded tenant keys without resolution
+tenant_key = "cerebral-default"  # VIOLATION - must use service
+```
+
+### ❌ **Single Identifier Type Usage**
+```python
+# ❌ FORBIDDEN: Using only UUID without context awareness
+def process_tenant(tenant_id: UUID):  # VIOLATION - missing context resolution
+    pass
+
+# ❌ FORBIDDEN: Using only string without hybrid support
+def process_tenant(tenant_key: str):  # VIOLATION - missing UUID for compliance
+    pass
+```
+
+### ❌ **Direct Database Access Without Resolution**
+```python
+# ❌ FORBIDDEN: Direct database queries with hardcoded identifiers
+result = await db.execute(
+    select(Table).where(Table.tenant_id == "some-hardcoded-id")  # VIOLATION
+)
+
+# ❌ FORBIDDEN: Bypassing hybrid resolution service
+tenant_data = get_tenant_by_key("cerebral-default")  # VIOLATION - use HybridTenantService
+```
+
+### ❌ **Non-Compliant Identifier Exposure**
+```python
+# ❌ FORBIDDEN: Exposing UUIDs in user-facing contexts
+return {"tenant_id": "00000000-0000-0000-0000-000000000100"}  # VIOLATION
+
+# ❌ FORBIDDEN: Using tenant_key in compliance contexts
+audit_log.record(tenant_key="cerebral-default")  # VIOLATION - use UUID for audit
+```
+
+## **AUTOMATIC ENFORCEMENT**
+
+### **Pre-Commit Hook Validation**
+```python
+# Automatically validates hybrid pattern usage before commits
+class TenantArchitectureValidator:
+    VIOLATION_PATTERNS = [
+        r'tenant_id\s*=\s*["\'][0-9a-f]{8}-[0-9a-f]{4}.*["\']',  # Hardcoded UUIDs
+        r'["\']cerebral-default["\']',  # Hardcoded tenant keys
+        r'get_tenant_by_.*\(',  # Direct tenant access bypassing service
+        r'\.tenant_id\s*==\s*["\']',  # Direct tenant_id comparisons
+    ]
+```
+
+### **CI/CD Pipeline Enforcement**
+- **Build Failure**: Automatic build failure on pattern violations
+- **Code Review**: Required architecture review for tenant-related changes
+- **Deployment Gate**: No deployment allowed with architecture violations
+
+### **Runtime Monitoring**
+```python
+# Real-time monitoring for pattern violations in production
+class HybridArchitectureMonitor:
+    async def detect_pattern_violations(self):
+        """Monitor for improper tenant identifier usage."""
+
+    async def compliance_drift_detection(self):
+        """Detect any compliance drift in production."""
+```
+
+## **COMPLIANCE REQUIREMENTS**
+
+### **SOC2 Type II Requirements**
+- ✅ **Non-enumerable UUIDs**: All internal operations must use UUIDs
+- ✅ **Audit Trail**: All tenant operations must be auditable with UUIDs
+- ✅ **Access Controls**: Tenant isolation enforced via UUID-based security
+
+### **HIPAA Compliance**
+- ✅ **Patient Data Isolation**: Healthcare tenants require UUID-based separation
+- ✅ **Audit Requirements**: All healthcare data access logged with UUIDs
+
+### **PCI-DSS Requirements**
+- ✅ **Payment Data Separation**: Financial tenants require UUID-based isolation
+- ✅ **Non-enumerable Security**: Payment processing uses UUID identifiers only
+
+## **MIGRATION STRATEGY**
+
+### **Phase 1: Immediate Enforcement (NOW)**
+```bash
+# Install pre-commit hooks
+cp .cursor/rules/pre-commit-tenant-validation .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+```
+
+### **Phase 2: Service Implementation**
+```python
+# Create HybridTenantService following the comprehensive plan
+# See: backend-python/COMPREHENSIVE_ARCHITECTURE_RECTIFICATION_PLAN.md
+```
+
+### **Phase 3: Progressive Migration**
+- Update all tenant-related services to use HybridTenantService
+- Validate all foreign key relationships maintain UUID compliance
+- Implement context-aware identifier resolution across codebase
+
+## **DEVELOPER QUICK REFERENCE**
+
+### **Common Operations**
+```python
+# Resolve any tenant identifier
+tenant = await HybridTenantService.resolve_identifier(identifier)
+
+# Get appropriate identifier for context
+uuid_for_security = tenant.id  # SOC2/HIPAA compliance
+key_for_debug = tenant.tenant_key  # Human-readable debugging
+slug_for_url = tenant.public_slug  # Clean URLs (if available)
+
+# Database operations (always use UUID)
+query = select(Table).where(Table.tenant_id == tenant.id)
+
+# Logging (use tenant_key for readability)
+logger.info(f"Processing for tenant: {tenant.tenant_key}")
+
+# Audit trail (use UUID for compliance)
+audit_log.record(tenant_id=tenant.id, action=action)
+```
+
+### **Testing Patterns**
+```python
+# ✅ CORRECT: Test with all identifier types
+@pytest.mark.asyncio
+async def test_tenant_resolution():
+    # Test UUID resolution
+    tenant_by_uuid = await service.resolve_identifier(str(tenant.id))
+
+    # Test tenant_key resolution
+    tenant_by_key = await service.resolve_identifier(tenant.tenant_key)
+
+    # Test public_slug resolution (if available)
+    if tenant.public_slug:
+        tenant_by_slug = await service.resolve_identifier(f"slug:{tenant.public_slug}")
+
+    # All should resolve to same tenant
+    assert tenant_by_uuid.id == tenant_by_key.id
+```
+
+## **VIOLATION CONSEQUENCES**
+
+### **Immediate Actions**
+- **Code Review Rejection**: All PRs with violations are automatically rejected
+- **Build Failure**: CI/CD pipeline prevents deployment
+- **Security Alert**: Compliance violations trigger security team alerts
+
+### **Escalation Process**
+1. **First Violation**: Developer training on hybrid architecture
+2. **Second Violation**: Architecture review meeting required
+3. **Repeated Violations**: Escalation to engineering management
+
+## **EMERGENCY ROLLBACK**
+
+If issues are discovered with hybrid implementation:
+
+```sql
+-- Emergency rollback to single UUID pattern (temporary)
+-- See: backend-python/COMPREHENSIVE_ARCHITECTURE_RECTIFICATION_PLAN.md
+-- Section: Rollback Procedures
+```
+
+---
+
+**This rule is MANDATORY and enforces the enterprise-grade hybrid tenant architecture that prevents the dual identifier anti-pattern violation. It ensures compliance with SOC2/HIPAA/PCI-DSS requirements while maintaining developer experience.**
+
+**Reference**: [Comprehensive Architecture Rectification Plan](mdc:backend-python/COMPREHENSIVE_ARCHITECTURE_RECTIFICATION_PLAN.md)

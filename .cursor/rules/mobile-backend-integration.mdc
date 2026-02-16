@@ -1,0 +1,74 @@
+---
+description: Standards for integrating Cerebral Mobile with the Backend Platform
+globs: ["apps/native/**/*.ts", "apps/native/**/*.tsx", "packages/core/**/*.ts"]
+---
+
+# 📱 Mobile Backend Integration Standards
+
+**MANDATORY**: All mobile-to-backend communication MUST use the shared `@cerebral/core` library. Ad-hoc API calls are strictly prohibited.
+
+## 🚫 Forbidden Patterns
+
+### ❌ Direct Fetch Calls
+```typescript
+// VIOLATION: Do not use fetch directly in components or services
+const response = await fetch('https://api.cerebral.com/v1/tasks');
+```
+
+### ❌ Axios/Other Clients
+```typescript
+// VIOLATION: Do not use axios or other HTTP clients directly
+import axios from 'axios';
+const response = await axios.get('/tasks');
+```
+
+### ❌ Duplicating API Logic
+```typescript
+// VIOLATION: Do not re-implement API methods that exist in core
+const getTasks = async () => { ... } // If this exists in BackendClient
+```
+
+## ✅ Required Patterns
+
+### 1. Use BackendClient from @cerebral/core
+```typescript
+import { backendClient } from '@cerebral/core';
+
+// Correct usage
+const tasks = await backendClient.tasks.list();
+```
+
+### 2. Use Shared Types
+```typescript
+import type { Task } from '@cerebral/core';
+
+// Correct usage
+const handleTask = (task: Task) => { ... };
+```
+
+### 3. Supabase Integration
+Use the shared Supabase client from core, which handles session persistence and auth state syncing.
+
+```typescript
+import { supabase } from '@cerebral/core';
+```
+
+## 🔒 Authentication & Security
+
+- **Token Management**: handled automatically by `@cerebral/core`.
+- **Session Refresh**: handled by `@cerebral/core`.
+- **Secure Storage**: Use `@react-native-async-storage/async-storage` via core abstractions only.
+
+## 🧪 Testing
+
+Mock the `@cerebral/core` module in Jest tests, do not mock `fetch` globally if possible.
+
+```typescript
+jest.mock('@cerebral/core', () => ({
+  backendClient: {
+    tasks: {
+      list: jest.fn().mockResolvedValue([])
+    }
+  }
+}));
+```

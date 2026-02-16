@@ -113,5 +113,3 @@ jobs:
             [ $status -ne 0 ] && break
           done < changed.txt
           exit $status
-
-

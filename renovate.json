@@ -39,9 +39,7 @@
     "enabled": true,
     "allowedConfigs": [".pre-commit-config.yaml"]
   },
-  "schedule": [
-    "before 3am on Monday"
-  ],
+  "schedule": ["before 3am on Monday"],
   "timezone": "UTC",
   "automerge": false,
   "labels": ["dependencies", "renovate"],

@@ -1,0 +1,101 @@
+# 🚨 MANDATORY UV PACKAGE MANAGER ENFORCEMENT
+
+## **CRITICAL: ZERO TOLERANCE FOR PIP USAGE**
+
+The Cerebral Platform uses **uv as the ONLY package manager**. This is a zero-tolerance enterprise production standard.
+
+### **REQUIRED COMMANDS (USE THESE)**
+```bash
+# ✅ CORRECT: Package installation
+uv add package-name
+uv add package-name==1.0.0
+uv add "package-name[extras]"
+
+# ✅ CORRECT: Requirements installation
+uv pip install -r requirements.txt
+
+# ✅ CORRECT: Virtual environment activation
+source .venv/bin/activate
+
+# ✅ CORRECT: Running Python in virtual environment
+.venv/bin/python script.py
+```
+
+### **FORBIDDEN COMMANDS (NEVER USE)**
+```bash
+# ❌ FORBIDDEN: pip commands
+pip install package-name          # Use: uv add package-name
+pip install -r requirements.txt   # Use: uv pip install -r requirements.txt
+pip upgrade package-name          # Use: uv add package-name --upgrade
+
+# ❌ FORBIDDEN: Global Python
+python script.py                  # Use: .venv/bin/python script.py
+/usr/bin/python script.py        # Use: .venv/bin/python script.py
+
+# ❌ FORBIDDEN: Other virtual environments
+venv/bin/activate                 # Use: .venv/bin/activate
+source venv/bin/activate          # Use: source .venv/bin/activate
+```
+
+### **ENFORCEMENT MECHANISMS**
+
+#### **1. Pre-Implementation Check**
+Before ANY Python work:
+```bash
+# Verify virtual environment
+ls -la .venv/bin/python || echo "❌ VIOLATION: .venv not found"
+
+# Verify uv is available
+which uv || echo "❌ VIOLATION: uv not installed"
+```
+
+#### **2. Code Review Enforcement**
+ALL code must pass these checks:
+- **NO** `pip install` references in any file
+- **NO** `pip add` references in any file
+- **NO** global Python paths
+- **ONLY** `.venv/bin/python` for Python execution
+- **ONLY** `uv add` for package installation
+
+#### **3. Documentation Standards**
+ALL documentation must use:
+- `uv add package-name` instead of `pip install package-name`
+- `.venv/bin/python` instead of `python`
+- `source .venv/bin/activate` instead of other venv paths
+
+## **WHY UV OVER PIP**
+
+### **Enterprise Advantages**
+- **10x faster** than pip for dependency resolution
+- **Built in Rust** for performance and reliability
+- **Unified workflow** combining pip, pip-tools, and virtualenv
+- **Enterprise security** with built-in verification
+- **Production stability** with deterministic dependency resolution
+
+### **Fortune 500 Requirements**
+- **Consistent environments** across development and production
+- **Audit trail** for all package installations
+- **Security validation** for all dependencies
+- **Performance optimization** for CI/CD pipelines
+
+## **VIOLATION CONSEQUENCES**
+
+### **Immediate Actions Required**
+1. **STOP ALL WORK** until violation is corrected
+2. **FIX ALL REFERENCES** to use uv instead of pip
+3. **UPDATE DOCUMENTATION** to reflect uv usage
+4. **VERIFY ENVIRONMENT** is using .venv correctly
+
+### **Prevention Measures**
+- **Memory creation** for uv-only policy enforcement
+- **Rule updates** to remove conflicting pip references
+- **Code review** to catch violations before commit
+- **Automated checks** in CI/CD pipeline
+
+---
+
+**This rule supersedes all other package management guidance. When in doubt, use uv.**
+description:
+globs:
+alwaysApply: false
+---

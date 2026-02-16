@@ -63,13 +63,13 @@ TS_FILES=$(echo "$STAGED_FILES" | grep -E '\.(ts|tsx)$' || true)
 
 if [ -n "$TS_FILES" ]; then
     log_message "Checking TypeScript for $(echo "$TS_FILES" | wc -l) files..."
-    
+
     # Check for TypeScript compilation errors
     if ! pnpm run build >/dev/null 2>&1; then
         log_message "❌ TypeScript compilation failed"
         handle_error "TypeScript compilation errors found. Fix type errors and try again."
     fi
-    
+
     log_message "✅ TypeScript validation passed"
 else
     log_message "ℹ️  No TypeScript files staged"
@@ -84,7 +84,7 @@ JS_TS_FILES=$(echo "$STAGED_FILES" | grep -E '\.(js|jsx|ts|tsx)$' || true)
 
 if [ -n "$JS_TS_FILES" ]; then
     log_message "Linting $(echo "$JS_TS_FILES" | wc -l) files..."
-    
+
     if ! pnpm run lint >/dev/null 2>&1; then
         log_message "❌ ESLint validation failed"
         echo ""
@@ -92,7 +92,7 @@ if [ -n "$JS_TS_FILES" ]; then
         pnpm run lint
         handle_error "ESLint violations found. Run 'pnpm lint' to see details."
     fi
-    
+
     log_message "✅ ESLint validation passed - 100% lint compliant"
 else
     log_message "ℹ️  No JavaScript/TypeScript files staged"
@@ -107,7 +107,7 @@ FORMATTED_FILES=$(echo "$STAGED_FILES" | grep -E '\.(js|jsx|ts|tsx|json|md|yaml|
 
 if [ -n "$FORMATTED_FILES" ]; then
     log_message "Checking format compliance for $(echo "$FORMATTED_FILES" | wc -l) files..."
-    
+
     # Check if files are properly formatted
     UNFORMATTED=0
     for FILE in $FORMATTED_FILES; do
@@ -118,12 +118,12 @@ if [ -n "$FORMATTED_FILES" ]; then
             fi
         fi
     done
-    
+
     if [ $UNFORMATTED -gt 0 ]; then
         log_message "❌ $UNFORMATTED file(s) need formatting"
         handle_error "Code formatting issues found. Run 'pnpm format' to auto-fix."
     fi
-    
+
     log_message "✅ Prettier validation passed - All code properly formatted"
 else
     log_message "ℹ️  No formattable files staged"
@@ -138,7 +138,7 @@ log_message "🧪 Running Jest tests..."
 if echo "$STAGED_FILES" | grep -qE '\.(ts|tsx|js|jsx)$'; then
     if [ -f "$PROJECT_ROOT/jest.config.js" ] || [ -f "$PROJECT_ROOT/jest.config.ts" ]; then
         log_message "Running tests on staged changes..."
-        
+
         if ! pnpm run test -- --bail --onlyChanged >/dev/null 2>&1; then
             log_message "⚠️  Some tests failed"
             log_message "Note: Tests can be skipped with --no-verify if intentional"
@@ -174,14 +174,14 @@ log_message "🔗 Validating monorepo workspace integrity..."
 # Check that all workspace packages are referenced correctly
 if [ -f "$PROJECT_ROOT/pnpm-workspace.yaml" ]; then
     log_message "Checking workspace configuration..."
-    
+
     # Verify all package.json files in packages and apps are valid JSON
     for pkg_json in $(find "$PROJECT_ROOT/packages" "$PROJECT_ROOT/apps" -name "package.json" 2>/dev/null); do
         if ! pnpm exec node -e "require('$pkg_json')" >/dev/null 2>&1; then
             handle_error "Invalid JSON in $pkg_json"
         fi
     done
-    
+
     log_message "✅ Workspace configuration is valid"
 fi
 

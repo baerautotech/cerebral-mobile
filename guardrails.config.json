@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "defaults": {
+    "scope": {
+      "includePathPrefixes": ["frontend-react-native/src/", "frontend-react-native/__tests__/", "packages/", "apps/", "e2e/"],
+      "excludePathPrefixes": ["node_modules/", "dist/", "build/", "coverage/", "android/", "ios/"]
+    },
+    "mode": "ratchet",
+    "srp": {
+      "newFileMaxLines": 300,
+      "warnOverLines": 200,
+      "ratchetBlockOverLines": 350,
+      "ratchetBlockIfGrowsBy": 10,
+      "exemptPaths": [
+        "frontend-react-native/src/types/backend-api.ts",
+        "frontend-react-native/src/services/BackendClient.test.ts",
+        "frontend-react-native/src/services/BackendClient.ts",
+        "packages/core/src/services/supabase.ts"
+      ]
+    },
+    "checks": {
+      "forbiddenImports": "error",
+      "hexColors": "error",
+      "tailwindPalette": "warn",
+      "console": "warn",
+      "supabaseCreateClient": {
+        "level": "error",
+        "allowImportPaths": [
+          "packages/core/src/services/supabase.ts",
+          "frontend-react-native/src/services/supabase.ts"
+        ],
+        "allowPathPrefixes": [
+          "docs/",
+          "scripts/"
+        ]
+      }
+    }
+  },
+  "overrides": []
+}

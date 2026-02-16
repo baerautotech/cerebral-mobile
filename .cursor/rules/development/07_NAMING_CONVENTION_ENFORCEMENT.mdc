@@ -1,0 +1,210 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# MANDATORY NAMING CONVENTION ENFORCEMENT
+
+**Rule Type**: CRITICAL ENFORCEMENT
+**Violation Level**: IMMEDIATE CORRECTION REQUIRED
+**Scope**: Component, Variable, Function, File Naming (NOT documentation)
+
+---
+
+## ⚠️ DOCUMENTATION NAMING DEPRECATED
+
+**IMPORTANT**: Documentation naming is now handled by the MASTER DOCUMENTATION STANDARDS rule:
+- `.cursor/rules/development/00_MASTER_DOCUMENTATION_STANDARDS.mdc`
+
+This rule has been UPDATED to NOT enforce documentation naming anymore.
+All documentation naming is now centralized in the master rule for clarity.
+
+---
+
+## CRITICAL NAMING VIOLATIONS PREVENTION
+
+### **Component Naming (PRIMARY SCOPE)**
+
+### **Component Naming (MANDATORY)**
+
+#### **Component Prefixes by Category**
+- **Core Framework**: `Core[Feature][Type]` → `CoreAuditService.ts`
+- **Enterprise Features**: `Enterprise[Feature][Type]` → `EnterpriseBillingDashboard.tsx`
+- **Admin Interface**: `Admin[Feature][Type]` → `AdminUserManagement.tsx`
+- **Real-time Features**: `RealTime[Feature][Type]` → `RealTimeCollaboration.tsx`
+- **Modern SaaS UI**: `ModernSaaS[Component]` → `ModernSaaSButton.tsx`
+
+#### **FORBIDDEN Component Prefixes**
+- ❌ `Enhanced*` (vague and meaningless)
+- ❌ `Unified*` (creates versioning confusion)
+- ❌ `Advanced*` (subjective and unclear)
+- ❌ `Real*` (use `RealTime*` for clarity)
+- ❌ `Smart*` (marketing term, not descriptive)
+- ❌ `Super*` (unprofessional)
+- ❌ `V2`, `V3`, `New*`, `Legacy*` (no versioning)
+
+### **File Structure Enforcement (MANDATORY)**
+
+#### **Directory Placement Rules**
+```
+src/
+├── core/                    # Core[Feature][Type] components
+├── components/
+│   ├── admin/              # Admin[Feature][Type] components
+│   ├── enterprise/         # Enterprise[Feature][Type] components
+│   ├── ui/                 # ModernSaaS* and base UI components
+│   └── [feature]/          # Feature-specific components
+├── docs/                   # CEREBRAL_XXX_* documentation ONLY
+└── services/               # [Feature]Service.ts files
+```
+
+#### **Import/Export Standards**
+- **REQUIRED**: Use barrel exports (`@/components/ui`)
+- **FORBIDDEN**: Direct deep imports (`@/components/ui/button/Button.tsx`)
+- **REQUIRED**: Type imports from re-export files (`@/types/enterprise`)
+- **FORBIDDEN**: Direct master-types imports (`@/types/master-types`)
+
+## ENFORCEMENT MECHANISMS
+
+### **Pre-Commit Validation (MANDATORY)**
+
+#### **Naming Convention Checker**
+```bash
+# Add to .git/hooks/pre-commit
+#!/bin/bash
+
+# Check for CEREBRAL naming violations
+if git diff --cached --name-only | grep -E "docs/[^/]*\.md$" | grep -v "^docs/CEREBRAL_"; then
+    echo "❌ CRITICAL: Documentation files must follow CEREBRAL_XXX_ naming pattern"
+    echo "   Found violations:"
+    git diff --cached --name-only | grep -E "docs/[^/]*\.md$" | grep -v "^docs/CEREBRAL_"
+    echo "   Fix: Rename to docs/CEREBRAL_XXX_[CATEGORY]_[TOPIC].md"
+    exit 1
+fi
+
+# Check for forbidden component prefixes
+if git diff --cached --name-only | xargs grep -l "Enhanced\|Unified\|Advanced\|Smart\|Super" 2>/dev/null; then
+    echo "❌ CRITICAL: Forbidden component prefixes detected"
+    echo "   Use Core*, Enterprise*, Admin*, RealTime*, or ModernSaaS* instead"
+    exit 1
+fi
+```
+
+#### **AutoDoc Integration Validation**
+```bash
+# Check for proper AutoDoc integration
+if ! git diff --cached --name-only | xargs grep -l "tsx .cerebral/rag/rag-query.ts" 2>/dev/null; then
+    echo "⚠️  WARNING: Consider using AutoDoc RAG system for context loading"
+fi
+```
+
+### **Build-Time Validation (MANDATORY)**
+
+#### **ESLint Rules Addition**
+```json
+// .eslintrc.js additions
+{
+  "rules": {
+    "cerebral/naming-convention": "error",
+    "cerebral/import-paths": "error",
+    "cerebral/documentation-naming": "error"
+  }
+}
+```
+
+#### **TypeScript Path Validation**
+```typescript
+// Validate import paths match naming conventions
+// Forbid direct imports to deep paths
+// Require barrel export usage
+```
+
+### **AutoDoc System Enhancement**
+
+#### **Naming Validation Integration**
+```json
+// autodoc/config/doc-sync.json additions
+{
+  "validationRules": {
+    "namingConsistency": {
+      "checkDocumentationNaming": true,
+      "validateComponentPrefixes": true,
+      "verifyDirectoryPlacement": true,
+      "enforceBarrelExports": true
+    }
+  },
+  "triggers": {
+    "naming": [
+      "docs/*.md",
+      "src/components/**/*.tsx",
+      "src/core/**/*.ts"
+    ]
+  }
+}
+```
+
+## AI ASSISTANT ENFORCEMENT PROTOCOLS
+
+### **MANDATORY Pre-Work Validation**
+1. **Documentation Creation**: ALWAYS check next CEREBRAL number first
+2. **Component Creation**: ALWAYS verify correct prefix and directory
+3. **File Imports**: ALWAYS use barrel exports, never deep paths
+4. **Type Imports**: ALWAYS use re-export files, never master-types directly
+
+### **CRITICAL VIOLATION PREVENTION**
+- **NEVER** create documentation without `CEREBRAL_XXX_` prefix
+- **NEVER** use forbidden component prefixes (Enhanced, Unified, etc.)
+- **NEVER** place files in wrong directories
+- **NEVER** use direct deep imports instead of barrel exports
+
+### **MANDATORY CORRECTION PROTOCOL**
+When naming violations are detected:
+1. **IMMEDIATE STOP**: Halt all work until violations are corrected
+2. **IDENTIFY ALL VIOLATIONS**: List every naming/structure violation
+3. **CORRECT SYSTEMATICALLY**: Fix naming, move files, update imports
+4. **VERIFY COMPLIANCE**: Ensure all standards are met before proceeding
+5. **UPDATE ENFORCEMENT**: Strengthen rules to prevent recurrence
+
+### **TERMINAL COMMAND SAFETY**
+- **ALWAYS** escape special characters in git commit messages
+- **NEVER** use unescaped quotes or special characters
+- **ALWAYS** validate command syntax before execution
+- **MANDATORY** use simple, safe commit message formats
+
+## VIOLATION CONSEQUENCES
+
+### **Immediate Actions Required**
+- **Code Review Rejection**: All PRs with naming violations are rejected
+- **Build Failure**: Automated checks prevent deployment
+- **Documentation Block**: Invalid documentation prevents RAG updates
+- **Import Errors**: Incorrect imports cause TypeScript compilation failure
+
+### **Remediation Process**
+1. **Identify Violations**: Use automated scanning tools
+2. **Batch Correction**: Create systematic correction plan
+3. **Validation Testing**: Ensure all corrections work properly
+4. **Prevention Enhancement**: Strengthen enforcement mechanisms
+
+## IMPLEMENTATION CHECKLIST
+
+### **Immediate Setup (REQUIRED)**
+- [ ] Add pre-commit hooks for naming validation
+- [ ] Update AutoDoc configuration for naming checks
+- [ ] Create ESLint rules for naming enforcement
+- [ ] Add TypeScript path validation
+
+### **Short-term Enhancement**
+- [ ] Create automated naming correction scripts
+- [ ] Implement build-time validation
+- [ ] Add IDE integration for real-time validation
+- [ ] Create developer education materials
+
+### **Long-term Maintenance**
+- [ ] Regular audit of naming compliance
+- [ ] Update enforcement rules as needed
+- [ ] Monitor violation patterns and strengthen weak points
+- [ ] Maintain developer training on naming standards
+
+---
+
+**CRITICAL REMINDER**: These naming conventions are MANDATORY for enterprise production standards. Violations compromise code maintainability, team productivity, and system reliability. NO EXCEPTIONS are permitted.

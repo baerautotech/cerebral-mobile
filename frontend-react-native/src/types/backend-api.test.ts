@@ -6,7 +6,8 @@
 import type { paths, components, operations } from './backend-api';
 
 // Test that types are properly generated
-type HealthCheckResponse = paths['/health']['get']['responses']['200']['content']['application/json'];
+type HealthCheckResponse =
+  paths['/health']['get']['responses']['200']['content']['application/json'];
 type SignupRequest = paths['/auth/signup']['post']['requestBody']['content']['application/json'];
 type AuthResponse = components['schemas']['AuthResponse'];
 type SignupOperation = operations['authSignup'];

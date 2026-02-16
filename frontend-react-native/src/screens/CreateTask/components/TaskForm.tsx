@@ -55,10 +55,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             onPress={() => onPriorityChange(p)}
           >
             <Text
-              style={[
-                styles.optionButtonText,
-                priority === p && styles.optionButtonTextActive,
-              ]}
+              style={[styles.optionButtonText, priority === p && styles.optionButtonTextActive]}
             >
               {p}
             </Text>
@@ -76,9 +73,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             style={[styles.optionButton, status === s && styles.optionButtonActive]}
             onPress={() => onStatusChange(s)}
           >
-            <Text
-              style={[styles.optionButtonText, status === s && styles.optionButtonTextActive]}
-            >
+            <Text style={[styles.optionButtonText, status === s && styles.optionButtonTextActive]}>
               {s.replace('_', ' ')}
             </Text>
           </TouchableOpacity>

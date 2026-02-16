@@ -8,10 +8,7 @@ import { logPerformance } from '../services/monitoring';
 /**
  * Measure execution time of a function
  */
-export const measurePerformance = <T>(
-  name: string,
-  fn: () => T
-): T => {
+export const measurePerformance = <T>(name: string, fn: () => T): T => {
   const start = performance.now();
   const result = fn();
   const duration = performance.now() - start;
@@ -83,14 +80,13 @@ export const throttle = <T extends (...args: any[]) => any>(
 /**
  * Check if component should update (for React.memo)
  */
-export const shallowEqual = (obj1: Record<string, unknown>, obj2: Record<string, unknown>): boolean => {
+export const shallowEqual = (
+  obj1: Record<string, unknown>,
+  obj2: Record<string, unknown>
+): boolean => {
   if (obj1 === obj2) return true;
 
-  if (
-    typeof obj1 !== 'object' ||
-    obj1 === null ?? typeof obj2 !== 'object' ||
-    obj2 === null
-  ) {
+  if ((typeof obj1 !== 'object' || obj1 === null) ?? (typeof obj2 !== 'object' || obj2 === null)) {
     return false;
   }
 
@@ -110,11 +106,9 @@ export const shallowEqual = (obj1: Record<string, unknown>, obj2: Record<string,
 /**
  * Batch multiple state updates
  */
-export const batchUpdates = <_T = void>(
-  updates: Array<() => void>
-): void => {
+export const batchUpdates = <_T = void>(updates: Array<() => void>): void => {
   // In React 19, batching is automatic, but this provides explicit control
-  updates.forEach(update => update());
+  updates.forEach((update) => update());
 };
 
 /**

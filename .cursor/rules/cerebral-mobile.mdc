@@ -1,0 +1,121 @@
+# Cerebral Mobile Repository Rules
+
+## Repository Context
+- **Name**: cerebral-mobile (React Native Mobile App)
+- **Framework**: React Native with Expo
+- **Language**: TypeScript
+- **Platforms**: iOS & Android
+- **Package Manager**: npm/yarn
+- **Build System**: Tekton/Kaniko (NEW) for CI/CD
+- **App Distribution**: TestFlight (iOS) + Play Store (Android)
+- **Kubernetes**: 3-tier namespaces for build orchestration
+- **Feature Management**: Feature flags + Tier system + In-App Purchases
+
+## Key Principles
+
+### 1. Feature Flags in Mobile
+Mobile apps must:
+- Fetch flags on startup (with offline fallback)
+- Cache flags locally (SQLite or AsyncStorage)
+- Check flags before rendering screens/features
+- Support gradual rollouts via percentage-based flags
+- Handle flag changes gracefully (re-render vs restart)
+
+### 2. Tier System in Mobile
+Mobile apps must:
+- Extract tier from JWT (stored in secure storage)
+- Enforce tier restrictions at screen level
+- Show upgrade CTA for insufficient tier
+- Link to in-app purchase flow for upgrades
+- Sync tier status after purchase
+
+### 3. In-App Purchases (IAP)
+Mobile apps must support:
+- Free tier (no purchase)
+- Standard tier (monthly subscription $9.99)
+- Enterprise tier (monthly subscription $49.99)
+- Family tier (annual subscription $99.99)
+- IAP framework integration (RevenueCat or native)
+- Purchase verification with backend
+
+### 4. Screen Wrapping Pattern
+```typescript
+// Pattern 1: Feature Flag Guard
+<FeatureFlagGuard flag="ai_features">
+  <AdvancedSearchScreen />
+</FeatureFlagGuard>
+
+// Pattern 2: Tier Guard
+<TierGuard tier="enterprise">
+  <PremiumAnalyticsScreen />
+</TierGuard>
+
+// Pattern 3: IAP-Backed Feature
+<IAPFeature sku="premium_monthly">
+  <PremiumScreen />
+</IAPFeature>
+
+// Pattern 4: Combined
+<TierGuard tier="enterprise">
+  <FeatureFlagGuard flag="ai_analytics_beta">
+    <AIAnalyticsScreen />
+  </FeatureFlagGuard>
+</TierGuard>
+```
+
+### 5. Development Branches
+- **develop**: Latest dev code → iOS dev build + Android debug APK
+- **staging**: Release candidates → iOS TestFlight build
+- **main**: Production ready → App Store release
+
+### 6. CI/CD Integration
+- Push to branch → GitHub webhook
+- Webhook → Tekton PipelineRun
+- Tekton executes iOS build task (xcodebuild)
+- Tekton executes Android build task (gradle)
+- Fastlane uploads to TestFlight (staging/main) or Play Store
+- Binaries signed with release certificates
+
+## Common Tasks
+
+### Task: Add Feature Behind Flag
+1. Backend adds feature flag to database
+2. Mobile wraps screen with FeatureFlagGuard
+3. Test on simulator with flag enabled/disabled
+4. Merge to develop, auto-build
+5. Push to staging for QA
+
+### Task: Add Premium Feature
+1. Define SKU in RevenueCat (or IAP config)
+2. Wrap screen with IAPFeature or TierGuard
+3. Implement purchase flow
+4. Test with TestFlight StoreKit config
+5. Verify purchase syncs to backend
+
+### Task: Test Locally
+1. Start Metro bundler: `npm start`
+2. Run on simulator: `npm run ios` or `npm run android`
+3. Modify feature flag in backend database
+4. Refresh app (pull-to-refresh or shake menu)
+5. Verify UI changes based on flag
+
+## Build System Integration
+- CI/CD triggered automatically on push
+- Tekton builds iOS and Android in parallel
+- Binaries signed with certificates from K8s secrets
+- TestFlight/Play Store updated automatically
+- No manual builds required
+
+## Debugging Checklist
+- Are feature flags cached? (Check AsyncStorage)
+- Is user tier being read from JWT? (Check secure storage)
+- Are IAP purchases being verified? (Check receipts)
+- Check logs: `adb logcat` (Android) or Xcode console (iOS)
+- Check pod logs: `kubectl logs -n {namespace} {pod}`
+
+## Resources
+- Feature flags docs: `/Users/bbaer/Development/cerebral-mobile-1/docs/FEATURE_FLAGS.md`
+- Tier system docs: `/Users/bbaer/Development/cerebral-mobile-1/docs/TIER_SYSTEM.md`
+- IAP docs: `/Users/bbaer/Development/cerebral-mobile-1/docs/IN_APP_PURCHASES.md`
+- Deployment: `/Users/bbaer/Development/cerebral-mobile-1/docs/APP_STORE_DISTRIBUTION.md`
+- Architecture: `/Users/bbaer/Development/cerebral-deployment/NAMESPACE_ARCHITECTURE_COMPLETE.md`

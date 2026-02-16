@@ -1,0 +1,89 @@
+---
+description: ⚠️ DEPRECATED - For Supabase database operations, use 03_SUPABASE_OPERATIONS_AUTHORITATIVE.mdc
+globs:
+alwaysApply: false
+---
+# ⚠️ **DEPRECATED - USE AUTHORITATIVE SUPABASE PROTOCOL INSTEAD**
+
+**⚠️ DEPRECATION NOTICE**: This rule has been superseded by the authoritative Supabase operations protocol.
+
+**✅ NEW RULE**: Use `.cursor/rules/development/03_SUPABASE_OPERATIONS_AUTHORITATIVE.mdc` instead.
+
+**📅 Deprecation Date**: November 7, 2025
+**🗓️ Reason**: This rule referenced MCP tools that don't exist for direct DB operations. Use authoritative protocol instead.
+
+**For Supabase Database Operations**:
+- Import: `from backend_python.shared.database.supabase.client import get_admin_client`
+- Execute: `client.rpc("run_sql", {"query": sql}).execute()`
+- Package Manager: `/Users/bbaer/.local/bin/uv run python3`
+- Credentials: Pass as environment variables on command line
+
+---
+
+# 🔧 SUPABASE MCP PROTOCOLS - MANDATORY DATABASE OPERATIONS
+
+## **ALWAYS Use Supabase MCP Tools**
+
+For ALL database interactions in this project, you MUST use the Supabase MCP (Management Control Plane) tools.
+
+### **Mandatory MCP Function Usage**
+**ALWAYS use these exact function names - NEVER abbreviate:**
+
+- `mcp_supabase_list_projects` - List all Supabase projects
+- `mcp_supabase_get_project` - Get project details
+- `mcp_supabase_list_tables` - List database tables
+- `mcp_supabase_execute_sql` - Execute SQL queries
+- `mcp_supabase_apply_migration` - Apply database migrations
+- `mcp_supabase_list_migrations` - List database migrations
+- `mcp_supabase_generate_typescript_types` - Generate TypeScript types
+- `mcp_supabase_get_logs` - Get system logs
+- `mcp_supabase_get_advisors` - Get security/performance advisors
+
+### **Critical Database Protocols**
+- **No Manual SQL Scripts**: Use MCP functions, not manual script generation
+- **No Execution Assumptions**: Don't assume lack of execution capability
+- **Migration Priority**: Use `mcp_supabase_apply_migration` for all schema changes
+- **Query Execution**: Use `mcp_supabase_execute_sql` for data operations
+
+### **Batch Processing Rules**
+- **No Status Updates**: Never provide status updates during batch operations unless critical blocker
+- **No Redundant Acknowledgement**: When user says "start", immediately begin work
+- **Critical Blocker Protocol**: Display 'Critical blocker reached' with full details if encountered
+- **Complete Until Done**: Work continuously until 100% complete
+
+### **MCP SERVER DEVELOPMENT - PYTHON ONLY**
+
+**🚨 CRITICAL: ALL MCP server development must ONLY be done in Python**
+
+- **NO TypeScript MCP servers**: Never create, modify, or suggest TypeScript MCP servers
+- **NO Node.js MCP servers**: Never create, modify, or suggest Node.js MCP servers
+- **ONLY Python MCP servers**: All MCP server development uses Python exclusively
+- **Use existing Python infrastructure**: Build on existing `.cerebral/mcp/cerebral_server.py`
+- **No parallel implementations**: Never create alternative MCP server implementations
+- **Delete TypeScript MCP files**: If TypeScript MCP files exist, delete them immediately
+
+**Why Python Only:**
+- **Stability**: Python MCP implementation is tested and stable
+- **Consistency**: Single language reduces complexity and maintenance burden
+- **Performance**: Python server handles all 18+ tools efficiently
+- **Reliability**: Proven Python implementation prevents deployment issues
+
+**Enforcement:**
+- **Zero tolerance**: Any suggestion of TypeScript/Node.js MCP development is forbidden
+- **Immediate correction**: Delete any non-Python MCP files immediately
+- **Python extension only**: Only extend existing Python MCP server with new tools
+
+### **Project Information**
+- **Project ID**: Available in environment variables as `SUPABASE_PROJECT_ID`
+- **SOC2 Compliance**: All database operations must maintain audit trail
+- **Production Database**: This is a live production system serving real customers
+
+---
+
+**Use MCP tools for all database operations - no exceptions.**
+**Develop MCP servers in Python only - no exceptions.**
+
+---
+
+**Use MCP tools for all database operations - no exceptions.**
+**Develop MCP servers in Python only - no exceptions.**

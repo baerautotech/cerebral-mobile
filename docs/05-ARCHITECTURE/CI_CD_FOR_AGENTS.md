@@ -2,13 +2,13 @@
 
 ## Quick Reference
 
-| Aspect | Value |
-|--------|-------|
-| **Infrastructure** | cerebral-deployment repo (`k8s/ci-cd/`) |
-| **Namespace** | `tekton-pipelines` |
-| **Pipeline** | `cerebral-microservice-pipeline` |
-| **Trigger** | Custom Rust webhook receiver |
-| **Webhook URL** | https://webhook.dev.cerebral.baerautotech.com |
+| Aspect             | Value                                         |
+| ------------------ | --------------------------------------------- |
+| **Infrastructure** | cerebral-deployment repo (`k8s/ci-cd/`)       |
+| **Namespace**      | `tekton-pipelines`                            |
+| **Pipeline**       | `cerebral-microservice-pipeline`              |
+| **Trigger**        | Custom Rust webhook receiver                  |
+| **Webhook URL**    | https://webhook.dev.cerebral.baerautotech.com |
 
 ## How Builds Are Triggered
 
@@ -26,6 +26,7 @@ Code Push → GitHub Webhook → Webhook Receiver → PipelineRun → Build → 
 ## Branch Mapping & Deployment Phases
 
 ### Development Phase (Now)
+
 ```
 Branch: develop or feature/*
 Namespace: cerebral-development
@@ -37,6 +38,7 @@ Rollback: Manual
 Modify files → Commit → Push → **Auto-builds and deploys to development**
 
 ### Testing Phase (Future)
+
 ```
 Branch: staging
 Namespace: cerebral-staging
@@ -46,6 +48,7 @@ Rollback: One-command auto-rollback
 ```
 
 ### Production Phase (Future)
+
 ```
 Branch: main
 Namespace: cerebral-production
@@ -59,18 +62,21 @@ Rollback: Automatic on health check failure
 The webhook receiver automatically detects what to build:
 
 **Single service build**:
+
 ```
 Modified: microservices/ai-services/src/main.py
 → Builds: ai-services only
 ```
 
 **Multiple service build**:
+
 ```
 Modified: backend-python/shared_utils.py
 → Builds: ALL 14 microservices (shared library change)
 ```
 
 **No build** (docs-only):
+
 ```
 Modified: README.md, docs/architecture.md
 → Builds: Nothing (docs-only change is normal)
@@ -79,6 +85,7 @@ Modified: README.md, docs/architecture.md
 ## Timeline by Phase
 
 ### Development
+
 - 30 sec: Webhook received
 - 1-2 min: PipelineRun created
 - 5-10 min: Build completes
@@ -86,26 +93,31 @@ Modified: README.md, docs/architecture.md
 - **Total: 8-16 minutes**
 
 ### Testing (with approval)
+
 - Same as development + 15-30 min approval wait
 - **Total: 23-46 minutes**
 
 ### Production (with canary)
+
 - Same as development + approval + canary stages
 - **Total: 15-30 minutes**
 
 ## Build Status Monitoring
 
 ### Watch PipelineRuns
+
 ```bash
 kubectl get pipelinerun -n tekton-pipelines -w
 ```
 
 ### Check specific service build
+
 ```bash
 kubectl describe pipelinerun {pipelinerun-name} -n tekton-pipelines
 ```
 
 ### View build logs
+
 ```bash
 kubectl logs -n tekton-pipelines {pod-name} -c {container}
 ```
@@ -113,21 +125,25 @@ kubectl logs -n tekton-pipelines {pod-name} -c {container}
 ## Troubleshooting
 
 ### Build didn't trigger
+
 - Check webhook receiver pods: `kubectl get pods -n tekton-pipelines | grep webhook-receiver`
 - Verify file changes in `microservices/` directory (docs-only won't trigger)
 - Check PipelineRun created: `kubectl get pipelinerun -n tekton-pipelines`
 
 ### Build failed
+
 - Check logs: `kubectl logs -n tekton-pipelines {pod-name}`
 - Common issues: Dockerfile not found, build context wrong, image push failed
 
 ### Deployment didn't update
+
 - Check service exists: `kubectl get svc -n {namespace}`
 - Check image in registry: `kubectl get deployment {service-name} -n {namespace} -o jsonpath='{.spec.template.spec.containers[0].image}'`
 
 ## Branch & Commit Guidelines
 
 ### Branch Names
+
 - `develop` - Development branch (auto-deploy)
 - `staging` - Staging branch (manual approval required)
 - `main` - Production branch (multi-stage approval)
@@ -136,7 +152,9 @@ kubectl logs -n tekton-pipelines {pod-name} -c {container}
 - `hotfix/description` - Hotfix branches (deploy to production)
 
 ### Commit Messages
+
 Use conventional commits format:
+
 ```
 feat(ai-services): add version tracking endpoint
 fix(backend): resolve memory leak in cache
@@ -153,12 +171,14 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`
 ## Rollback Procedures
 
 ### Development
+
 ```bash
 # Manual rollback
 kubectl rollout undo deployment/{service-name} -n cerebral-development
 ```
 
 ### Testing
+
 ```bash
 # Automatic rollback on health check failure (configured)
 # Manual rollback
@@ -166,6 +186,7 @@ kubectl rollout undo deployment/{service-name} -n cerebral-staging
 ```
 
 ### Production
+
 ```bash
 # Automatic rollback triggered by:
 # - Health check failures (5 consecutive failures)
@@ -219,6 +240,7 @@ monitoring-services
 ## Support & Questions
 
 For infrastructure questions, see cerebral-deployment repo:
+
 - `CI_CD_FOR_AGENTS.md` - This document (in all repos)
 - `docs/CI_CD_COMPLETE_FRAMEWORK_DEV_TO_PRODUCTION.md` - Complete framework
 - `docs/COMPREHENSIVE_VALIDATION_REPORT_OCT30.md` - System status

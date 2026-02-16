@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+} from 'react-native';
 
 interface AuthFormProps {
   title: string;
@@ -77,8 +84,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       {footerLink && (
         <TouchableOpacity onPress={footerLink.onPress} style={styles.footerLink}>
           <Text style={styles.footerText}>
-            {footerLink.text}{' '}
-            <Text style={styles.linkText}>{footerLink.linkText}</Text>
+            {footerLink.text} <Text style={styles.linkText}>{footerLink.linkText}</Text>
           </Text>
         </TouchableOpacity>
       )}

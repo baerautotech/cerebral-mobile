@@ -19,14 +19,14 @@ YOLO = Autonomous project execution with 99%+ accuracy through comprehensive pre
 
 ## Document Guide
 
-| Document | Purpose | Read Time |
-|----------|---------|-----------|
-| `BMAD_YOLO_MASTER_INDEX.md` | Navigation hub (START HERE) | 20 min |
-| `BMAD_YOLO_STANDARD_TEMPLATE.md` | Universal template | 30 min |
-| `HOW_TO_USE_BMAD_YOLO_TEMPLATE.md` | Step-by-step guide | 20 min |
-| `COMPLETE_YOLO_65H_ALL_PHASES.md` | Real-world example | 45 min |
-| `YOLO_MODE_ENGINEERING_BLUEPRINT.md` | Technical architecture | 30 min |
-| `YOLO_MODE_GO_DECISION.md` | Decision framework + ROI | 20 min |
+| Document                             | Purpose                     | Read Time |
+| ------------------------------------ | --------------------------- | --------- |
+| `BMAD_YOLO_MASTER_INDEX.md`          | Navigation hub (START HERE) | 20 min    |
+| `BMAD_YOLO_STANDARD_TEMPLATE.md`     | Universal template          | 30 min    |
+| `HOW_TO_USE_BMAD_YOLO_TEMPLATE.md`   | Step-by-step guide          | 20 min    |
+| `COMPLETE_YOLO_65H_ALL_PHASES.md`    | Real-world example          | 45 min    |
+| `YOLO_MODE_ENGINEERING_BLUEPRINT.md` | Technical architecture      | 30 min    |
+| `YOLO_MODE_GO_DECISION.md`           | Decision framework + ROI    | 20 min    |
 
 ## How to Use
 

@@ -1,0 +1,32 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+## Error Accumulation Prevention
+
+### **Root Cause Analysis Required**
+When implementing features that generate linting errors:
+- Identify WHY the errors are occurring (configuration, coding patterns, tool conflicts)
+- Fix configuration issues before fixing individual errors
+- Document systemic patterns in team knowledge base
+
+### **Correlation Monitoring**
+- Weekly correlation analysis between TypeScript and ESLint errors
+- Alert on files with both error types growing simultaneously
+- Investigate files with >50 combined errors for architectural issues
+
+### **Configuration Synchronization**
+- Keep TypeScript exclude patterns and ESLint ignore patterns synchronized
+- Use unified configuration management for both tools
+- Test configuration changes against representative file samples
+
+### **Quality Gates**
+- Block commits that add >10 TypeScript errors to any file
+- Require explanation for adding files to exclude lists
+- Mandate correlation analysis for major linting rule changes
+
+### **Team Coordination**
+- Share knowledge of common error patterns and their fixes
+- Document successful mass-fix strategies for future reference
+- Coordinate linting rule changes across team members

@@ -4,1709 +4,1709 @@
  */
 
 export interface paths {
-    "/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Health check
-         * @description Check if the API is running and healthy
-         */
-        get: operations["healthCheck"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/health': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/signup": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * User signup
-         * @description Create a new user account with email and password
-         */
-        post: operations["authSignup"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Health check
+     * @description Check if the API is running and healthy
+     */
+    get: operations['healthCheck'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/signup': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/signin": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * User signin
-         * @description Authenticate user with email and password
-         */
-        post: operations["authSignin"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * User signup
+     * @description Create a new user account with email and password
+     */
+    post: operations['authSignup'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/signin': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/signout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * User signout
-         * @description Sign out the currently authenticated user
-         */
-        post: operations["authSignout"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * User signin
+     * @description Authenticate user with email and password
+     */
+    post: operations['authSignin'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/signout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/user": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get current user
-         * @description Get the currently authenticated user's information
-         */
-        get: operations["getCurrentUser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * User signout
+     * @description Sign out the currently authenticated user
+     */
+    post: operations['authSignout'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/user': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/password-reset/request": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Request password reset
-         * @description Request a password reset email
-         */
-        post: operations["requestPasswordReset"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Get current user
+     * @description Get the currently authenticated user's information
+     */
+    get: operations['getCurrentUser'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/password-reset/request': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/password-reset/confirm": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Confirm password reset
-         * @description Reset password using token from email
-         */
-        post: operations["confirmPasswordReset"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Request password reset
+     * @description Request a password reset email
+     */
+    post: operations['requestPasswordReset'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/password-reset/confirm': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/email/verify/send": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Send verification email
-         * @description Send email verification link to user
-         */
-        post: operations["sendVerificationEmail"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Confirm password reset
+     * @description Reset password using token from email
+     */
+    post: operations['confirmPasswordReset'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/email/verify/send': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/email/verify/confirm": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Confirm email verification
-         * @description Verify email using token from link
-         */
-        post: operations["confirmEmailVerification"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Send verification email
+     * @description Send email verification link to user
+     */
+    post: operations['sendVerificationEmail'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/email/verify/confirm': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/mfa/enroll": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Enroll in MFA
-         * @description Enroll user in TOTP-based multi-factor authentication
-         */
-        post: operations["enrollMFA"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Confirm email verification
+     * @description Verify email using token from link
+     */
+    post: operations['confirmEmailVerification'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/mfa/enroll': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/mfa/verify": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Verify MFA code
-         * @description Verify TOTP code for MFA
-         */
-        post: operations["verifyMFA"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Enroll in MFA
+     * @description Enroll user in TOTP-based multi-factor authentication
+     */
+    post: operations['enrollMFA'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/mfa/verify': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/mfa/disable": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Disable MFA
-         * @description Disable multi-factor authentication for user
-         */
-        post: operations["disableMFA"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Verify MFA code
+     * @description Verify TOTP code for MFA
+     */
+    post: operations['verifyMFA'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/mfa/disable': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/sso/initiate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Initiate SSO
-         * @description Initiate Single Sign-On flow (Keycloak, OIDC, SAML)
-         */
-        post: operations["initiateSSO"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Disable MFA
+     * @description Disable multi-factor authentication for user
+     */
+    post: operations['disableMFA'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/sso/initiate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/sso/callback": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * SSO callback
-         * @description Handle SSO callback from identity provider
-         */
-        post: operations["ssoCallback"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Initiate SSO
+     * @description Initiate Single Sign-On flow (Keycloak, OIDC, SAML)
+     */
+    post: operations['initiateSSO'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/sso/callback': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/permissions/check": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Check permissions
-         * @description Check if user has specific permissions
-         */
-        post: operations["checkPermissions"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * SSO callback
+     * @description Handle SSO callback from identity provider
+     */
+    post: operations['ssoCallback'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/permissions/check': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/webauthn/register/begin": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Begin WebAuthn registration
-         * @description Begin passwordless WebAuthn registration process
-         */
-        post: operations["beginWebAuthnRegistration"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Check permissions
+     * @description Check if user has specific permissions
+     */
+    post: operations['checkPermissions'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/webauthn/register/begin': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/webauthn/register/complete": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Complete WebAuthn registration
-         * @description Complete passwordless WebAuthn registration
-         */
-        post: operations["completeWebAuthnRegistration"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Begin WebAuthn registration
+     * @description Begin passwordless WebAuthn registration process
+     */
+    post: operations['beginWebAuthnRegistration'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/webauthn/register/complete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/webauthn/authenticate/begin": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Begin WebAuthn authentication
-         * @description Begin passwordless WebAuthn authentication
-         */
-        post: operations["beginWebAuthnAuthentication"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Complete WebAuthn registration
+     * @description Complete passwordless WebAuthn registration
+     */
+    post: operations['completeWebAuthnRegistration'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/webauthn/authenticate/begin': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/webauthn/authenticate/complete": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Complete WebAuthn authentication
-         * @description Complete passwordless WebAuthn authentication
-         */
-        post: operations["completeWebAuthnAuthentication"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Begin WebAuthn authentication
+     * @description Begin passwordless WebAuthn authentication
+     */
+    post: operations['beginWebAuthnAuthentication'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/webauthn/authenticate/complete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/notifications/send": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Send notification
-         * @description Send notification via email, push, SMS, or webhook
-         */
-        post: operations["sendNotification"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Complete WebAuthn authentication
+     * @description Complete passwordless WebAuthn authentication
+     */
+    post: operations['completeWebAuthnAuthentication'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/notifications/send': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/notifications": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get notifications
-         * @description Get user's notifications
-         */
-        get: operations["getNotifications"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Send notification
+     * @description Send notification via email, push, SMS, or webhook
+     */
+    post: operations['sendNotification'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/notifications': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/notifications/{id}/read": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /**
-         * Mark notification as read
-         * @description Mark a specific notification as read
-         */
-        put: operations["markNotificationAsRead"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Get notifications
+     * @description Get user's notifications
+     */
+    get: operations['getNotifications'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/notifications/{id}/read': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/notifications/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Delete notification
-         * @description Delete a specific notification
-         */
-        delete: operations["deleteNotification"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    /**
+     * Mark notification as read
+     * @description Mark a specific notification as read
+     */
+    put: operations['markNotificationAsRead'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/notifications/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Delete notification
+     * @description Delete a specific notification
+     */
+    delete: operations['deleteNotification'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        SignupRequest: {
-            /**
-             * Format: email
-             * @description User email address
-             * @example user@example.com
-             */
-            email: string;
-            /**
-             * Format: password
-             * @description User password (minimum 12 characters)
-             * @example StrongPassword123!
-             */
-            password: string;
-            /**
-             * Format: uri
-             * @description URL to redirect after verification
-             * @example https://app.cerebral.com/verify-success
-             */
-            redirect_url?: string;
-            /**
-             * @description Additional user metadata
-             * @example {
-             *       "first_name": "John",
-             *       "last_name": "Doe",
-             *       "organization": "Acme Corp"
-             *     }
-             */
-            metadata?: {
-                [key: string]: unknown;
-            };
-        };
-        SigninRequest: {
-            /**
-             * Format: email
-             * @description User email address
-             * @example user@example.com
-             */
-            email: string;
-            /**
-             * Format: password
-             * @description User password
-             * @example StrongPassword123!
-             */
-            password: string;
-            /**
-             * @description Device fingerprint for trust scoring
-             * @example device_abc123
-             */
-            device_fingerprint?: string;
-            /**
-             * Format: ipv4
-             * @description Client IP address
-             * @example 192.168.1.1
-             */
-            ip_address?: string;
-            /**
-             * @description Client user agent
-             * @example Mozilla/5.0...
-             */
-            user_agent?: string;
-        };
-        SignoutRequest: {
-            /**
-             * @description Session token to invalidate
-             * @example session_token_here
-             */
-            session_token: string;
-        };
-        AuthResponse: {
-            /** @example true */
-            success?: boolean;
-            /**
-             * Format: uuid
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            user_id?: string;
-            /**
-             * Format: uuid
-             * @example 00000000-0000-0000-0000-000000000100
-             */
-            tenant_id?: string;
-            /** @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... */
-            session_token?: string;
-            /** @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... */
-            access_token?: string;
-            /** @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... */
-            refresh_token?: string;
-            /**
-             * @description Token expiration time in seconds
-             * @example 3600
-             */
-            expires_in?: number;
-            /**
-             * @description Whether MFA verification is required
-             * @example false
-             */
-            mfa_required?: boolean;
-            /**
-             * @description Trust score for this authentication
-             * @example 85
-             */
-            trust_score?: number;
-        };
-        UserResponse: {
-            /**
-             * Format: uuid
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            id?: string;
-            /**
-             * Format: email
-             * @example user@example.com
-             */
-            email?: string;
-            /**
-             * Format: uuid
-             * @example 00000000-0000-0000-0000-000000000100
-             */
-            tenant_id?: string;
-            /** @example [
-             *       "user",
-             *       "admin"
-             *     ] */
-            roles?: string[];
-            /** @example [
-             *       "read:tasks",
-             *       "write:tasks",
-             *       "delete:tasks"
-             *     ] */
-            permissions?: string[];
-            /** @example true */
-            mfa_enabled?: boolean;
-            /** @example true */
-            email_verified?: boolean;
-            /** Format: date-time */
-            created_at?: string;
-            /** Format: date-time */
-            last_signin_at?: string;
-            metadata?: {
-                [key: string]: unknown;
-            };
-        };
-        PasswordResetRequest: {
-            /**
-             * Format: email
-             * @example user@example.com
-             */
-            email: string;
-            /**
-             * Format: uri
-             * @example https://app.cerebral.com/reset-password
-             */
-            redirect_url?: string;
-        };
-        PasswordResetConfirm: {
-            /**
-             * @description Password reset token from email
-             * @example reset_token_here
-             */
-            token: string;
-            /**
-             * Format: password
-             * @description New password
-             * @example NewStrongPassword123!
-             */
-            password: string;
-        };
-        SendVerificationRequest: {
-            /**
-             * Format: email
-             * @example user@example.com
-             */
-            email: string;
-            /**
-             * Format: uri
-             * @example https://app.cerebral.com/verify-success
-             */
-            redirect_url?: string;
-        };
-        EmailVerificationConfirm: {
-            /**
-             * @description Email verification token from link
-             * @example verify_token_here
-             */
-            token: string;
-        };
-        MFAEnrollRequest: {
-            /**
-             * @description MFA method (currently only TOTP)
-             * @example TOTP
-             * @enum {string}
-             */
-            method: "TOTP";
-        };
-        MFAEnrollResponse: {
-            /** @example true */
-            success?: boolean;
-            /** @example TOTP */
-            method?: string;
-            /**
-             * @description TOTP secret key
-             * @example JBSWY3DPEHPK3PXP
-             */
-            secret?: string;
-            /**
-             * @description Base64-encoded QR code image
-             * @example data:image/png;base64,iVBORw0KGgo...
-             */
-            qr_code?: string;
-            /** @example [
-             *       "123456",
-             *       "234567",
-             *       "345678"
-             *     ] */
-            backup_codes?: string[];
-        };
-        MFAVerifyRequest: {
-            /**
-             * @description 6-digit TOTP code
-             * @example 123456
-             */
-            code: string;
-        };
-        MFADisableRequest: {
-            /**
-             * Format: password
-             * @description User password for verification
-             * @example StrongPassword123!
-             */
-            password: string;
-        };
-        SSOInitiateRequest: {
-            /**
-             * @description SSO provider type
-             * @example keycloak
-             * @enum {string}
-             */
-            provider: "keycloak" | "oidc_generic" | "saml_generic";
-            /**
-             * Format: uri
-             * @description URL to redirect after authentication
-             * @example https://app.cerebral.com/dashboard
-             */
-            redirect_url?: string;
-        };
-        SSOInitiateResponse: {
-            /** @example true */
-            success?: boolean;
-            /** @example keycloak */
-            provider?: string;
-            /**
-             * Format: uri
-             * @description URL to redirect user for SSO authentication
-             * @example https://keycloak.dev.cerebral.com/auth/...
-             */
-            authorization_url?: string;
-            /**
-             * @description CSRF protection state parameter
-             * @example random_state_string
-             */
-            state?: string;
-        };
-        SSOCallbackRequest: {
-            /**
-             * @example keycloak
-             * @enum {string}
-             */
-            provider: "keycloak" | "oidc_generic" | "saml_generic";
-            /**
-             * @description State parameter for CSRF validation
-             * @example random_state_string
-             */
-            state: string;
-            /**
-             * @description Authorization code from SSO provider
-             * @example auth_code_here
-             */
-            code: string;
-        };
-        PermissionCheckRequest: {
-            /**
-             * @description List of permissions to check
-             * @example [
-             *       "read:tasks",
-             *       "write:tasks"
-             *     ]
-             */
-            permissions: string[];
-            /**
-             * Format: uuid
-             * @description Optional resource ID for resource-level permissions
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            resource_id?: string;
-        };
-        PermissionCheckResponse: {
-            /**
-             * @description Whether user has all requested permissions
-             * @example true
-             */
-            has_permissions?: boolean;
-            /**
-             * @description List of granted permissions
-             * @example [
-             *       "read:tasks",
-             *       "write:tasks"
-             *     ]
-             */
-            granted_permissions?: string[];
-            /**
-             * @description List of denied permissions
-             * @example []
-             */
-            denied_permissions?: string[];
-        };
-        WebAuthnRegisterBeginRequest: {
-            /**
-             * @description User-friendly name for the passkey
-             * @example My MacBook Pro
-             */
-            device_name?: string;
-        };
-        WebAuthnRegisterBeginResponse: {
-            /** @example true */
-            success?: boolean;
-            /** @description WebAuthn registration options */
-            options?: {
-                [key: string]: unknown;
-            };
-        };
-        WebAuthnRegisterCompleteRequest: {
-            /** @description WebAuthn credential response */
-            credential: {
-                [key: string]: unknown;
-            };
-        };
-        WebAuthnAuthBeginRequest: {
-            /**
-             * Format: email
-             * @example user@example.com
-             */
-            email: string;
-        };
-        WebAuthnAuthBeginResponse: {
-            /** @example true */
-            success?: boolean;
-            /** @description WebAuthn authentication options */
-            options?: {
-                [key: string]: unknown;
-            };
-        };
-        WebAuthnAuthCompleteRequest: {
-            /** @description WebAuthn authentication response */
-            credential: {
-                [key: string]: unknown;
-            };
-        };
-        SendNotificationRequest: {
-            /**
-             * Format: uuid
-             * @description User ID to send notification to
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            recipient_id: string;
-            /**
-             * @description Notification channel
-             * @example email
-             * @enum {string}
-             */
-            channel: "email" | "push" | "sms" | "webhook";
-            /**
-             * @description Notification title
-             * @example Task Completed
-             */
-            title: string;
-            /**
-             * @description Notification message
-             * @example Your task 'Deploy backend' has been completed.
-             */
-            message: string;
-            /**
-             * @default normal
-             * @example normal
-             * @enum {string}
-             */
-            priority: "low" | "normal" | "high" | "urgent";
-            /**
-             * @description Additional notification metadata
-             * @example {
-             *       "task_id": "123e4567-e89b-12d3-a456-426614174000",
-             *       "link": "/tasks/123e4567-e89b-12d3-a456-426614174000"
-             *     }
-             */
-            metadata?: {
-                [key: string]: unknown;
-            };
-        };
-        NotificationResponse: {
-            /** @example true */
-            success?: boolean;
-            /**
-             * Format: uuid
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            notification_id?: string;
-            /**
-             * @example sent
-             * @enum {string}
-             */
-            status?: "sent" | "pending" | "failed";
-        };
-        NotificationListResponse: {
-            notifications?: components["schemas"]["Notification"][];
-            /**
-             * @description Total number of notifications
-             * @example 42
-             */
-            total?: number;
-            /** @example 20 */
-            limit?: number;
-            /** @example 0 */
-            offset?: number;
-        };
-        Notification: {
-            /**
-             * Format: uuid
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            id?: string;
-            /**
-             * Format: uuid
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            recipient_id?: string;
-            /**
-             * @example email
-             * @enum {string}
-             */
-            channel?: "email" | "push" | "sms" | "webhook";
-            /** @example Task Completed */
-            title?: string;
-            /** @example Your task has been completed. */
-            message?: string;
-            /**
-             * @example normal
-             * @enum {string}
-             */
-            priority?: "low" | "normal" | "high" | "urgent";
-            /** @example false */
-            read?: boolean;
-            /** Format: date-time */
-            created_at?: string;
-            metadata?: {
-                [key: string]: unknown;
-            };
-        };
-        SuccessResponse: {
-            /** @example true */
-            success?: boolean;
-            /** @example Operation completed successfully */
-            message?: string;
-        };
-        ErrorResponse: {
-            /** @example false */
-            success?: boolean;
-            error?: {
-                /**
-                 * @description Error code
-                 * @example AUTH001
-                 */
-                code?: string;
-                /**
-                 * @description User-friendly error message
-                 * @example Invalid email or password
-                 */
-                message?: string;
-                /**
-                 * @description Error type
-                 * @example AuthenticationError
-                 */
-                type?: string;
-                /**
-                 * @example medium
-                 * @enum {string}
-                 */
-                severity?: "low" | "medium" | "high" | "critical";
-                /**
-                 * @description Whether the operation can be retried
-                 * @example false
-                 */
-                retryable?: boolean;
-                /**
-                 * Format: uuid
-                 * @description Unique error ID for tracking
-                 * @example 550e8400-e29b-41d4-a716-446655440000
-                 */
-                error_id?: string;
-                /** Format: date-time */
-                timestamp?: string;
-                /** @description Technical details (only in development mode) */
-                technical_details?: {
-                    [key: string]: unknown;
-                };
-            };
-        };
+  schemas: {
+    SignupRequest: {
+      /**
+       * Format: email
+       * @description User email address
+       * @example user@example.com
+       */
+      email: string;
+      /**
+       * Format: password
+       * @description User password (minimum 12 characters)
+       * @example StrongPassword123!
+       */
+      password: string;
+      /**
+       * Format: uri
+       * @description URL to redirect after verification
+       * @example https://app.cerebral.com/verify-success
+       */
+      redirect_url?: string;
+      /**
+       * @description Additional user metadata
+       * @example {
+       *       "first_name": "John",
+       *       "last_name": "Doe",
+       *       "organization": "Acme Corp"
+       *     }
+       */
+      metadata?: {
+        [key: string]: unknown;
+      };
     };
-    responses: {
-        /** @description Bad request */
-        BadRequest: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                /** @example {
-                 *       "success": false,
-                 *       "error": {
-                 *         "code": "VAL001",
-                 *         "message": "Invalid request parameters",
-                 *         "type": "ValidationError",
-                 *         "severity": "medium",
-                 *         "retryable": false
-                 *       }
-                 *     } */
-                "application/json": components["schemas"]["ErrorResponse"];
-            };
-        };
-        /** @description Unauthorized */
-        Unauthorized: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                /** @example {
-                 *       "success": false,
-                 *       "error": {
-                 *         "code": "AUTH001",
-                 *         "message": "Authentication required",
-                 *         "type": "AuthenticationError",
-                 *         "severity": "high",
-                 *         "retryable": true
-                 *       }
-                 *     } */
-                "application/json": components["schemas"]["ErrorResponse"];
-            };
-        };
-        /** @description Forbidden */
-        Forbidden: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                /** @example {
-                 *       "success": false,
-                 *       "error": {
-                 *         "code": "AUTH002",
-                 *         "message": "Insufficient permissions",
-                 *         "type": "AuthorizationError",
-                 *         "severity": "high",
-                 *         "retryable": false
-                 *       }
-                 *     } */
-                "application/json": components["schemas"]["ErrorResponse"];
-            };
-        };
-        /** @description Resource not found */
-        NotFound: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                /** @example {
-                 *       "success": false,
-                 *       "error": {
-                 *         "code": "RES001",
-                 *         "message": "Resource not found",
-                 *         "type": "NotFoundError",
-                 *         "severity": "low",
-                 *         "retryable": false
-                 *       }
-                 *     } */
-                "application/json": components["schemas"]["ErrorResponse"];
-            };
-        };
-        /** @description Validation error */
-        ValidationError: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                /** @example {
-                 *       "success": false,
-                 *       "error": {
-                 *         "code": "VAL002",
-                 *         "message": "Password must be at least 12 characters",
-                 *         "type": "ValidationError",
-                 *         "severity": "medium",
-                 *         "retryable": true
-                 *       }
-                 *     } */
-                "application/json": components["schemas"]["ErrorResponse"];
-            };
-        };
-        /** @description Internal server error */
-        InternalServerError: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                /** @example {
-                 *       "success": false,
-                 *       "error": {
-                 *         "code": "SYS001",
-                 *         "message": "An unexpected error occurred",
-                 *         "type": "SystemError",
-                 *         "severity": "critical",
-                 *         "retryable": true
-                 *       }
-                 *     } */
-                "application/json": components["schemas"]["ErrorResponse"];
-            };
-        };
+    SigninRequest: {
+      /**
+       * Format: email
+       * @description User email address
+       * @example user@example.com
+       */
+      email: string;
+      /**
+       * Format: password
+       * @description User password
+       * @example StrongPassword123!
+       */
+      password: string;
+      /**
+       * @description Device fingerprint for trust scoring
+       * @example device_abc123
+       */
+      device_fingerprint?: string;
+      /**
+       * Format: ipv4
+       * @description Client IP address
+       * @example 192.168.1.1
+       */
+      ip_address?: string;
+      /**
+       * @description Client user agent
+       * @example Mozilla/5.0...
+       */
+      user_agent?: string;
     };
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    SignoutRequest: {
+      /**
+       * @description Session token to invalidate
+       * @example session_token_here
+       */
+      session_token: string;
+    };
+    AuthResponse: {
+      /** @example true */
+      success?: boolean;
+      /**
+       * Format: uuid
+       * @example 550e8400-e29b-41d4-a716-446655440000
+       */
+      user_id?: string;
+      /**
+       * Format: uuid
+       * @example 00000000-0000-0000-0000-000000000100
+       */
+      tenant_id?: string;
+      /** @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... */
+      session_token?: string;
+      /** @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... */
+      access_token?: string;
+      /** @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... */
+      refresh_token?: string;
+      /**
+       * @description Token expiration time in seconds
+       * @example 3600
+       */
+      expires_in?: number;
+      /**
+       * @description Whether MFA verification is required
+       * @example false
+       */
+      mfa_required?: boolean;
+      /**
+       * @description Trust score for this authentication
+       * @example 85
+       */
+      trust_score?: number;
+    };
+    UserResponse: {
+      /**
+       * Format: uuid
+       * @example 550e8400-e29b-41d4-a716-446655440000
+       */
+      id?: string;
+      /**
+       * Format: email
+       * @example user@example.com
+       */
+      email?: string;
+      /**
+       * Format: uuid
+       * @example 00000000-0000-0000-0000-000000000100
+       */
+      tenant_id?: string;
+      /** @example [
+       *       "user",
+       *       "admin"
+       *     ] */
+      roles?: string[];
+      /** @example [
+       *       "read:tasks",
+       *       "write:tasks",
+       *       "delete:tasks"
+       *     ] */
+      permissions?: string[];
+      /** @example true */
+      mfa_enabled?: boolean;
+      /** @example true */
+      email_verified?: boolean;
+      /** Format: date-time */
+      created_at?: string;
+      /** Format: date-time */
+      last_signin_at?: string;
+      metadata?: {
+        [key: string]: unknown;
+      };
+    };
+    PasswordResetRequest: {
+      /**
+       * Format: email
+       * @example user@example.com
+       */
+      email: string;
+      /**
+       * Format: uri
+       * @example https://app.cerebral.com/reset-password
+       */
+      redirect_url?: string;
+    };
+    PasswordResetConfirm: {
+      /**
+       * @description Password reset token from email
+       * @example reset_token_here
+       */
+      token: string;
+      /**
+       * Format: password
+       * @description New password
+       * @example NewStrongPassword123!
+       */
+      password: string;
+    };
+    SendVerificationRequest: {
+      /**
+       * Format: email
+       * @example user@example.com
+       */
+      email: string;
+      /**
+       * Format: uri
+       * @example https://app.cerebral.com/verify-success
+       */
+      redirect_url?: string;
+    };
+    EmailVerificationConfirm: {
+      /**
+       * @description Email verification token from link
+       * @example verify_token_here
+       */
+      token: string;
+    };
+    MFAEnrollRequest: {
+      /**
+       * @description MFA method (currently only TOTP)
+       * @example TOTP
+       * @enum {string}
+       */
+      method: 'TOTP';
+    };
+    MFAEnrollResponse: {
+      /** @example true */
+      success?: boolean;
+      /** @example TOTP */
+      method?: string;
+      /**
+       * @description TOTP secret key
+       * @example JBSWY3DPEHPK3PXP
+       */
+      secret?: string;
+      /**
+       * @description Base64-encoded QR code image
+       * @example data:image/png;base64,iVBORw0KGgo...
+       */
+      qr_code?: string;
+      /** @example [
+       *       "123456",
+       *       "234567",
+       *       "345678"
+       *     ] */
+      backup_codes?: string[];
+    };
+    MFAVerifyRequest: {
+      /**
+       * @description 6-digit TOTP code
+       * @example 123456
+       */
+      code: string;
+    };
+    MFADisableRequest: {
+      /**
+       * Format: password
+       * @description User password for verification
+       * @example StrongPassword123!
+       */
+      password: string;
+    };
+    SSOInitiateRequest: {
+      /**
+       * @description SSO provider type
+       * @example keycloak
+       * @enum {string}
+       */
+      provider: 'keycloak' | 'oidc_generic' | 'saml_generic';
+      /**
+       * Format: uri
+       * @description URL to redirect after authentication
+       * @example https://app.cerebral.com/dashboard
+       */
+      redirect_url?: string;
+    };
+    SSOInitiateResponse: {
+      /** @example true */
+      success?: boolean;
+      /** @example keycloak */
+      provider?: string;
+      /**
+       * Format: uri
+       * @description URL to redirect user for SSO authentication
+       * @example https://keycloak.dev.cerebral.com/auth/...
+       */
+      authorization_url?: string;
+      /**
+       * @description CSRF protection state parameter
+       * @example random_state_string
+       */
+      state?: string;
+    };
+    SSOCallbackRequest: {
+      /**
+       * @example keycloak
+       * @enum {string}
+       */
+      provider: 'keycloak' | 'oidc_generic' | 'saml_generic';
+      /**
+       * @description State parameter for CSRF validation
+       * @example random_state_string
+       */
+      state: string;
+      /**
+       * @description Authorization code from SSO provider
+       * @example auth_code_here
+       */
+      code: string;
+    };
+    PermissionCheckRequest: {
+      /**
+       * @description List of permissions to check
+       * @example [
+       *       "read:tasks",
+       *       "write:tasks"
+       *     ]
+       */
+      permissions: string[];
+      /**
+       * Format: uuid
+       * @description Optional resource ID for resource-level permissions
+       * @example 550e8400-e29b-41d4-a716-446655440000
+       */
+      resource_id?: string;
+    };
+    PermissionCheckResponse: {
+      /**
+       * @description Whether user has all requested permissions
+       * @example true
+       */
+      has_permissions?: boolean;
+      /**
+       * @description List of granted permissions
+       * @example [
+       *       "read:tasks",
+       *       "write:tasks"
+       *     ]
+       */
+      granted_permissions?: string[];
+      /**
+       * @description List of denied permissions
+       * @example []
+       */
+      denied_permissions?: string[];
+    };
+    WebAuthnRegisterBeginRequest: {
+      /**
+       * @description User-friendly name for the passkey
+       * @example My MacBook Pro
+       */
+      device_name?: string;
+    };
+    WebAuthnRegisterBeginResponse: {
+      /** @example true */
+      success?: boolean;
+      /** @description WebAuthn registration options */
+      options?: {
+        [key: string]: unknown;
+      };
+    };
+    WebAuthnRegisterCompleteRequest: {
+      /** @description WebAuthn credential response */
+      credential: {
+        [key: string]: unknown;
+      };
+    };
+    WebAuthnAuthBeginRequest: {
+      /**
+       * Format: email
+       * @example user@example.com
+       */
+      email: string;
+    };
+    WebAuthnAuthBeginResponse: {
+      /** @example true */
+      success?: boolean;
+      /** @description WebAuthn authentication options */
+      options?: {
+        [key: string]: unknown;
+      };
+    };
+    WebAuthnAuthCompleteRequest: {
+      /** @description WebAuthn authentication response */
+      credential: {
+        [key: string]: unknown;
+      };
+    };
+    SendNotificationRequest: {
+      /**
+       * Format: uuid
+       * @description User ID to send notification to
+       * @example 550e8400-e29b-41d4-a716-446655440000
+       */
+      recipient_id: string;
+      /**
+       * @description Notification channel
+       * @example email
+       * @enum {string}
+       */
+      channel: 'email' | 'push' | 'sms' | 'webhook';
+      /**
+       * @description Notification title
+       * @example Task Completed
+       */
+      title: string;
+      /**
+       * @description Notification message
+       * @example Your task 'Deploy backend' has been completed.
+       */
+      message: string;
+      /**
+       * @default normal
+       * @example normal
+       * @enum {string}
+       */
+      priority: 'low' | 'normal' | 'high' | 'urgent';
+      /**
+       * @description Additional notification metadata
+       * @example {
+       *       "task_id": "123e4567-e89b-12d3-a456-426614174000",
+       *       "link": "/tasks/123e4567-e89b-12d3-a456-426614174000"
+       *     }
+       */
+      metadata?: {
+        [key: string]: unknown;
+      };
+    };
+    NotificationResponse: {
+      /** @example true */
+      success?: boolean;
+      /**
+       * Format: uuid
+       * @example 550e8400-e29b-41d4-a716-446655440000
+       */
+      notification_id?: string;
+      /**
+       * @example sent
+       * @enum {string}
+       */
+      status?: 'sent' | 'pending' | 'failed';
+    };
+    NotificationListResponse: {
+      notifications?: components['schemas']['Notification'][];
+      /**
+       * @description Total number of notifications
+       * @example 42
+       */
+      total?: number;
+      /** @example 20 */
+      limit?: number;
+      /** @example 0 */
+      offset?: number;
+    };
+    Notification: {
+      /**
+       * Format: uuid
+       * @example 550e8400-e29b-41d4-a716-446655440000
+       */
+      id?: string;
+      /**
+       * Format: uuid
+       * @example 550e8400-e29b-41d4-a716-446655440000
+       */
+      recipient_id?: string;
+      /**
+       * @example email
+       * @enum {string}
+       */
+      channel?: 'email' | 'push' | 'sms' | 'webhook';
+      /** @example Task Completed */
+      title?: string;
+      /** @example Your task has been completed. */
+      message?: string;
+      /**
+       * @example normal
+       * @enum {string}
+       */
+      priority?: 'low' | 'normal' | 'high' | 'urgent';
+      /** @example false */
+      read?: boolean;
+      /** Format: date-time */
+      created_at?: string;
+      metadata?: {
+        [key: string]: unknown;
+      };
+    };
+    SuccessResponse: {
+      /** @example true */
+      success?: boolean;
+      /** @example Operation completed successfully */
+      message?: string;
+    };
+    ErrorResponse: {
+      /** @example false */
+      success?: boolean;
+      error?: {
+        /**
+         * @description Error code
+         * @example AUTH001
+         */
+        code?: string;
+        /**
+         * @description User-friendly error message
+         * @example Invalid email or password
+         */
+        message?: string;
+        /**
+         * @description Error type
+         * @example AuthenticationError
+         */
+        type?: string;
+        /**
+         * @example medium
+         * @enum {string}
+         */
+        severity?: 'low' | 'medium' | 'high' | 'critical';
+        /**
+         * @description Whether the operation can be retried
+         * @example false
+         */
+        retryable?: boolean;
+        /**
+         * Format: uuid
+         * @description Unique error ID for tracking
+         * @example 550e8400-e29b-41d4-a716-446655440000
+         */
+        error_id?: string;
+        /** Format: date-time */
+        timestamp?: string;
+        /** @description Technical details (only in development mode) */
+        technical_details?: {
+          [key: string]: unknown;
+        };
+      };
+    };
+  };
+  responses: {
+    /** @description Bad request */
+    BadRequest: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        /** @example {
+         *       "success": false,
+         *       "error": {
+         *         "code": "VAL001",
+         *         "message": "Invalid request parameters",
+         *         "type": "ValidationError",
+         *         "severity": "medium",
+         *         "retryable": false
+         *       }
+         *     } */
+        'application/json': components['schemas']['ErrorResponse'];
+      };
+    };
+    /** @description Unauthorized */
+    Unauthorized: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        /** @example {
+         *       "success": false,
+         *       "error": {
+         *         "code": "AUTH001",
+         *         "message": "Authentication required",
+         *         "type": "AuthenticationError",
+         *         "severity": "high",
+         *         "retryable": true
+         *       }
+         *     } */
+        'application/json': components['schemas']['ErrorResponse'];
+      };
+    };
+    /** @description Forbidden */
+    Forbidden: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        /** @example {
+         *       "success": false,
+         *       "error": {
+         *         "code": "AUTH002",
+         *         "message": "Insufficient permissions",
+         *         "type": "AuthorizationError",
+         *         "severity": "high",
+         *         "retryable": false
+         *       }
+         *     } */
+        'application/json': components['schemas']['ErrorResponse'];
+      };
+    };
+    /** @description Resource not found */
+    NotFound: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        /** @example {
+         *       "success": false,
+         *       "error": {
+         *         "code": "RES001",
+         *         "message": "Resource not found",
+         *         "type": "NotFoundError",
+         *         "severity": "low",
+         *         "retryable": false
+         *       }
+         *     } */
+        'application/json': components['schemas']['ErrorResponse'];
+      };
+    };
+    /** @description Validation error */
+    ValidationError: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        /** @example {
+         *       "success": false,
+         *       "error": {
+         *         "code": "VAL002",
+         *         "message": "Password must be at least 12 characters",
+         *         "type": "ValidationError",
+         *         "severity": "medium",
+         *         "retryable": true
+         *       }
+         *     } */
+        'application/json': components['schemas']['ErrorResponse'];
+      };
+    };
+    /** @description Internal server error */
+    InternalServerError: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        /** @example {
+         *       "success": false,
+         *       "error": {
+         *         "code": "SYS001",
+         *         "message": "An unexpected error occurred",
+         *         "type": "SystemError",
+         *         "severity": "critical",
+         *         "retryable": true
+         *       }
+         *     } */
+        'application/json': components['schemas']['ErrorResponse'];
+      };
+    };
+  };
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    healthCheck: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description API is healthy */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example healthy */
-                        status?: string;
-                        /** @example 2.0.0 */
-                        version?: string;
-                        /** Format: date-time */
-                        timestamp?: string;
-                    };
-                };
-            };
-            503: components["responses"]["InternalServerError"];
-        };
+  healthCheck: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    authSignup: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description API is healthy */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SignupRequest"];
-            };
+        content: {
+          'application/json': {
+            /** @example healthy */
+            status?: string;
+            /** @example 2.0.0 */
+            version?: string;
+            /** Format: date-time */
+            timestamp?: string;
+          };
         };
-        responses: {
-            /** @description User created successfully */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+      };
+      503: components['responses']['InternalServerError'];
     };
-    authSignin: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SigninRequest"];
-            };
-        };
-        responses: {
-            /** @description User authenticated successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+  };
+  authSignup: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    authSignout: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SignoutRequest"];
-            };
-        };
-        responses: {
-            /** @description User signed out successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SuccessResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            500: components["responses"]["InternalServerError"];
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SignupRequest'];
+      };
     };
-    getCurrentUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description User created successfully */
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description User information retrieved successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            500: components["responses"]["InternalServerError"];
+        content: {
+          'application/json': components['schemas']['AuthResponse'];
         };
+      };
+      400: components['responses']['BadRequest'];
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
     };
-    requestPasswordReset: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PasswordResetRequest"];
-            };
-        };
-        responses: {
-            /** @description Password reset email sent */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SuccessResponse"];
-                };
-            };
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+  };
+  authSignin: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    confirmPasswordReset: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PasswordResetConfirm"];
-            };
-        };
-        responses: {
-            /** @description Password reset successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SuccessResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SigninRequest'];
+      };
     };
-    sendVerificationEmail: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description User authenticated successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SendVerificationRequest"];
-            };
+        content: {
+          'application/json': components['schemas']['AuthResponse'];
         };
-        responses: {
-            /** @description Verification email sent */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SuccessResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+      };
+      401: components['responses']['Unauthorized'];
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
     };
-    confirmEmailVerification: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["EmailVerificationConfirm"];
-            };
-        };
-        responses: {
-            /** @description Email verified successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SuccessResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+  };
+  authSignout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    enrollMFA: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MFAEnrollRequest"];
-            };
-        };
-        responses: {
-            /** @description MFA enrollment initiated */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MFAEnrollResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SignoutRequest'];
+      };
     };
-    verifyMFA: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description User signed out successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MFAVerifyRequest"];
-            };
+        content: {
+          'application/json': components['schemas']['SuccessResponse'];
         };
-        responses: {
-            /** @description MFA verified successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SuccessResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+      };
+      401: components['responses']['Unauthorized'];
+      500: components['responses']['InternalServerError'];
     };
-    disableMFA: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MFADisableRequest"];
-            };
-        };
-        responses: {
-            /** @description MFA disabled successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SuccessResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+  };
+  getCurrentUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    initiateSSO: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description User information retrieved successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SSOInitiateRequest"];
-            };
+        content: {
+          'application/json': components['schemas']['UserResponse'];
         };
-        responses: {
-            /** @description SSO flow initiated */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SSOInitiateResponse"];
-                };
-            };
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+      };
+      401: components['responses']['Unauthorized'];
+      500: components['responses']['InternalServerError'];
     };
-    ssoCallback: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SSOCallbackRequest"];
-            };
-        };
-        responses: {
-            /** @description SSO authentication completed */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthResponse"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+  };
+  requestPasswordReset: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    checkPermissions: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PermissionCheckRequest"];
-            };
-        };
-        responses: {
-            /** @description Permission check result */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PermissionCheckResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PasswordResetRequest'];
+      };
     };
-    beginWebAuthnRegistration: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Password reset email sent */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["WebAuthnRegisterBeginRequest"];
-            };
+        content: {
+          'application/json': components['schemas']['SuccessResponse'];
         };
-        responses: {
-            /** @description WebAuthn registration options */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WebAuthnRegisterBeginResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            500: components["responses"]["InternalServerError"];
-        };
+      };
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
     };
-    completeWebAuthnRegistration: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["WebAuthnRegisterCompleteRequest"];
-            };
-        };
-        responses: {
-            /** @description WebAuthn registration completed */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SuccessResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+  };
+  confirmPasswordReset: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    beginWebAuthnAuthentication: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["WebAuthnAuthBeginRequest"];
-            };
-        };
-        responses: {
-            /** @description WebAuthn authentication options */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WebAuthnAuthBeginResponse"];
-                };
-            };
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PasswordResetConfirm'];
+      };
     };
-    completeWebAuthnAuthentication: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Password reset successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["WebAuthnAuthCompleteRequest"];
-            };
+        content: {
+          'application/json': components['schemas']['SuccessResponse'];
         };
-        responses: {
-            /** @description WebAuthn authentication completed */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+      };
+      400: components['responses']['BadRequest'];
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
     };
-    sendNotification: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SendNotificationRequest"];
-            };
-        };
-        responses: {
-            /** @description Notification sent successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["NotificationResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            422: components["responses"]["ValidationError"];
-            500: components["responses"]["InternalServerError"];
-        };
+  };
+  sendVerificationEmail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    getNotifications: {
-        parameters: {
-            query?: {
-                /** @description Number of notifications to return */
-                limit?: number;
-                /** @description Pagination offset */
-                offset?: number;
-                /** @description Return only unread notifications */
-                unread_only?: boolean;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Notifications retrieved successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["NotificationListResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            500: components["responses"]["InternalServerError"];
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SendVerificationRequest'];
+      };
     };
-    markNotificationAsRead: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Notification ID */
-                id: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Verification email sent */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Notification marked as read */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SuccessResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            404: components["responses"]["NotFound"];
-            500: components["responses"]["InternalServerError"];
+        content: {
+          'application/json': components['schemas']['SuccessResponse'];
         };
+      };
+      401: components['responses']['Unauthorized'];
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
     };
-    deleteNotification: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Notification ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Notification deleted */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SuccessResponse"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            404: components["responses"]["NotFound"];
-            500: components["responses"]["InternalServerError"];
-        };
+  };
+  confirmEmailVerification: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['EmailVerificationConfirm'];
+      };
+    };
+    responses: {
+      /** @description Email verified successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SuccessResponse'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
+    };
+  };
+  enrollMFA: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MFAEnrollRequest'];
+      };
+    };
+    responses: {
+      /** @description MFA enrollment initiated */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MFAEnrollResponse'];
+        };
+      };
+      401: components['responses']['Unauthorized'];
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
+    };
+  };
+  verifyMFA: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MFAVerifyRequest'];
+      };
+    };
+    responses: {
+      /** @description MFA verified successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SuccessResponse'];
+        };
+      };
+      401: components['responses']['Unauthorized'];
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
+    };
+  };
+  disableMFA: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MFADisableRequest'];
+      };
+    };
+    responses: {
+      /** @description MFA disabled successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SuccessResponse'];
+        };
+      };
+      401: components['responses']['Unauthorized'];
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
+    };
+  };
+  initiateSSO: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SSOInitiateRequest'];
+      };
+    };
+    responses: {
+      /** @description SSO flow initiated */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SSOInitiateResponse'];
+        };
+      };
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
+    };
+  };
+  ssoCallback: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SSOCallbackRequest'];
+      };
+    };
+    responses: {
+      /** @description SSO authentication completed */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuthResponse'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
+    };
+  };
+  checkPermissions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PermissionCheckRequest'];
+      };
+    };
+    responses: {
+      /** @description Permission check result */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PermissionCheckResponse'];
+        };
+      };
+      401: components['responses']['Unauthorized'];
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
+    };
+  };
+  beginWebAuthnRegistration: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WebAuthnRegisterBeginRequest'];
+      };
+    };
+    responses: {
+      /** @description WebAuthn registration options */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WebAuthnRegisterBeginResponse'];
+        };
+      };
+      401: components['responses']['Unauthorized'];
+      500: components['responses']['InternalServerError'];
+    };
+  };
+  completeWebAuthnRegistration: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WebAuthnRegisterCompleteRequest'];
+      };
+    };
+    responses: {
+      /** @description WebAuthn registration completed */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SuccessResponse'];
+        };
+      };
+      401: components['responses']['Unauthorized'];
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
+    };
+  };
+  beginWebAuthnAuthentication: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WebAuthnAuthBeginRequest'];
+      };
+    };
+    responses: {
+      /** @description WebAuthn authentication options */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WebAuthnAuthBeginResponse'];
+        };
+      };
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
+    };
+  };
+  completeWebAuthnAuthentication: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WebAuthnAuthCompleteRequest'];
+      };
+    };
+    responses: {
+      /** @description WebAuthn authentication completed */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuthResponse'];
+        };
+      };
+      401: components['responses']['Unauthorized'];
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
+    };
+  };
+  sendNotification: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SendNotificationRequest'];
+      };
+    };
+    responses: {
+      /** @description Notification sent successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['NotificationResponse'];
+        };
+      };
+      401: components['responses']['Unauthorized'];
+      422: components['responses']['ValidationError'];
+      500: components['responses']['InternalServerError'];
+    };
+  };
+  getNotifications: {
+    parameters: {
+      query?: {
+        /** @description Number of notifications to return */
+        limit?: number;
+        /** @description Pagination offset */
+        offset?: number;
+        /** @description Return only unread notifications */
+        unread_only?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Notifications retrieved successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['NotificationListResponse'];
+        };
+      };
+      401: components['responses']['Unauthorized'];
+      500: components['responses']['InternalServerError'];
+    };
+  };
+  markNotificationAsRead: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Notification ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Notification marked as read */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SuccessResponse'];
+        };
+      };
+      401: components['responses']['Unauthorized'];
+      404: components['responses']['NotFound'];
+      500: components['responses']['InternalServerError'];
+    };
+  };
+  deleteNotification: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Notification ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Notification deleted */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SuccessResponse'];
+        };
+      };
+      401: components['responses']['Unauthorized'];
+      404: components['responses']['NotFound'];
+      500: components['responses']['InternalServerError'];
+    };
+  };
 }

@@ -1,0 +1,313 @@
+---
+description: "Master rule hierarchy and conflict resolution - SINGLE SOURCE OF TRUTH for rule precedence across all repositories"
+globs: "**/*"
+alwaysApply: true
+priority: 0
+authority: "constitutional"
+---
+
+# 🎯 MASTER RULE HIERARCHY & CONFLICT RESOLUTION
+
+**Status**: AUTHORITATIVE | **Date**: November 7, 2025 | **Authority**: Constitutional
+**Purpose**: Eliminate rule conflicts and provide clear precedence for ALL agents
+
+---
+
+## 📊 RULE PRIORITY LEVELS (Definitive)
+
+### **PRIORITY 0: CONSTITUTIONAL RULES** (Cannot be overridden)
+
+These rules define the fundamental operating principles. All other rules must align with these.
+
+| Rule | File | Purpose | Non-Negotiable |
+|------|------|---------|-----------------|
+| **Production Standards** | `core/01_PRODUCTION_STANDARDS.mdc` | Enterprise-grade code, multi-compliance (SOC2/HIPAA/GDPR/ISO27001/PCI), revenue platform | YES - No shortcuts |
+| **Master Documentation Standards** | `development/00_MASTER_DOCUMENTATION_STANDARDS.mdc` | File organization, docs/ directory structure, naming convention | YES - Zero root .md files (except README/CLAUDE) |
+| **Enterprise Methodology** | `.trae/rules/enterprise_methodology.md` | SRP, dependency injection, monitoring, circuit breakers, testing | YES - All code must follow |
+| **Mandatory Compliance** | `core/08_ENTERPRISE_COMPLIANCE_STANDARDS.mdc` | SOC2/HIPAA/GDPR/ISO27001/PCI compliance enforcement | YES - Multi-compliance required |
+
+**Load Order**: Load these FIRST before any other rules.
+
+---
+
+### **PRIORITY 1: FOUNDATIONAL RULES** (Only overridden by Constitutional)
+
+These rules implement the Constitutional rules and enforce core architecture.
+
+| Rule | File | Purpose | When to Apply |
+|------|------|---------|----------------|
+| **Brownfield-First Mandatory** | `development/00_BROWNFIELD_FIRST_MANDATORY.mdc` | Phase 0 analysis before ANY planning | EVERY task - no exceptions |
+| **Mandatory Architecture Compliance** | `00_MANDATORY_ARCHITECTURE_COMPLIANCE.mdc` | CAEF integration, memory system, file organization | All implementation work |
+| **VEG Framework Enforcement** | `development/00_VEG_CEREBRAFLOW_CURSOR_INTEGRATION.mdc` | No placeholders, theater code, TODOs | Code generation tasks |
+| **AI Agent Quick Reference** | `00_AI_AGENT_QUICK_REFERENCE.mdc` | Execution protocols, RAG queries, storage patterns | All agent work |
+| **Mandatory RAG Usage** | `core/00_MANDATORY_RAG_USAGE.mdc` | Query RAG before ANY implementation | Before writing code |
+| **Hybrid MCP/Local Protocols** | `development/00_HYBRID_MCP_LOCAL_PROTOCOLS.mdc` | MCP-first with local CLI fallback | MCP tasks and failures |
+
+**Load Order**: Load these SECOND after Constitutional rules.
+
+---
+
+### **PRIORITY 2: OPERATIONAL RULES** (Implement Priority 1)
+
+These rules enforce specific operational patterns and workflows.
+
+| Rule | File | Purpose | Scope |
+|------|------|---------|-------|
+| **Supabase Operations (Authoritative)** | `development/03_SUPABASE_OPERATIONS_AUTHORITATIVE.mdc` | Database operations, RPC patterns, client usage | All Supabase work |
+| **Verification Protocols** | `development/04_VERIFICATION_PROTOCOLS.mdc` | Quality gates, testing requirements, deployment validation | Before any deployment |
+| **Tenant-First Development** | `development/09_MANDATORY_TENANT_FIRST_DEVELOPMENT.mdc` | Multi-tenant isolation, tenant awareness, security boundaries | All services |
+| **Kubernetes Deployment** | `11_KUBERNETES_DEPLOYMENT_MANDATORY.mdc` | K8s manifests, deployment patterns, HA requirements | K8s operations |
+| **BMAD MCP Cloud-Only** | `development/BMAD_MCP_CLOUD_ONLY.mdc` | BMAD access exclusively through MCP, no local file execution | BMAD operations |
+
+**Load Order**: Load these THIRD after Priority 1.
+
+---
+
+### **PRIORITY 3: CONTEXTUAL RULES** (Domain/language-specific)
+
+These rules apply to specific domains, languages, or frameworks.
+
+| Rule | File | Purpose | When |
+|------|------|---------|------|
+| **React TypeScript Patterns** | `react-typescript-patterns.mdc` | React/TS component patterns | React Native Web work |
+| **FastAPI Optimization** | `development/10_FASTAPI_OPTIMIZATION_RULES.mdc` | FastAPI patterns, performance | FastAPI services |
+| **Technology Stack Standards** | `development/08_TECHNOLOGY_STACK_STANDARDS.mdc` | Tech choices, version pins, compatibility | Architecture decisions |
+
+**Load Order**: Load these FOURTH when context is relevant.
+
+---
+
+### **PRIORITY 4: ADVISORY RULES** (Guidance and best practices)
+
+These rules provide guidance, but are less strict than higher priorities.
+
+| Rule | File | Purpose | Type |
+|------|------|---------|------|
+| **AI Context Engineering** | `development/05_AI_CONTEXT_ENGINEERING_ACCURACY.mdc` | Tips for accurate prompting | Best practice |
+| **Tool Usage Protocols** | `development/06_TOOL_USAGE_PROTOCOLS.mdc` | Guidance on tool selection | Reference |
+| **Naming Conventions** | `development/07_NAMING_CONVENTION_ENFORCEMENT.mdc` | Code naming standards (defers to Master Docs for file naming) | Code quality |
+
+**Load Order**: Load these LAST for reference.
+
+---
+
+## ⚔️ CONFLICT RESOLUTION ALGORITHM
+
+When two rules appear to conflict:
+
+### **Step 1: Check Priority Level**
+```
+If Rule_A.priority > Rule_B.priority
+  → Rule_A wins (higher priority takes precedence)
+else
+  → Go to Step 2
+```
+
+### **Step 2: Check Scope Specificity**
+```
+If Rule_A scope more specific than Rule_B
+  → Rule_A wins (specific beats general)
+else
+  → Go to Step 3
+```
+
+### **Step 3: Check Publication Date**
+```
+If Rule_A.date > Rule_B.date  (more recent)
+  → Rule_A wins (newer supersedes older)
+else
+  → Go to Step 4
+```
+
+### **Step 4: Consult Conflict Map**
+```
+Check: CONFLICT_RESOLUTION_MAP (see below)
+If found: → Use mapped resolution
+Else: → Escalate to Priority 0 rules for guidance
+```
+
+### **Step 5: Escalate to Constitutional**
+```
+If no resolution found:
+  → Review against Priority 0 rules
+  → Priority 0 rules always define the tie-breaker
+  → Create GitHub issue if genuinely conflicted
+```
+
+---
+
+## 🗺️ CONFLICT RESOLUTION MAP
+
+Pre-resolved conflicts with documented winners:
+
+### File Organization & Documentation
+
+| Conflict | Rule A | Rule B | Winner | Reason | Date |
+|----------|--------|--------|--------|--------|------|
+| File organization standard | `00_MASTER_DOCUMENTATION_STANDARDS.mdc` | `FILE_ORGANIZATION_STANDARDS.mdc` | Master Docs | P0 vs P2, more recent (11/5/25), consolidates all conflicts | 11/5/25 |
+| Root file placement | `00_MASTER_DOCUMENTATION_STANDARDS.mdc` | `00_MANDATORY_ARCHITECTURE_COMPLIANCE.mdc` | Master Docs | More specific (0/0 allowlist), P0 authority | 11/5/25 |
+| .md file creation | `00_MANDATORY_ARCHITECTURE_COMPLIANCE.mdc` (AutoDoc) | Direct file writes | AutoDoc workflow | Enterprise mandate, P1 priority, audit trail | 11/5/25 |
+| Documentation naming | `00_MASTER_DOCUMENTATION_STANDARDS.mdc` | Old `CEREBRAL_XXX_` scheme | action-subject-scope | Cleaner, hierarchical, universally understandable | 11/5/25 |
+
+### Architecture & Implementation
+
+| Conflict | Rule A | Rule B | Winner | Reason | Date |
+|----------|--------|--------|--------|--------|------|
+| Auth pattern selection | `00_MANDATORY_ARCHITECTURE_COMPLIANCE.mdc` | Individual service rules | Mandatory Arch | P1 priority, constitutional compliance | 11/5/25 |
+| BMAD access method | `development/BMAD_MCP_CLOUD_ONLY.mdc` | Local file access | MCP Cloud Only | P1 enforcement, security/tenant isolation | 11/5/25 |
+| Supabase operations | `development/03_SUPABASE_OPERATIONS_AUTHORITATIVE.mdc` | `02_SUPABASE_MCP_PROTOCOLS.mdc` (deprecated) | 03_Authoritative | P2 authority, explicitly supersedes deprecated | 11/5/25 |
+| VEG compliance | `development/00_VEG_CEREBRAFLOW_CURSOR_INTEGRATION.mdc` | Task shortcuts/theater code | VEG Framework | P1 foundational, constitutional anti-theater principle | 11/5/25 |
+| Multi-tenant isolation | `development/09_MANDATORY_TENANT_FIRST_DEVELOPMENT.mdc` | Per-service implementation | Tenant-First | P2 operational standard, compliance requirement | 11/5/25 |
+
+### Database & Data Access
+
+| Conflict | Rule A | Rule B | Winner | Reason | Date |
+|----------|--------|--------|--------|--------|------|
+| Database client usage | `backend_python/shared/database/supabase/client.py` (implementation) | Manual connections | Shared client | P2 operational, connection pooling, retry logic, timeouts | 11/5/25 |
+| Supabase RPC pattern | `client.rpc("run_sql", {...})` | Other methods | RPC with run_sql | P2 authority, only method that works for DDL | 11/5/25 |
+
+### Code Quality & Standards
+
+| Conflict | Rule A | Rule B | Winner | Reason | Date |
+|----------|--------|--------|--------|--------|------|
+| Error handling | `core/01_PRODUCTION_STANDARDS.mdc` | Minimal error handling | Production Standards | P0 constitutional, enterprise compliance | 11/5/25 |
+| Type hints requirement | `core/01_PRODUCTION_STANDARDS.mdc` | Optional type hints | Production Standards | P0 constitutional, SOC2 compliance audit trails | 11/5/25 |
+| Test coverage minimum | `core/01_PRODUCTION_STANDARDS.mdc` (>85%) | Lower coverage targets | Production Standards | P0 constitutional, compliance requirement | 11/5/25 |
+| noqa usage | VEG Framework (prohibit) | Per-case exceptions (FastAPI Depends) | B008 only | P1 VEG + P2 FastAPI - single exception documented | 11/5/25 |
+
+### Deployment & Infrastructure
+
+| Conflict | Rule A | Rule B | Winner | Reason | Date |
+|----------|--------|--------|--------|--------|------|
+| Deployment method | Tekton CI/CD automation | Manual kubectl/docker | Tekton (commit→push→auto) | P2 operational, Kaniko builds, zero-downtime rolling updates | 11/5/25 |
+| Image tagging | SHA256 digest (immutable) | Semantic versioning tags | SHA256 digest | P2 operational, reproducible deployments, security | 11/5/25 |
+
+---
+
+## 🚨 VIOLATION ENFORCEMENT
+
+### What Happens When Rules Conflict (in order of severity)
+
+**PRIORITY 0 Violation** (Constitutional):
+- ❌ Automatic deployment block
+- ❌ Code review rejection
+- ❌ Pre-commit hook fail
+- 🔴 MUST be fixed before any forward progress
+
+**PRIORITY 1 Violation** (Foundational):
+- ⚠️ Automatic git pre-commit fail
+- ⚠️ Build pipeline warning
+- 🟠 Must be addressed, escalates on next violation
+
+**PRIORITY 2 Violation** (Operational):
+- ℹ️ Code review note
+- ℹ️ Linter warning
+- 🟡 Should be fixed, can be deferred with justification
+
+**PRIORITY 3+ Violation** (Contextual/Advisory):
+- 📝 Linter note
+- 📝 Code review suggestion
+- 🟢 Best practice, improvement recommended
+
+---
+
+## 📖 HOW AGENTS SHOULD USE THIS
+
+### Before Starting Any Work
+
+```bash
+# 1. Check priority of conflicting rules
+# 2. Use this hierarchy document
+# 3. Apply higher-priority rule
+# 4. If still unclear, check CONFLICT_RESOLUTION_MAP
+# 5. If not in map, follow CONFLICT_RESOLUTION_ALGORITHM
+```
+
+### Making Decisions
+
+```
+Question: "Should I do X or Y?"
+
+Answer Steps:
+1. Find the rules that govern X and Y
+2. Check their priority levels
+3. Higher priority wins
+4. If same priority, use conflict map
+5. If not in map, use algorithm
+6. If still unclear, ask: "What does Priority 0 say?"
+   (Priority 0 always has the answer)
+```
+
+### Reporting New Conflicts
+
+```bash
+If you find a conflict not in CONFLICT_RESOLUTION_MAP:
+
+1. Document both rules and their priorities
+2. Note where they conflict (specific section)
+3. Create GitHub issue with label "rules-conflict"
+4. Reference this document
+5. Suggest a resolution based on algorithm
+
+Example:
+"CONFLICT: Rule A (P1) vs Rule B (P2) in [section]
+Algorithm result: Rule A should win (higher priority)
+Propose: Add to conflict map with justification"
+```
+
+---
+
+## 🔄 MAINTENANCE & UPDATES
+
+### When to Update This Hierarchy
+
+- ✅ New rule created → add to appropriate priority level
+- ✅ Rule deprecated → mark as deprecated, maintain entry for history
+- ✅ Priority changes → update level, document justification, new date
+- ✅ New conflict discovered → add to CONFLICT_RESOLUTION_MAP
+- ✅ Algorithm needs refinement → update steps, document why
+
+### Review Cycle
+
+- **Monthly**: Check for new rules not in hierarchy
+- **Quarterly**: Review conflict map for accuracy
+- **Yearly**: Audit all rules against current system state
+
+---
+
+## 📌 RELATED DOCUMENTS
+
+- 📄 `development/00_BROWNFIELD_FIRST_MANDATORY.mdc` - Implements Phase 0 (Priority 1 enforcement)
+- 📄 `core/01_PRODUCTION_STANDARDS.mdc` - Constitutional standards (Priority 0)
+- 📄 `development/00_MASTER_DOCUMENTATION_STANDARDS.mdc` - File organization (Priority 0)
+- 📄 `.trae/rules/enterprise_methodology.md` - Enterprise patterns (Priority 0)
+- 📄 `docs/01-DEPLOYMENT/framework-audit-rules-enforcement-complete.md` - Full framework audit and solution
+
+---
+
+## ✅ VERIFICATION
+
+Verify this hierarchy is working:
+
+```bash
+# Check that conflicts are resolved consistently
+grep -r "should.*do" .cursor/rules/00_MASTER_RULE_HIERARCHY.mdc | wc -l
+# Should reference precedence rules
+
+# Check that Priority 0 is load-first
+head -20 .cursor/rules/00_MASTER_RULE_HIERARCHY.mdc | grep -i "priority 0"
+# Should be prominent
+
+# Verify conflict map is comprehensive
+grep -c "Rule A | Rule B | Winner" .cursor/rules/00_MASTER_RULE_HIERARCHY.mdc
+# Should have 20+ documented resolutions
+```
+
+---
+
+**THIS DOCUMENT IS THE DEFINITIVE SOURCE FOR RULE PRECEDENCE AND CONFLICT RESOLUTION**
+
+**Last Updated**: November 7, 2025
+**Authority**: Constitutional (P0)
+**Status**: Active and Enforced
+**Scope**: All agents, all repositories, all work

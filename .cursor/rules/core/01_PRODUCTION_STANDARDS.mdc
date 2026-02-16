@@ -1,0 +1,96 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# 🚨 PRODUCTION STANDARDS - ENTERPRISE GRADE ONLY
+
+## **THIS IS A PRODUCTION PROJECT - NOT A PROTOTYPE**
+
+The Cerebral Platform is an enterprise-grade, revenue-generating SaaS application serving real Fortune 500 customers.
+
+### **Production Requirements (NON-NEGOTIABLE)**
+- ✅ **Enterprise-grade quality only** - No shortcuts or "good enough" solutions
+- ✅ **Real customer revenue** - This platform generates actual revenue
+- ✅ **MULTI-STANDARD COMPLIANCE MANDATORY** - See `08_ENTERPRISE_COMPLIANCE_STANDARDS.mdc` for complete requirements:
+  - **SOC2 Type II** - Continuous security and availability controls
+  - **HIPAA** - Healthcare data protection and privacy requirements
+  - **ISO27001** - Information security management system
+  - **GDPR** - EU data protection and privacy requirements
+  - **PCI 4.0** - Payment card industry data security standards
+  - **Industry-Specific Standards** - Per vertical requirements
+- ✅ **Zero downtime tolerance** - System reliability is mission-critical
+- ✅ **Performance optimized** - 99.97% bundle size reduction achieved
+
+### **What This Project IS:**
+- ✅ Production-ready enterprise SaaS platform
+- ✅ Revenue-generating business application
+- ✅ Mission-critical customer dependency
+- ✅ **Multi-compliance enterprise system** (SOC2 + HIPAA + ISO27001 + GDPR + PCI 4.0)
+- ✅ Fortune 500 enterprise solution
+
+### **What This Project IS NOT:**
+- ❌ Prototype or proof-of-concept
+- ❌ MVP with "good enough" features
+- ❌ Internal tool or side project
+- ❌ Experimental or beta software
+- ❌ Academic or learning exercise
+
+### **Code Quality Requirements**
+- All code must pass **ALL applicable compliance requirements** (see `08_ENTERPRISE_COMPLIANCE_STANDARDS.mdc`)
+- Comprehensive error handling and logging
+- Performance optimization from the start
+- Security-first development approach
+- Lazy loading for components >20KB
+- Enterprise coding standards compliance
+
+## **MANDATORY CODE QUALITY DIRECTIVES**
+
+### **Conciseness**
+* **DRY Principle:** Abstract common patterns; avoid repetition.
+* **SRP:** Each function/class has one clear purpose.
+* **Simplicity:** Favor clear, simple solutions over complex ones.
+* **Efficient Language Use:** Leverage language features (e.g., list comprehensions) for compact logic.
+
+### **Cleanliness**
+* **Readability First:** Code must be easily understandable by humans.
+* **Consistent Formatting:** Adhere to project style guide (indentation, spacing, line length).
+* **Meaningful Naming:** Use descriptive, language-convention-following names (e.g., `camelCase`, `snake_case`). Avoid ambiguous abbreviations.
+* **Robust Error Handling:** Implement explicit error handling with clear, specific messages.
+* **Modularity:** Break down tasks into small, logical functions/classes. Group related functionality.
+* **No Dead Code:** Remove unused or commented-out code.
+* **Handle Edge Cases:** Address boundary conditions for robustness.
+* **Security:** (If applicable) Validate inputs, sanitize, avoid hardcoded secrets.
+* **Performance:** Optimize critical paths only after ensuring clarity.
+
+### **Documentation Directives**
+* **Self-Documenting Code:** Prioritize clear code that minimizes need for excessive comments.
+* **Explain "Why," Not "What":**
+    * **Inline Comments:** Explain non-obvious logic, design decisions, complex algorithms.
+    * **Function/Method Docs:**
+        * Purpose, parameters (type, description), return value (type, description).
+        * Exceptions raised, pre/post-conditions.
+    * **Class/Module Docs:** Overall purpose, key components, interactions.
+* **API Docs:** (If applicable) Describe endpoints, methods, URLs, authentication, request/response structures.
+* **Consistency:** Adhere to specified documentation format (e.g., JSDoc, Python Docstrings).
+* **Maintain Freshness:** Update documentation with significant code changes.
+* **Examples:** Include simple code examples for complex functionalities.
+
+### **AI Process Directives**
+* **Role:** Act as an **experienced software engineer** valuing maintainability and collaboration.
+* **Contextual Awareness:** Use existing codebase, project standards, and provided guidance files.
+* **Refine Iteratively:** Incorporate specific feedback to improve output.
+* **Clarify:** Ask questions if the task is ambiguous before generating code.
+* **Adherence:** Strictly follow all specified constraints (language, libraries, targets).
+* **Testability:** Generate code that is easy to test.
+* **Plan First:** For complex tasks, outline a plan or pseudo-code before implementation.
+
+### **Performance Targets (MAINTAIN THESE)**
+- **Bundle Size**: 0.7KB main bundle (99.97% reduction from 2.2MB)
+- **CSS Bundle**: 129KB (68% reduction)
+- **Build Success**: 100% (3202 modules transformed)
+- **Load Time**: Instant (99.97% improvement)
+
+---
+
+**Every feature you build directly impacts real customers and real revenue. Build accordingly with full compliance requirements.**

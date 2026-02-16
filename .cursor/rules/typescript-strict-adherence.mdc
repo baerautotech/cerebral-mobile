@@ -1,0 +1,292 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 🚨 MANDATORY TYPESCRIPT STRICTNESS RULES
+
+**CRITICAL: You MUST always prioritize strict TypeScript adherence in ALL code.**
+
+## **Core Principles (NON-NEGOTIABLE)**
+
+### **1. No Loose Typing**
+- **❌ BANNED**: `any`, `unknown` types unless explicitly justified with detailed comment
+- **✅ REQUIRED**: Find the correct, specific type for ALL variables, parameters, returns
+- **Exception Protocol**: If `any` is temporarily necessary:
+  ```typescript
+  // @ts-ignore - TEMPORARY: External library xyz lacks proper types
+  // TODO: Create proper type definition or find typed alternative
+  const result: any = externalLibraryCall();
+  ```
+
+### **2. Explicit Type Annotations (MANDATORY)**
+- **Function Parameters**: Always explicitly typed
+  ```typescript
+  // ✅ CORRECT
+  function processUser(user: User, options: ProcessOptions): UserResult {
+    return { processed: true, user };
+  }
+
+  // ❌ FORBIDDEN
+  function processUser(user, options) {
+    return { processed: true, user };
+  }
+  ```
+
+- **Function Return Types**: Required except React components returning JSX
+  ```typescript
+  // ✅ CORRECT
+  function calculateTotal(items: Item[]): number {
+    return items.reduce((sum, item) => sum + item.price, 0);
+  }
+
+  // ✅ CORRECT (React component - inference OK)
+  function UserCard({ user }: { user: User }) {
+    return <div>{user.name}</div>;
+  }
+  ```
+
+- **React Hooks**: Always explicitly typed
+  ```typescript
+  // ✅ CORRECT
+  const [user, setUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
+  const divRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // ❌ FORBIDDEN
+  const [user, setUser] = useState(null);
+  const [users, setUsers] = useState([]);
+  const divRef = useRef(null);
+  ```
+
+- **Variables with Ambiguous Inference**
+  ```typescript
+  // ✅ CORRECT
+  const data: UserData[] = [];
+  const config: ApiConfig = { timeout: 5000, retries: 3 };
+
+  // ❌ FORBIDDEN (too loose)
+  const data = [];
+  const config = { timeout: 5000, retries: 3 };
+  ```
+
+### **3. Strict Null Safety (MANDATORY)**
+- **Optional Chaining**: Always use for potentially null/undefined values
+  ```typescript
+  // ✅ CORRECT
+  const email = user?.profile?.email;
+  const result = api.getData()?.response?.data;
+
+  // ❌ FORBIDDEN
+  const email = user.profile.email; // Could crash
+  ```
+
+- **Nullish Coalescing**: Use instead of || for null/undefined checks
+  ```typescript
+  // ✅ CORRECT
+  const name = user.name ?? 'Anonymous';
+  const count = data.count ?? 0;
+
+  // ❌ AVOID (can cause issues with 0, false, '')
+  const name = user.name || 'Anonymous';
+  ```
+
+- **Type Guards**: Required for runtime type checking
+  ```typescript
+  // ✅ CORRECT
+  function isUser(obj: unknown): obj is User {
+    return typeof obj === 'object' && obj !== null && 'id' in obj;
+  }
+
+  if (isUser(data)) {
+    // TypeScript knows data is User here
+    console.log(data.id);
+  }
+  ```
+
+### **4. Immutability Patterns (REQUIRED)**
+```typescript
+// ✅ CORRECT - Immutable operations
+const newArray = [...existingArray, newItem];
+const updatedUser = { ...user, name: 'New Name' };
+const filteredItems = items.filter(item => item.active);
+
+// ❌ FORBIDDEN - Mutations
+existingArray.push(newItem);
+user.name = 'New Name';
+```
+
+### **5. Type Definition Standards**
+
+#### **Interfaces vs Types**
+```typescript
+// ✅ Use interface for extensible object shapes
+interface User {
+  id: string;
+  name: string;
+}
+
+interface AdminUser extends User {
+  permissions: string[];
+}
+
+// ✅ Use type for unions, intersections, primitives
+type Status = 'pending' | 'approved' | 'rejected';
+type UserWithStatus = User & { status: Status };
+type UserId = string;
+```
+
+#### **Enum Alternatives (PREFERRED)**
+```typescript
+// ✅ PREFERRED - Union types
+type Theme = 'light' | 'dark' | 'auto';
+
+// ✅ PREFERRED - Const objects
+const API_ENDPOINTS = {
+  USERS: '/api/users',
+  POSTS: '/api/posts'
+} as const;
+
+type ApiEndpoint = typeof API_ENDPOINTS[keyof typeof API_ENDPOINTS];
+
+// ❌ AVOID - Traditional enums (except for numeric enums with specific needs)
+enum Theme {
+  Light = 'light',
+  Dark = 'dark'
+}
+```
+
+#### **Discriminated Unions**
+```typescript
+// ✅ CORRECT - Discriminated union with proper narrowing
+type ApiResponse =
+  | { success: true; data: User[] }
+  | { success: false; error: string };
+
+function handleResponse(response: ApiResponse): void {
+  if (response.success) {
+    // TypeScript knows response.data exists
+    console.log(response.data);
+  } else {
+    // TypeScript knows response.error exists
+    console.error(response.error);
+  }
+}
+```
+
+### **6. Callback Function Typing (MANDATORY)**
+```typescript
+// ✅ CORRECT - Explicit callback types
+interface Props {
+  onUserSelect: (user: User) => void;
+  onError: (error: Error) => Promise<void>;
+  validateInput: (input: string) => boolean;
+}
+
+// ✅ CORRECT - Event handlers
+const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
+  console.log('Clicked');
+};
+
+const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  event.preventDefault();
+  await submitForm();
+};
+```
+
+## **🚫 ABSOLUTELY PROHIBITED PATTERNS**
+
+### **1. Loose Typing Violations**
+```typescript
+// ❌ NEVER DO THIS
+function processData(data: any): any {
+  return data.whatever.something;
+}
+
+// ❌ NEVER DO THIS
+const user = data as any;
+
+// ❌ NEVER DO THIS
+// @ts-ignore
+const result = user.undefinedProperty;
+```
+
+### **2. Implicit Any Parameters**
+```typescript
+// ❌ FORBIDDEN
+function handleUser(user) { // Implicit any
+  return user.name;
+}
+
+// ❌ FORBIDDEN
+const callback = (data) => { // Implicit any
+  console.log(data);
+};
+```
+
+### **3. Unsafe Property Access**
+```typescript
+// ❌ FORBIDDEN (potential runtime errors)
+const email = user.profile.email;
+const result = response.data.items[0].name;
+
+// ✅ CORRECT
+const email = user?.profile?.email;
+const result = response?.data?.items?.[0]?.name;
+```
+
+## **🔧 ERROR RESOLUTION PROTOCOL**
+
+### **When TypeScript Errors Occur:**
+
+1. **FIRST**: Attempt to fix with proper typing
+2. **ANALYZE**: Understand what TypeScript is protecting against
+3. **IMPLEMENT**: Add necessary type guards, assertions, or definitions
+4. **DOCUMENT**: If temporary workaround needed, document thoroughly
+5. **VERIFY**: Ensure code compiles without TypeScript errors
+
+### **Error Resolution Examples:**
+
+```typescript
+// ❌ TypeScript Error: Property might not exist
+const name = user.name;
+
+// ✅ SOLUTION 1: Optional chaining
+const name = user?.name;
+
+// ✅ SOLUTION 2: Type guard
+if (user && 'name' in user) {
+  const name = user.name;
+}
+
+// ✅ SOLUTION 3: Default value
+const name = user?.name ?? 'Unknown';
+```
+
+## **🎯 COMPLETION CRITERIA**
+
+**A task is NOT complete until:**
+- ✅ Zero TypeScript compilation errors
+- ✅ All types are explicit and specific
+- ✅ No `any` types without detailed justification
+- ✅ Proper null safety implemented
+- ✅ Immutable patterns used consistently
+
+## **📊 CODE REVIEW CHECKLIST**
+
+Before submitting ANY code, verify:
+- [ ] All function parameters have explicit types
+- [ ] All function return types are declared
+- [ ] React hooks have proper type annotations
+- [ ] Optional chaining used for nullable properties
+- [ ] Type guards implemented for runtime checks
+- [ ] No mutations of props or state
+- [ ] Union types used instead of enums where appropriate
+- [ ] Interfaces used for extensible objects
+- [ ] Types used for unions and intersections
+- [ ] All callbacks have proper type signatures
+
+---
+
+**REMEMBER: TypeScript errors are not obstacles—they're protective guardrails preventing runtime failures. Embrace strict typing as a development superpower.**

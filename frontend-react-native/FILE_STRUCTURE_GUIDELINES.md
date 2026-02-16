@@ -104,6 +104,7 @@ frontend-react-native/
 ## 🚫 **Forbidden Patterns**
 
 ### **❌ NO Flat Structure**:
+
 ```
 src/
   ├── LoginScreen.tsx          ❌
@@ -113,6 +114,7 @@ src/
 ```
 
 ### **❌ NO Mixed Concerns**:
+
 ```
 src/components/
   ├── LoginForm.tsx            ❌ (Should be in screens/Auth/)
@@ -121,6 +123,7 @@ src/components/
 ```
 
 ### **❌ NO Deep Nesting** (Max 3 levels):
+
 ```
 src/screens/Dashboard/components/widgets/charts/types.ts  ❌ TOO DEEP
 src/screens/Dashboard/components/ChartWidget.tsx          ✅ GOOD
@@ -131,6 +134,7 @@ src/screens/Dashboard/components/ChartWidget.tsx          ✅ GOOD
 ## ✅ **Naming Conventions**
 
 ### **Files**:
+
 ```typescript
 // Components: PascalCase.tsx
 LoginScreen.tsx           ✅
@@ -155,6 +159,7 @@ test-login.tsx            ❌
 ```
 
 ### **Exports**:
+
 ```typescript
 // Named exports preferred
 export const LoginScreen = () => {}      ✅
@@ -187,6 +192,7 @@ export * from './LoginScreen';                   ❌ (too implicit)
 ## 🎨 **Component Patterns**
 
 ### **1. Component File** (LoginScreen.tsx):
+
 ```typescript
 /**
  * LoginScreen - User authentication interface
@@ -209,6 +215,7 @@ const styles = StyleSheet.create({
 ```
 
 ### **2. Types File** (types.ts):
+
 ```typescript
 export interface LoginScreenProps {
   onLoginSuccess: () => void;
@@ -222,6 +229,7 @@ export interface LoginFormData {
 ```
 
 ### **3. Index File** (index.ts):
+
 ```typescript
 export { LoginScreen } from './LoginScreen';
 export type { LoginScreenProps, LoginFormData } from './types';
@@ -232,6 +240,7 @@ export type { LoginScreenProps, LoginFormData } from './types';
 ## 🔐 **Security Standards**
 
 ### **Required**:
+
 ```typescript
 // ✅ NO hardcoded secrets
 const API_KEY = process.env.REACT_APP_API_KEY;  ✅
@@ -254,6 +263,7 @@ npm audit --audit-level=high                    (must pass)
 ## 📊 **Quality Metrics**
 
 ### **Required Thresholds**:
+
 ```json
 {
   "bundleSize": {
@@ -270,6 +280,7 @@ npm audit --audit-level=high                    (must pass)
 ```
 
 ### **CI/CD Gates**:
+
 ```bash
 # All must pass for merge:
 ✅ npm run lint      (0 errors, <10 warnings)
@@ -319,6 +330,7 @@ npm audit --audit-level=high                    (must pass)
 ## 🚀 **Implementation Checklist**
 
 ### **Immediate** (Today):
+
 - [x] Create enterprise .eslintrc.js
 - [x] Create strict tsconfig.json
 - [x] Update package.json with scripts
@@ -329,6 +341,7 @@ npm audit --audit-level=high                    (must pass)
 - [ ] Fix any issues found
 
 ### **Ongoing**:
+
 - [ ] Enforce in code reviews
 - [ ] Monitor quality metrics
 - [ ] Update rules as needed
@@ -340,6 +353,7 @@ npm audit --audit-level=high                    (must pass)
 ## 📝 **Developer Workflow**
 
 ### **Before Starting Work**:
+
 ```bash
 git checkout -b feature/new-feature
 npm install  # Get latest dependencies
@@ -347,6 +361,7 @@ npm run quality  # Check baseline
 ```
 
 ### **During Development**:
+
 ```bash
 # Auto-fix on save (VS Code/Cursor)
 # Or run manually:
@@ -354,6 +369,7 @@ npm run quality:fix
 ```
 
 ### **Before Commit**:
+
 ```bash
 git add .
 git commit -m "feat: add feature"
@@ -364,6 +380,7 @@ git commit -m "feat: add feature"
 ```
 
 ### **Before Push**:
+
 ```bash
 git push
 # Husky runs:

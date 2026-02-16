@@ -30,8 +30,8 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "jest",
-    "lint": "eslint src --ext .ts,.tsx",
-    "format": "prettier --write src"
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "react": "^18.3.0",

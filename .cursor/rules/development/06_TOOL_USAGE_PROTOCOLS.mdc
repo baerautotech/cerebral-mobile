@@ -1,0 +1,183 @@
+---
+description: Tool usage protocols (agent-select). Use when guidance on tool ordering is needed.
+globs:
+alwaysApply: false
+---
+# 🛠️ TOOL USAGE PROTOCOLS
+
+## 🚨 MANDATORY TOOL SELECTION HIERARCHY
+
+### **TIER 1: REQUIRED TOOLS (Use First)**
+
+#### **🧠 AutoDoc RAG System (PRIMARY)**
+```bash
+# ALWAYS USE FIRST for any code/documentation search
+tsx .cerebral/rag/rag-enhanced-query.ts search "your query"
+tsx .cerebral/rag/rag-enhanced-query.ts status
+```
+
+**Use for:**
+- Finding existing implementations
+- Understanding architectural patterns
+- Locating specific code examples
+- Documentation research
+- Component discovery
+- Service pattern analysis
+
+#### **📁 File Operations (When Specific Files Known)**
+```bash
+read_file           # When you know exact file path from RAG results
+edit_file           # For making changes to known files
+search_replace      # For precise edits in large files
+```
+
+#### **🏗️ Supabase MCP Tools (Database Operations)**
+```bash
+mcp_supabase_execute_sql      # Database queries
+mcp_supabase_apply_migration  # Schema changes
+mcp_supabase_list_tables      # Schema discovery
+```
+
+### **TIER 2: CONDITIONAL TOOLS (Use Only When Needed)**
+
+#### **📂 Directory Exploration (Discovery Only)**
+```bash
+list_dir           # Only for initial project exploration
+file_search        # Only when RAG results don't provide file paths
+```
+
+#### **⚡ Terminal Commands (Specific Operations)**
+```bash
+run_terminal_cmd   # For npm commands, builds, tests
+                  # NOT for code searching
+```
+
+### **TIER 3: FORBIDDEN TOOLS (NEVER USE)**
+
+#### **🚫 ABSOLUTELY PROHIBITED**
+```bash
+grep_search        # ❌ NEVER - Use RAG instead
+git commands       # ❌ NEVER - Use RAG for code discovery
+find commands      # ❌ NEVER - Use RAG for file discovery
+ripgrep/rg         # ❌ NEVER - Use RAG for pattern search
+```
+
+## 🔄 CORRECT WORKFLOW PATTERN
+
+### **✅ RAG-First Pattern (REQUIRED)**
+```
+1. 🧠 RAG SEARCH: tsx .cerebral/rag/rag-enhanced-query.ts search "topic"
+2. 📋 ANALYZE: Review RAG results for patterns and file locations
+3. 📁 READ FILES: Use read_file for specific files found in RAG
+4. 💻 IMPLEMENT: Make changes using edit_file/search_replace
+5. ✅ VERIFY: Cross-reference with RAG findings
+```
+
+### **❌ Anti-Pattern (FORBIDDEN)**
+```
+1. 🚫 grep_search "pattern"     # Wrong - use RAG
+2. 🚫 find . -name "*.ts"       # Wrong - use RAG
+3. 🚫 git grep "search"         # Wrong - use RAG
+4. 🚫 Manual file browsing      # Wrong - use RAG
+```
+
+## 📊 TOOL SELECTION DECISION TREE
+
+```
+Need to find code/docs?
+├── YES → Use RAG: tsx .cerebral/rag/rag-enhanced-query.ts search "query"
+└── NO → Continue to next question
+
+Know exact file path?
+├── YES → Use read_file
+└── NO → Use RAG first to find file path
+
+Need to modify code?
+├── Small change → Use search_replace
+├── Large change → Use edit_file
+└── Database change → Use mcp_supabase_*
+
+Need to run commands?
+├── Build/test → Use run_terminal_cmd
+├── Database → Use mcp_supabase_*
+└── Search → Use RAG (not terminal commands)
+```
+
+## 🎯 SPECIFIC USE CASES
+
+### **Authentication Implementation**
+```bash
+# ✅ CORRECT
+tsx .cerebral/rag/rag-enhanced-query.ts search "OAuth authentication implementation"
+tsx .cerebral/rag/rag-enhanced-query.ts search "auth service patterns"
+
+# ❌ WRONG
+grep_search "auth"
+find . -name "*auth*"
+```
+
+### **Database Schema Research**
+```bash
+# ✅ CORRECT
+tsx .cerebral/rag/rag-enhanced-query.ts search "database schema organizations"
+mcp_supabase_list_tables
+
+# ❌ WRONG
+grep_search "CREATE TABLE"
+find . -name "*.sql"
+```
+
+### **Component Architecture**
+```bash
+# ✅ CORRECT
+tsx .cerebral/rag/rag-enhanced-query.ts search "react component patterns"
+tsx .cerebral/rag/rag-enhanced-query.ts search "lazy loading implementation"
+
+# ❌ WRONG
+grep_search "component"
+find . -name "*Component*"
+```
+
+## 🧠 RAG SYSTEM ADVANTAGES
+
+### **Why RAG Beats Traditional Search:**
+- **🎯 Semantic Understanding**: Understands intent, not just keywords
+- **📊 Comprehensive Coverage**: 4,359 docs + 1,012 code chunks
+- **⚡ Pre-processed**: Instant results vs slow grep operations
+- **🔄 Always Current**: Auto-syncs with latest changes
+- **🧩 Context Aware**: Returns relevant patterns and examples
+- **🚀 AI-Powered**: OpenAI embeddings for intelligent matching
+
+### **RAG vs Traditional Tools:**
+```
+Traditional: grep_search "authentication"
+→ Returns raw text matches, no context
+
+RAG: tsx .cerebral/rag/rag-enhanced-query.ts search "authentication"
+→ Returns:
+  - Relevant auth implementations
+  - Architecture documentation
+  - Security patterns
+  - Integration examples
+  - Best practices
+```
+
+## 🚨 ENFORCEMENT
+
+### **Required Evidence:**
+Every code suggestion must include:
+1. **RAG Search Command Used**: `tsx .cerebral/rag/rag-enhanced-query.ts search "topic"`
+2. **RAG Results Summary**: Key findings from search
+3. **Pattern Justification**: How implementation follows RAG findings
+
+### **Violations:**
+- Using `grep_search` instead of RAG → Immediate correction required
+- Using `find` for code discovery → Must use RAG instead
+- Manual file browsing → Must query RAG first
+- Git commands for search → Must use RAG system
+
+---
+
+**The AutoDoc RAG system is your primary tool for code discovery and understanding. All other tools are secondary and support the RAG-driven development workflow.**
+
+*Priority: CRITICAL - Tool selection affects development efficiency and code quality*

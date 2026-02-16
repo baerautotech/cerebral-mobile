@@ -1,0 +1,159 @@
+# 🚨 MANDATORY: Architecture Compliance Enforcement
+
+**ZERO TOLERANCE for architecture violations**
+
+## **🔒 FORBIDDEN ARCHITECTURES**
+
+### **❌ CAEF Memory System Violations**
+- **NEVER** create separate databases for CAEF (caef_state.db)
+- **NEVER** implement separate learning modules in CAEF
+- **ALWAYS** use unified cerebral memory system
+- **MANDATORY**: `from shared.project_memory import get_project_memory`
+
+### **❌ File System Standards Violations**
+- **ALL** documentation MUST be in `docs/` directory
+- **ALL** documentation MUST follow `CEREBRAL_XXX_[CATEGORY]_[TOPIC].md` naming
+- **FORBIDDEN** locations for .md files:
+  - Root directory (except README.md)
+  - `backend-python/` (except specific exceptions)
+  - `.cursor/` (except rules)
+  - `.trae/`, `.windsurf/`
+  - Any directory outside `docs/`
+
+### **❌ Direct Documentation Creation Violations**
+- **NEVER** create .md files directly with `open()`, `write_text()`, etc.
+- **ALWAYS** use enterprise AutoDoc workflow:
+  ```python
+  from services.enhanced_autodoc_integration_service import EnhancedAutoDocIntegrationService
+
+  # ✅ CORRECT
+  await autodoc_service.create_document(AutoDocCreationRequest(...))
+
+  # ❌ FORBIDDEN
+  with open("file.md", "w") as f:
+      f.write(content)
+  ```
+
+## **✅ REQUIRED ARCHITECTURES**
+
+### **🧠 Unified Memory System**
+```python
+# ✅ CORRECT: CAEF integration
+class CAEFOrchestrator:
+    def _init_cerebral_memory_integration(self):
+        from shared.project_memory import get_project_memory
+        self.cerebral_memory = get_project_memory()
+        # NO separate databases!
+```
+
+### **📋 Enterprise Documentation Workflow**
+```python
+# ✅ CORRECT: Documentation creation
+request = AutoDocCreationRequest(
+    title="Document Title",
+    content=content,
+    file_path="docs/CEREBRAL_XXX_CATEGORY_TOPIC.md",
+    tenant_identifier="00000000-0000-0000-0000-000000000100"
+)
+doc_id = await autodoc_service.create_document(request)
+```
+
+### **🗂️ File System Standards**
+```
+✅ CORRECT file locations:
+docs/
+├── CEREBRAL_001_CORE_MASTER_INDEX.md
+├── CEREBRAL_XXX_[CATEGORY]_[TOPIC].md
+└── [subdirectories for organization]
+
+❌ FORBIDDEN locations:
+- Any .md files outside docs/ (except README.md, .cursor/rules/, specific exceptions)
+- Random .md files in backend-python/, root, etc.
+```
+
+## **🔧 ENFORCEMENT MECHANISMS**
+
+### **Pre-Commit Validation**
+```python
+# Automatically validates architecture compliance
+# Rejects commits with violations
+# Forces proper file placement and naming
+```
+
+### **Enterprise Services Integration**
+```python
+# All documentation creation must use:
+- EnhancedAutoDocIntegrationService
+- UnifiedRealtimeSyncService
+- HybridTenantService
+# NO direct file system operations
+```
+
+### **Build-Time Validation**
+```python
+# CI/CD pipeline enforces:
+- File system standards
+- CAEF memory integration
+- Documentation workflow compliance
+```
+
+## **🚨 VIOLATION CONSEQUENCES**
+
+### **Automatic Rejection**
+- **Pre-commit hooks** block non-compliant commits
+- **Build pipeline** fails on architecture violations
+- **Code review** automatically rejects violating PRs
+
+### **Mandatory Fixes**
+- All violations MUST be fixed before deployment
+- Use `SystemArchitectureValidator` to discover and fix issues
+- Enterprise workflow enforcement is mandatory
+
+### **Zero Tolerance Policy**
+- NO exceptions for "quick fixes" or "temporary" violations
+- ALL code must follow enterprise architecture standards
+- Compliance is required for production deployment
+
+## **🛠️ COMPLIANCE TOOLS**
+
+### **Architecture Validator**
+```bash
+# Run comprehensive architecture validation
+cd backend-python
+python FIX_SYSTEM_ARCHITECTURE_VIOLATIONS.py
+```
+
+### **File System Standards Checker**
+```bash
+# Check for file placement violations
+find . -name "*.md" -not -path "./docs/*" -not -name "README.md" -not -path "./.cursor/rules/*"
+```
+
+### **CAEF Memory Integration Validator**
+```bash
+# Check for CAEF memory violations
+grep -r "caef_state.db" .cerebraflow/framework/
+grep -r "self.learning_modules" .cerebraflow/framework/
+```
+
+## **📋 COMPLIANCE CHECKLIST**
+
+### **Before Any Development**
+- [ ] Verify CAEF uses cerebral memory system
+- [ ] Check all .md files are in docs/ with CEREBRAL naming
+- [ ] Ensure enterprise AutoDoc workflow is used for documentation
+
+### **Before Commit**
+- [ ] Run architecture validator
+- [ ] Verify no file system violations
+- [ ] Check CAEF memory integration compliance
+- [ ] Validate documentation workflow usage
+
+### **Before Deploy**
+- [ ] Comprehensive architecture compliance validation
+- [ ] All violations fixed and verified
+- [ ] Enterprise standards fully implemented
+
+---
+
+**This rule is MANDATORY and cannot be overridden. Architecture compliance is required for enterprise production deployment.**

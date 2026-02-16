@@ -124,9 +124,12 @@ describe('Task CRUD Integration', () => {
 
       // Verify PUT called
       await waitFor(() => {
-        expect(ApiClient.put).toHaveBeenCalledWith('/v1/tasks/1', expect.objectContaining({
-          title: 'Updated Task',
-        }));
+        expect(ApiClient.put).toHaveBeenCalledWith(
+          '/v1/tasks/1',
+          expect.objectContaining({
+            title: 'Updated Task',
+          })
+        );
       });
 
       // Verify callback
@@ -157,11 +160,7 @@ describe('Task CRUD Integration', () => {
       const mockOnClose = jest.fn();
 
       const { getByText } = render(
-        <TaskDetailScreen
-          taskId="1"
-          onTaskDeleted={mockOnTaskDeleted}
-          onClose={mockOnClose}
-        />
+        <TaskDetailScreen taskId="1" onTaskDeleted={mockOnTaskDeleted} onClose={mockOnClose} />
       );
 
       // Wait for load

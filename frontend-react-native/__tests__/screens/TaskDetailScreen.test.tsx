@@ -39,9 +39,7 @@ describe('TaskDetailScreen', () => {
 
   describe('Loading', () => {
     it('should show loading indicator initially', () => {
-      const { getByText } = render(
-        <TaskDetailScreen taskId="1" />
-      );
+      const { getByText } = render(<TaskDetailScreen taskId="1" />);
 
       expect(getByText('Loading task...')).toBeTruthy();
     });
@@ -200,9 +198,7 @@ describe('TaskDetailScreen', () => {
     });
 
     it('should cancel edit mode without saving', async () => {
-      const { getByText, queryByText, getByDisplayValue } = render(
-        <TaskDetailScreen taskId="1" />
-      );
+      const { getByText, queryByText, getByDisplayValue } = render(<TaskDetailScreen taskId="1" />);
 
       await waitFor(() => {
         fireEvent.press(getByText('Edit'));
@@ -256,9 +252,7 @@ describe('TaskDetailScreen', () => {
         fireEvent.press(getByText('Delete'));
       });
 
-      expect(global.confirm).toHaveBeenCalledWith(
-        'Are you sure you want to delete this task?'
-      );
+      expect(global.confirm).toHaveBeenCalledWith('Are you sure you want to delete this task?');
     });
 
     it('should call API to delete task on confirmation', async () => {
@@ -291,11 +285,7 @@ describe('TaskDetailScreen', () => {
       });
 
       const { getByText } = render(
-        <TaskDetailScreen
-          taskId="1"
-          onTaskDeleted={mockOnTaskDeleted}
-          onClose={mockOnClose}
-        />
+        <TaskDetailScreen taskId="1" onTaskDeleted={mockOnTaskDeleted} onClose={mockOnClose} />
       );
 
       await waitFor(() => {
@@ -343,9 +333,7 @@ describe('TaskDetailScreen', () => {
 
   describe('Close Action', () => {
     it('should call onClose when close button pressed', async () => {
-      const { getByText } = render(
-        <TaskDetailScreen taskId="1" onClose={mockOnClose} />
-      );
+      const { getByText } = render(<TaskDetailScreen taskId="1" onClose={mockOnClose} />);
 
       await waitFor(() => {
         expect(getByText('✕')).toBeTruthy();

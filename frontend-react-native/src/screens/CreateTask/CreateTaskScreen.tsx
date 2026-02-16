@@ -16,6 +16,9 @@ import {
 
 import { TaskForm } from './components/TaskForm';
 import { ApiClient } from '../../services/api';
+import { FeatureFlagGuard } from '../../components/FeatureFlagGuard';
+import { TierGuard } from '../../components/TierGuard';
+import { appColors } from '../../config/colors';
 
 interface CreateTaskScreenProps {
   onTaskCreated?: (task: unknown) => void;
@@ -36,7 +39,8 @@ export const CreateTaskScreen: React.FC<CreateTaskScreenProps> = ({
   const validateForm = (): string | null => {
     if (!title.trim()) return 'Task title is required';
     if (title.length < 3) return 'Task title must be at least 3 characters';
-    if (title.length > 200) return 'Task title must be less than 200 characters';
+    if (title.length > 200)
+      return 'Task title must be less than 200 characters';
     return null;
   };
 
@@ -85,7 +89,10 @@ export const CreateTaskScreen: React.FC<CreateTaskScreenProps> = ({
 
   return (
     <KeyboardAvoidingView style={styles.flex} behavior="padding">
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+      >
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Create New Task</Text>
           {onCancel && (
@@ -112,14 +119,29 @@ export const CreateTaskScreen: React.FC<CreateTaskScreenProps> = ({
           onStatusChange={setStatus}
         />
 
+        {/* Enterprise: AI Suggestions */}
+        <FeatureFlagGuard flag="ai_suggestions">
+          <TierGuard tier="enterprise">
+            <View style={styles.aiSuggestions}>
+              <Text style={styles.aiSuggestionsTitle}>🤖 AI Suggestions</Text>
+              <Text style={styles.aiSuggestionsBody}>
+                Get AI-powered title and description suggestions
+              </Text>
+            </View>
+          </TierGuard>
+        </FeatureFlagGuard>
+
         <View style={styles.footer}>
           <TouchableOpacity
-            style={[styles.createButton, loading && styles.createButtonDisabled]}
+            style={[
+              styles.createButton,
+              loading && styles.createButtonDisabled,
+            ]}
             onPress={handleCreate}
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={appColors.surface} />
             ) : (
               <Text style={styles.createButtonText}>Create Task</Text>
             )}
@@ -136,7 +158,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: appColors.canvas,
   },
   content: {
     padding: 20,
@@ -151,27 +173,43 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
+    color: appColors.surface,
   },
   cancelButton: {
-    color: '#999',
+    color: appColors.mutedOnDark,
     fontSize: 16,
   },
   errorBanner: {
-    backgroundColor: '#ff4444',
+    backgroundColor: appColors.danger,
     padding: 12,
     borderRadius: 8,
     marginBottom: 20,
   },
   errorBannerText: {
-    color: '#fff',
+    color: appColors.surface,
     fontSize: 14,
+  },
+  aiSuggestions: {
+    padding: 16,
+    backgroundColor: appColors.aiSurface,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  aiSuggestionsTitle: {
+    color: appColors.surface,
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  aiSuggestionsBody: {
+    color: appColors.mutedOnDark,
+    fontSize: 12,
   },
   footer: {
     marginTop: 32,
   },
   createButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: appColors.brand,
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -180,7 +218,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   createButtonText: {
-    color: '#fff',
+    color: appColors.surface,
     fontSize: 16,
     fontWeight: '600',
   },

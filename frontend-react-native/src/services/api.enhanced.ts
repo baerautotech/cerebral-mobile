@@ -3,10 +3,10 @@
  * Production-ready API client with resilience patterns
  */
 
-
 import { logApiError, logPerformance, addBreadcrumb } from './monitoring';
 import { AuthService } from './supabase';
 import { env } from '../config/env';
+import { backendClient } from '@cerebral/core';
 
 interface ApiConfig {
   baseURL: string;
@@ -69,7 +69,7 @@ class EnhancedApiClient {
    */
   private setCache(key: string, data: unknown): void {
     this.cache.set(key, {
-      data,
+      data: data as Record<string, unknown>,
       timestamp: Date.now(),
     });
   }
@@ -82,98 +82,37 @@ class EnhancedApiClient {
   }
 
   /**
-   * Check if error is retryable
-   */
-  private isRetryable(error: { message?: string; status?: number }): boolean {
-    // Network errors are retryable
-    if (error.message === 'Network request failed') return true;
-
-    // 5xx server errors are retryable
-    if (error.status >= 500 && error.status < 600) return true;
-
-    // Rate limit errors (429) are retryable
-    if (error.status === 429) return true;
-
-    return false;
-  }
-
-  /**
-   * Delay for retry logic
-   */
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  /**
    * Make request with retry logic
+   * Note: backendClient already handles retries, but this layer adds monitoring/caching
    */
   private async requestWithRetry<T>(
     endpoint: string,
-    options: RequestInit,
-    retriesLeft: number = this.config.retries
+    options: RequestInit
   ): Promise<{ data: T | null; error: Record<string, unknown> }> {
     try {
       const startTime = performance.now();
+      const method = options.method ?? 'GET';
+      const body = options.body ? JSON.parse(options.body as string) : undefined;
 
-      // Make request
-      const response = await fetch(`${this.config.baseURL}${endpoint}`, {
-        ...options,
-        signal: AbortSignal.timeout(this.config.timeout),
-      });
+      // Use backendClient from core
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const data = await (backendClient as any).request(method, endpoint, body);
 
       const duration = performance.now() - startTime;
 
       // Log performance
       logPerformance({
-        name: `API: ${options.method} ${endpoint}`,
+        name: `API: ${method} ${endpoint}`,
         value: duration,
         unit: 'ms',
       });
 
-      // Check response
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({
-          message: response.statusText,
-        }));
-
-        const error = {
-          status: response.status,
-          message: errorData.message ?? response.statusText,
-          ...errorData,
-        };
-
-        // Log error
-        logApiError(endpoint, options.method ?? 'GET', response.status, error);
-
-        // Retry if applicable
-        if (retriesLeft > 0 && this.isRetryable(error)) {
-          addBreadcrumb('Retrying API request', 'api', {
-            endpoint,
-            retriesLeft,
-            status: response.status,
-          });
-
-          await this.delay(this.config.retryDelay);
-          return this.requestWithRetry(endpoint, options, retriesLeft - 1);
-        }
-
-        return { data: null, error };
-      }
-
-      const data = await response.json();
       return { data, error: null };
+    } catch (error: any) {
+      // Log error
+      logApiError(endpoint, options.method ?? 'GET', error.statusCode || 0, error);
 
-    } catch (error: unknown) {
-      // Network error or timeout
-      logApiError(endpoint, options.method ?? 'GET', 0, error);
-
-      // Retry if applicable
-      if (retriesLeft > 0 && this.isRetryable(error)) {
-        await this.delay(this.config.retryDelay);
-        return this.requestWithRetry(endpoint, options, retriesLeft - 1);
-      }
-
-      return { data: null, error };
+      return { data: null, error: error };
     }
   }
 
@@ -192,28 +131,14 @@ class EnhancedApiClient {
       const cached = this.getCached(cacheKey);
       if (cached) {
         addBreadcrumb('Cache hit', 'api', { endpoint });
-        return { data: cached, error: null };
+        return { data: cached as unknown as T, error: null };
       }
     }
 
-    // Get access token
-    const token = await AuthService.getAccessToken();
-
-    // Prepare headers
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    };
-
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
-    // Make request with retry
+    // Make request (backendClient handles Auth header)
     const result = await this.requestWithRetry<T>(endpoint, {
       ...options,
       method,
-      headers,
     });
 
     // Cache successful GET responses
@@ -232,14 +157,19 @@ class EnhancedApiClient {
   /**
    * GET request
    */
-  public async get<T>(endpoint: string): Promise<{ data: T | null; error: Record<string, unknown> }> {
+  public async get<T>(
+    endpoint: string
+  ): Promise<{ data: T | null; error: Record<string, unknown> }> {
     return this.request<T>(endpoint, { method: 'GET' });
   }
 
   /**
    * POST request
    */
-  public async post<T>(endpoint: string, body?: Record<string, unknown>): Promise<{ data: T | null; error: Record<string, unknown> }> {
+  public async post<T>(
+    endpoint: string,
+    body?: Record<string, unknown>
+  ): Promise<{ data: T | null; error: Record<string, unknown> }> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: body ? JSON.stringify(body) : undefined,
@@ -249,7 +179,10 @@ class EnhancedApiClient {
   /**
    * PUT request
    */
-  public async put<T>(endpoint: string, body?: Record<string, unknown>): Promise<{ data: T | null; error: Record<string, unknown> }> {
+  public async put<T>(
+    endpoint: string,
+    body?: Record<string, unknown>
+  ): Promise<{ data: T | null; error: Record<string, unknown> }> {
     return this.request<T>(endpoint, {
       method: 'PUT',
       body: body ? JSON.stringify(body) : undefined,
@@ -259,7 +192,9 @@ class EnhancedApiClient {
   /**
    * DELETE request
    */
-  public async delete<T>(endpoint: string): Promise<{ data: T | null; error: Record<string, unknown> }> {
+  public async delete<T>(
+    endpoint: string
+  ): Promise<{ data: T | null; error: Record<string, unknown> }> {
     return this.request<T>(endpoint, { method: 'DELETE' });
   }
 }

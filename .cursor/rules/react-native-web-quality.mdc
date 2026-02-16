@@ -1,0 +1,516 @@
+# React Native Web Quality Standards
+
+**Version**: 1.0.0
+**Date**: October 10, 2025
+**Status**: MANDATORY
+
+---
+
+## 🎯 Core Principles
+
+### **1. Zero Tolerance for Technical Debt**
+- No `any` types (ESLint enforces this)
+- No `console.log` in production code
+- No commented-out code in commits
+- No TODO comments without tickets
+- No inline styles (use StyleSheet.create)
+
+### **2. Type Safety First**
+```typescript
+// ✅ GOOD - Explicit types
+interface TaskProps {
+  task: Task;
+  onPress: (id: string) => void;
+}
+
+const TaskCard: React.FC<TaskProps> = ({ task, onPress }) => {
+  // ...
+};
+
+// ❌ BAD - Implicit any
+const TaskCard = ({ task, onPress }) => {
+  // ...
+};
+```
+
+### **3. Component Size Limits**
+- **Max file size**: 300 lines (enforced by ESLint)
+- **Max function size**: 50 lines (enforced by ESLint)
+- **Max complexity**: 10 (enforced by ESLint)
+- **Max props**: 5 per component
+
+If you exceed these, refactor into smaller components.
+
+---
+
+## 📐 Architecture Patterns
+
+### **1. Screen Structure**
+```
+src/screens/TasksScreen.tsx
+├── Imports (grouped by type)
+├── Types/Interfaces
+├── Component Definition
+├── Hooks (useEffect, useState, etc.)
+├── Event Handlers
+├── Render Methods
+├── Styles (StyleSheet.create)
+└── Export
+```
+
+### **2. Service Layer Pattern**
+```typescript
+// services/TaskService.ts
+export class TaskService {
+  static async getTasks(filters: TaskFilters): Promise<Task[]> {
+    const { data, error } = await ApiClient.get('/v1/tasks/', filters);
+    if (error) throw new TaskServiceError(error);
+    return data;
+  }
+}
+
+// Screens use services, not ApiClient directly
+const tasks = await TaskService.getTasks({ status: 'active' });
+```
+
+### **3. Error Boundaries (MANDATORY)**
+Every screen MUST be wrapped in an error boundary:
+```typescript
+<ErrorBoundary fallback={<ErrorScreen />}>
+  <YourScreen />
+</ErrorBoundary>
+```
+
+---
+
+## 🧪 Testing Requirements
+
+### **Test Coverage Targets**:
+- **Services**: 90% coverage minimum
+- **Components**: 80% coverage minimum
+- **Screens**: 70% coverage minimum
+- **Overall**: 80% coverage minimum
+
+### **Test Structure**:
+```typescript
+// __tests__/TasksScreen.test.tsx
+describe('TasksScreen', () => {
+  describe('Data Loading', () => {
+    it('should load tasks on mount', async () => {
+      // Test implementation
+    });
+
+    it('should handle loading errors', async () => {
+      // Test implementation
+    });
+  });
+
+  describe('User Interactions', () => {
+    it('should navigate to detail on task click', () => {
+      // Test implementation
+    });
+  });
+});
+```
+
+### **Required Tests**:
+1. **Component renders correctly**
+2. **Loading states display**
+3. **Error states display**
+4. **User interactions work**
+5. **API calls are made correctly**
+6. **Navigation functions correctly**
+
+---
+
+## 🎨 UI/UX Standards
+
+### **1. Loading States (MANDATORY)**
+Every async operation MUST show loading state:
+```typescript
+{loading && <ActivityIndicator />}
+{!loading && data && <DataView />}
+{!loading && error && <ErrorView />}
+```
+
+### **2. Error Handling (MANDATORY)**
+Every error MUST be user-friendly:
+```typescript
+// ❌ BAD
+catch (error) {
+  console.error(error);
+}
+
+// ✅ GOOD
+catch (error) {
+  const message = error instanceof ApiError
+    ? error.userMessage
+    : 'Something went wrong. Please try again.';
+  showError(message);
+  logError(error); // Send to monitoring
+}
+```
+
+### **3. Responsive Design (MANDATORY)**
+Support all breakpoints:
+```typescript
+const { width } = useWindowDimensions();
+const isMobile = width < 768;
+const isTablet = width >= 768 && width < 1024;
+const isDesktop = width >= 1024;
+
+// Adjust layout accordingly
+```
+
+### **4. Accessibility (MANDATORY)**
+```typescript
+<TouchableOpacity
+  accessibilityLabel="Create new task"
+  accessibilityHint="Opens form to create a new task"
+  accessibilityRole="button"
+>
+  <Text>Add Task</Text>
+</TouchableOpacity>
+```
+
+---
+
+## 🚀 Performance Standards
+
+### **1. Bundle Size Limits**
+- **Main bundle**: < 1MB
+- **Per screen**: < 50KB
+- **Per component**: < 10KB
+
+Monitor with: `npm run analyze-bundle`
+
+### **2. Lazy Loading (REQUIRED)**
+Load screens on-demand:
+```typescript
+const TasksScreen = React.lazy(() => import('./screens/TasksScreen'));
+const DashboardScreen = React.lazy(() => import('./screens/DashboardScreen'));
+```
+
+### **3. Memoization**
+Use React.memo for expensive components:
+```typescript
+export const TaskCard = React.memo<TaskCardProps>(({ task }) => {
+  // Component implementation
+}, (prev, next) => prev.task.id === next.task.id);
+```
+
+### **4. Image Optimization**
+- Use WebP format
+- Lazy load images
+- Provide width/height
+- Use responsive images
+
+---
+
+## 🔒 Security Standards
+
+### **1. Input Validation**
+Validate ALL user inputs:
+```typescript
+const validateTaskTitle = (title: string): ValidationResult => {
+  if (!title.trim()) return { valid: false, error: 'Title required' };
+  if (title.length < 3) return { valid: false, error: 'Title too short' };
+  if (title.length > 200) return { valid: false, error: 'Title too long' };
+  return { valid: true };
+};
+```
+
+### **2. XSS Prevention**
+- Never use `dangerouslySetInnerHTML`
+- Sanitize all user content
+- Use Text components (auto-escapes)
+
+### **3. Sensitive Data**
+- Never log sensitive data
+- Clear sensitive data from memory
+- Use secure storage for tokens
+
+---
+
+## 📝 Documentation Standards
+
+### **Component Documentation**:
+```typescript
+/**
+ * TaskCard - Displays a single task in a card format
+ *
+ * @example
+ * <TaskCard
+ *   task={myTask}
+ *   onPress={(id) => navigateToDetail(id)}
+ * />
+ *
+ * @param task - Task object to display
+ * @param onPress - Callback when card is pressed
+ */
+export const TaskCard: React.FC<TaskCardProps> = ({ task, onPress }) => {
+  // ...
+};
+```
+
+### **Service Documentation**:
+```typescript
+/**
+ * TaskService - Handles all task-related API operations
+ *
+ * @example
+ * const tasks = await TaskService.getTasks({ status: 'active' });
+ */
+export class TaskService {
+  /**
+   * Fetches tasks from the backend
+   *
+   * @param filters - Filter criteria
+   * @returns Promise<Task[]> - Array of tasks
+   * @throws TaskServiceError - If API call fails
+   */
+  static async getTasks(filters: TaskFilters): Promise<Task[]> {
+    // ...
+  }
+}
+```
+
+---
+
+## 🔄 State Management
+
+### **Use Case Guidelines**:
+1. **Local state** (useState) - Component-specific data
+2. **Context** - Shared data (theme, user, settings)
+3. **Query state** (React Query/SWR) - Server data
+4. **Global state** (Zustand/Jotai) - Complex shared state
+
+### **Context Pattern**:
+```typescript
+// context/AuthContext.tsx
+interface AuthContextValue {
+  user: User | null;
+  isAuthenticated: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+}
+
+export const AuthContext = createContext<AuthContextValue>(null!);
+
+export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
+  // Implementation
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => useContext(AuthContext);
+```
+
+---
+
+## 🎯 API Integration
+
+### **Retry Logic**:
+```typescript
+const apiWithRetry = async <T,>(
+  fn: () => Promise<T>,
+  retries = 3
+): Promise<T> => {
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries > 0 && isRetryable(error)) {
+      await delay(1000);
+      return apiWithRetry(fn, retries - 1);
+    }
+    throw error;
+  }
+};
+```
+
+### **Caching Strategy**:
+```typescript
+const cache = new Map<string, { data: any; timestamp: number }>();
+
+const getCached = <T,>(key: string, maxAge = 60000): T | null => {
+  const cached = cache.get(key);
+  if (cached && Date.now() - cached.timestamp < maxAge) {
+    return cached.data;
+  }
+  return null;
+};
+```
+
+---
+
+## 🐛 Error Monitoring
+
+### **Integration Required**:
+```typescript
+// services/monitoring.ts
+import * as Sentry from '@sentry/react-native';
+
+export const logError = (error: Error, context?: object) => {
+  Sentry.captureException(error, { extra: context });
+};
+
+export const logPerformance = (metric: string, value: number) => {
+  Sentry.setMeasurement(metric, value, 'millisecond');
+};
+```
+
+### **Error Tracking**:
+- Set up Sentry or similar
+- Track all API errors
+- Track navigation errors
+- Track performance metrics
+
+---
+
+## ✅ Pre-Commit Checklist
+
+Before every commit, ensure:
+- [ ] All tests pass (`npm test`)
+- [ ] No TypeScript errors (`npm run type-check`)
+- [ ] No linting errors (`npm run lint`)
+- [ ] Code is formatted (`npm run format`)
+- [ ] No console.log statements
+- [ ] Component documented (JSDoc)
+- [ ] Test coverage maintained
+- [ ] Bundle size acceptable
+
+This is automated via husky pre-commit hooks.
+
+---
+
+## 📊 Quality Gates
+
+### **CI/CD Gates** (Must pass to merge):
+1. All tests pass (100% pass rate)
+2. Test coverage > 80%
+3. No TypeScript errors
+4. No ESLint errors
+5. Bundle size < 1MB
+6. Lighthouse score > 90
+7. No security vulnerabilities
+
+### **Code Review Requirements**:
+- 2 approvals required
+- All comments resolved
+- CI/CD passing
+- Branch up to date with main
+
+---
+
+## 🎓 Best Practices (October 2025)
+
+### **1. Use Latest React Features**:
+```typescript
+// Use React 19 features
+import { use } from 'react';
+
+// Use automatic batching
+setState1(value1);
+setState2(value2); // Batched automatically
+
+// Use useTransition for non-urgent updates
+const [isPending, startTransition] = useTransition();
+startTransition(() => {
+  setSearchQuery(value);
+});
+```
+
+### **2. Optimize Re-renders**:
+```typescript
+// Split large components
+const TaskList = ({ tasks }) => (
+  <FlatList
+    data={tasks}
+    renderItem={({ item }) => <TaskItem task={item} />}
+    keyExtractor={(item) => item.id}
+    removeClippedSubviews // Performance boost
+    maxToRenderPerBatch={10}
+    windowSize={5}
+  />
+);
+```
+
+### **3. Use TypeScript Utility Types**:
+```typescript
+type TaskUpdate = Pick<Task, 'title' | 'description' | 'status'>;
+type TaskCreate = Omit<Task, 'id' | 'created_at'>;
+type ReadonlyTask = Readonly<Task>;
+type PartialTask = Partial<Task>;
+```
+
+---
+
+## 🚨 Common Pitfalls to AVOID
+
+1. **Inline Functions in Render**
+   ```typescript
+   // ❌ BAD - Creates new function on every render
+   <Button onPress={() => handlePress(item.id)} />
+
+   // ✅ GOOD - Memoized callback
+   const handlePress = useCallback(() => handleItemPress(item.id), [item.id]);
+   <Button onPress={handlePress} />
+   ```
+
+2. **Missing Cleanup in useEffect**
+   ```typescript
+   // ❌ BAD - Memory leak
+   useEffect(() => {
+     const subscription = api.subscribe();
+   }, []);
+
+   // ✅ GOOD - Proper cleanup
+   useEffect(() => {
+     const subscription = api.subscribe();
+     return () => subscription.unsubscribe();
+   }, []);
+   ```
+
+3. **Mutating State Directly**
+   ```typescript
+   // ❌ BAD
+   tasks.push(newTask);
+   setTasks(tasks);
+
+   // ✅ GOOD
+   setTasks([...tasks, newTask]);
+   ```
+
+4. **Not Handling Loading/Error States**
+   ```typescript
+   // ❌ BAD - No loading state
+   const data = await fetchData();
+   return <View>{data}</View>;
+
+   // ✅ GOOD - All states handled
+   if (loading) return <LoadingView />;
+   if (error) return <ErrorView error={error} />;
+   return <DataView data={data} />;
+   ```
+
+---
+
+## 🎯 Scaling Readiness Checklist
+
+- [x] TypeScript strict mode enabled
+- [x] ESLint with enterprise rules
+- [x] Pre-commit hooks configured
+- [ ] Test coverage > 80%
+- [ ] Error boundaries implemented
+- [ ] Performance monitoring set up
+- [ ] Bundle size monitoring
+- [ ] API retry logic
+- [ ] Caching strategy
+- [ ] Documentation complete
+- [ ] CI/CD quality gates
+- [ ] Security audit passed
+
+**Target**: All items checked before scaling beyond 10 screens/100K LOC.
+
+---
+
+**This is a living document. Update as patterns evolve!**

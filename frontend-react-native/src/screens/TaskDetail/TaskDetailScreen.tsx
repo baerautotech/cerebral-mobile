@@ -6,12 +6,23 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, Alert } from 'react-native';
 
-import { LoadingState, ErrorState, NotFoundState } from './components/TaskDetailStates';
-import { TaskField, StatusSelector, PrioritySelector } from './components/TaskField';
+import {
+  LoadingState,
+  ErrorState,
+  NotFoundState,
+} from './components/TaskDetailStates';
+import {
+  TaskField,
+  StatusSelector,
+  PrioritySelector,
+} from './components/TaskField';
 import { TaskHeader } from './components/TaskHeader';
 import { styles } from './styles';
 import { getStatusColor, getPriorityColor } from './utils';
 import { ApiClient } from '../../services/api';
+import { FeatureFlagGuard } from '../../components/FeatureFlagGuard';
+import { TierGuard } from '../../components/TierGuard';
+import { appColors } from '../../config/colors';
 
 interface TaskDetailScreenProps {
   taskId: string;
@@ -73,7 +84,9 @@ export const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({
     setError(null);
 
     try {
-      const { data, error: apiError } = await ApiClient.get<Task>(`/v1/tasks/${taskId}`);
+      const { data, error: apiError } = await ApiClient.get<Task>(
+        `/v1/tasks/${taskId}`,
+      );
 
       if (apiError) {
         setError('Failed to load task details');
@@ -100,7 +113,12 @@ export const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({
     onTaskUpdated?.(data);
   };
 
-  const buildUpdatePayload = (): { title: string; description: string; status: Task['status']; priority: Task['priority'] } => ({
+  const buildUpdatePayload = (): {
+    title: string;
+    description: string;
+    status: Task['status'];
+    priority: Task['priority'];
+  } => ({
     title: editTitle.trim(),
     description: editDescription.trim(),
     status: editStatus,
@@ -115,7 +133,10 @@ export const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({
 
     try {
       const payload = buildUpdatePayload();
-      const { data, error: apiError } = await ApiClient.put<Task>(`/v1/tasks/${taskId}`, payload);
+      const { data, error: apiError } = await ApiClient.put<Task>(
+        `/v1/tasks/${taskId}`,
+        payload,
+      );
 
       if (apiError) {
         setError('Failed to update task');
@@ -159,19 +180,17 @@ export const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({
   };
 
   const handleDelete = (): void => {
-    Alert.alert(
-      'Delete Task',
-      'Are you sure you want to delete this task?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: performDelete },
-      ]
-    );
+    Alert.alert('Delete Task', 'Are you sure you want to delete this task?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Delete', style: 'destructive', onPress: performDelete },
+    ]);
   };
 
-
   if (loading) return <LoadingState styles={styles} />;
-  if (error && !task) return <ErrorState error={error} onRetry={loadTaskDetails} styles={styles} />;
+  if (error && !task)
+    return (
+      <ErrorState error={error} onRetry={loadTaskDetails} styles={styles} />
+    );
   if (!task) return <NotFoundState styles={styles} />;
 
   return (
@@ -236,6 +255,87 @@ export const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({
             </Text>
           )}
         </View>
+
+        {/* Standard Tier: Data Export */}
+        <TierGuard tier="standard">
+          <View
+            style={{
+              padding: 16,
+              backgroundColor: appColors.standardSurface,
+              borderRadius: 8,
+              marginTop: 16,
+            }}
+          >
+            <Text
+              style={{
+                color: 'rgb(0, 96, 100)',
+                fontSize: 14,
+                fontWeight: '600',
+              }}
+            >
+              📊 Export Task Data
+            </Text>
+            <Text style={{ color: 'rgb(0, 131, 143)', fontSize: 12 }}>
+              Available in Standard tier and above
+            </Text>
+          </View>
+        </TierGuard>
+
+        {/* Enterprise: AI Suggestions */}
+        <FeatureFlagGuard flag="ai_suggestions">
+          <TierGuard tier="enterprise">
+            <View
+              style={{
+                padding: 16,
+                backgroundColor: appColors.aiSurface,
+                borderRadius: 8,
+                marginTop: 16,
+              }}
+            >
+              <Text
+                style={{
+                  color: appColors.surface,
+                  fontSize: 14,
+                  fontWeight: '600',
+                  marginBottom: 8,
+                }}
+              >
+                🤖 AI Insights
+              </Text>
+              <Text style={{ color: appColors.mutedOnDark, fontSize: 12 }}>
+                Get AI-powered recommendations for this task
+              </Text>
+            </View>
+          </TierGuard>
+        </FeatureFlagGuard>
+
+        {/* Enterprise: Workflow Automation */}
+        <FeatureFlagGuard flag="workflow_automation">
+          <TierGuard tier="enterprise">
+            <View
+              style={{
+                padding: 16,
+                backgroundColor: appColors.automationSurface,
+                borderRadius: 8,
+                marginTop: 16,
+              }}
+            >
+              <Text
+                style={{
+                  color: appColors.surface,
+                  fontSize: 14,
+                  fontWeight: '600',
+                  marginBottom: 8,
+                }}
+              >
+                ⚙️ Automation Rules
+              </Text>
+              <Text style={{ color: appColors.mutedOnDark, fontSize: 12 }}>
+                Set up automated workflows for this task type
+              </Text>
+            </View>
+          </TierGuard>
+        </FeatureFlagGuard>
       </View>
     </ScrollView>
   );

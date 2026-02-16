@@ -1,75 +1,116 @@
-# Cursor Rules - Supabase Database Access
+# Cerebral Repository - Build & Deploy System
 
-## Database Connection: Use /root/supabase_connect.sh
+**Last Updated**: October 12, 2025
+**Status**: ✅ Production Ready - Framework Verified Working
 
-Supabase database access is through a simple shell script at:
-```
-/root/supabase_connect.sh
-```
+## Unified Build System (100% Working)
 
-### Quick Commands
+**All builds use shared Kaniko action** from `baerautotech/cerebral-deployment`
 
-```bash
-# List tables
-/root/supabase_connect.sh list-tables
+**Verified**: End-to-end test completed Oct 12, 2025 ✅
 
-# Show table schema
-/root/supabase_connect.sh schema <table_name>
-
-# Count records
-/root/supabase_connect.sh count <table_name>
-
-# Run SQL query
-/root/supabase_connect.sh query "SELECT * FROM table_name LIMIT 10;"
-
-# Open psql
-/root/supabase_connect.sh psql
-```
-
-### Connection Details
-
-Session Pooler (Production):
-```
-host: aws-0-us-east-2.pooler.supabase.com
-user: postgres.txlzlhcrfippujcmnief
-password: rC@UUh9Z%*WQ
-port: 5432
-dbname: postgres
-```
-
-### For Python Code
-
-```python
-import subprocess
-
-def query_supabase(sql):
-    result = subprocess.run(
-        ['/root/supabase_connect.sh', 'query', sql],
-        capture_output=True,
-        text=True
-    )
-    return result.stdout
-```
-
-### For Schema Changes
+### Quick Deploy
 
 ```bash
-# Create table
-/root/supabase_connect.sh query "CREATE TABLE ..."
+# Just push your code - auto-deploys in ~3 minutes!
+git push
 
-# Add column
-/root/supabase_connect.sh query "ALTER TABLE ... ADD COLUMN ..."
+# Or trigger manually
+gh workflow run <workflow>.yml
+gh run watch
 
-# View structure
-/root/supabase_connect.sh schema table_name
+# Watch build progress
+kubectl get jobs -n build-system
+kubectl logs -n build-system -l app.kubernetes.io/name=kaniko-build -c kaniko -f
 ```
 
-### No External Dependencies
+### Services in This Repo
 
-- No MCP
-- No CLI tools
-- No Python packages
-- Just psql (comes with PostgreSQL)
-- Simple bash script
+- **BMAD Cloud 3.0**: `bmad-cloud-ci.yml` → `cerebral-bmad` namespace
+- **Cerebral Backend**: `build-cerebral-backend.yml` → `cerebral-platform` namespace
+- **React Native Web**: `react-native-web-fast.yml` → `cerebral-platform` namespace
 
-Reference: SUPABASE_CONNECTION_GUIDE.md
+### Using Shared Kaniko Action
+
+```yaml
+- uses: baerautotech/cerebral-deployment/.github/actions/build-with-kaniko@main
+  with:
+    dockerfile: 'docker/Dockerfile.yourservice'
+    image-name: 'cerebral/yourservice'
+    context: '.'
+
+# Deploy with the output (use digest, not tag!)
+kubectl set image deployment/yourservice \
+  container=${{ steps.build.outputs.image }} \
+  -n cerebral-platform
+```
+
+### Registry URLs
+
+- **Inside cluster/Kaniko**: `internal-registry.registry.svc.cluster.local:5000` (HTTP)
+- **External/Outside**: `registry.dev.cerebral.baerautotech.com` (HTTPS)
+- **ClusterIP**: `10.102.88.76:5000` (HTTP, cluster-internal only)
+
+### Namespace Reference
+
+**CURRENT NAMESPACES** (use these):
+
+| Namespace | Purpose | Resources | Status |
+|-----------|---------|-----------|--------|
+| `actions-runner-system` | GitHub Actions runners | Runner pods, secrets, RBAC | ✅ ACTIVE |
+| `build-system` | Kaniko build jobs | Build jobs, service accounts, secrets | ✅ ACTIVE |
+| `cerebral-platform` | Main apps | Backend, Frontend pods | ✅ ACTIVE |
+| `cerebral-bmad` | BMAD MCP | BMAD orchestrator pods | ✅ ACTIVE |
+| `cerebral-development` | Dev environment | Dev deployments | ✅ ACTIVE |
+| `registry` | Internal registry | Registry pods, services | ✅ ACTIVE |
+
+**DEPRECATED** (⚠️ do NOT use):
+
+| Namespace | Replaced By | Status |
+|-----------|-------------|--------|
+| `github-runners` | `actions-runner-system` | ❌ DEPRECATED |
+
+**IMPORTANT**: Some old files in `archive/` may reference `github-runners`. Always use `actions-runner-system`.
+
+### Required Secrets (build-system namespace)
+
+- `github-actions-token` - For cloning repos during build
+- `registry-dockerconfig` - For pushing images to registry
+
+Both are automatically available (copied from actions-runner-system).
+
+### Documentation
+
+- **Framework Guide**: [cerebral-deployment/BUILD_SYSTEM.md](https://github.com/baerautotech/cerebral-deployment/blob/main/BUILD_SYSTEM.md)
+- **This Repo**: [BUILD_SYSTEM.md](BUILD_SYSTEM.md)
+- **Framework Status**: [cerebral-deployment/FRAMEWORK_COMPLETE_FINAL_STATUS.md](https://github.com/baerautotech/cerebral-deployment/blob/main/FRAMEWORK_COMPLETE_FINAL_STATUS.md)
+
+### Common Mistakes
+
+❌ Checking `github-runners` namespace → ✅ Check `actions-runner-system`
+❌ Adding workflows to cerebral-deployment → ✅ Add workflows to THIS repo
+❌ Using `:latest` or mutable tags → ✅ Use SHA256 digests (`${{ steps.build.outputs.image }}`)
+❌ Hardcoding images in k8s manifests → ✅ Use placeholders (workflow updates them)
+❌ Using `image-tag` output → ✅ Use `image` output (with digest)
+
+### Verification Commands
+
+```bash
+# Check runners
+kubectl get pods -n actions-runner-system
+gh api orgs/baerautotech/actions/runners
+
+# Check builds
+kubectl get jobs -n build-system
+kubectl logs -n build-system -l app.kubernetes.io/name=kaniko-build -c kaniko -f
+
+# Check deployments
+kubectl get deployment -n cerebral-platform
+kubectl get pods -n cerebral-bmad
+```
+
+---
+
+**Last Framework Test**: October 12, 2025, 3:30 AM - ✅ SUCCESS
+**Caching**: ✅ Enforced (line 277-280 of shared action)
+**Cleanup**: ✅ Complete (37 files archived)

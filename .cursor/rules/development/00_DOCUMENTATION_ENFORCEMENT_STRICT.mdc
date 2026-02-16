@@ -1,0 +1,245 @@
+# 🔴 DOCUMENTATION FILE PLACEMENT - STRICT ENFORCEMENT
+
+**Status**: CRITICAL | **Priority**: P0 (BLOCKING)
+**Effective**: November 7, 2025
+**Reason for Creation**: 58 markdown files incorrectly placed in root directory despite clear P0 rule
+
+---
+
+## 🚨 CRITICAL ISSUE
+
+**The Problem**: Agents consistently ignore `00_MASTER_DOCUMENTATION_STANDARDS.mdc` and place ALL documentation in root.
+
+**Why It Matters**:
+- Violates P0 (highest priority) rule
+- Makes repository unmaintainable (58 root files!)
+- Prevents proper documentation organization
+- Violates enterprise standards
+
+**Root Cause Analysis**:
+1. Rule exists but not prominently referenced in agent initialization
+2. No blocking validation (pre-commit hook, git check)
+3. Habitual pattern from previous sessions
+4. Convenience bias (easier to create in root)
+
+---
+
+## ✅ SOLUTION: THREE-LAYER ENFORCEMENT
+
+### Layer 1: PRE-GENERATION BLOCKER
+
+**BEFORE ANY AGENT CREATES A DOCUMENTATION FILE:**
+
+```
+IF creating a .md file:
+  ├─ Is this AI-generated? (planning, analysis, report, guide, etc.)
+  │  └─ YES → MUST go to docs/
+  ├─ Is this README.md or CLAUDE.md?
+  │  └─ YES → Exception allowed (root)
+  ├─ Is this a Cursor rule (.mdc)?
+  │  └─ YES → Goes to .cursor/rules/
+  └─ Is this in the root allowlist? (BUILD_SYSTEM.md is borderline)
+     └─ NO → REJECT, place in docs/
+```
+
+**Action**: Agents MUST verify placement BEFORE creating file.
+
+### Layer 2: NAMING REQUIREMENT
+
+**All documentation files MUST follow this naming pattern:**
+
+```
+{action}-{subject}-{scope}.md
+
+Examples:
+✅ plan-phase4-corrective-actions.md
+✅ summary-session-bmad-integration.md
+✅ audit-report-microservices-theater-code.md
+❌ PHASE_4_SESSION_COMPLETE.md (wrong pattern)
+❌ FINAL_SUMMARY.md (too vague)
+```
+
+**Action**: Any file not following pattern is WRONG PLACEMENT SIGNAL.
+
+### Layer 3: CATEGORIZATION REQUIREMENT
+
+**File must map to ONE of these categories:**
+
+```
+docs/00-QUICK-START/       ← Quick start guides
+docs/01-DEPLOYMENT/        ← CI/CD, Tekton, K8s
+docs/02-OBSERVABILITY/     ← Monitoring, logging
+docs/03-SECURITY/          ← Auth, compliance
+docs/04-OPERATIONS/        ← Runbooks, troubleshooting
+docs/05-ARCHITECTURE/      ← Design, patterns, phases
+docs/06-COMPLIANCE/        ← Audit, standards
+docs/07-REFERENCE/         ← API specs, tech refs
+docs/archive/
+  ├── phase-archive/       ← Completed phases
+  ├── session-archive/     ← Session summaries
+  ├── epic-archive/        ← Epic completions
+  └── implementation-archive/
+```
+
+**Action**: If file doesn't fit → WRONG PLACEMENT.
+
+---
+
+## 🔒 ENFORCEMENT AUTOMATION
+
+### Git Hook Validation
+
+**Create file**: `.git/hooks/pre-commit`
+
+```bash
+#!/bin/bash
+# REJECT any .md files being added to root (except allowlist)
+
+ALLOWLIST="README.md CLAUDE.md"
+ERRORS=0
+
+for file in $(git diff --cached --name-only --diff-filter=A | grep "\.md$"); do
+  if [[ "$file" != *.md ]] || [[ "$file" != "README.md" ]] && [[ "$file" != "CLAUDE.md" ]]; then
+    echo "🔴 VIOLATION: $file would be placed in root"
+    echo "   MUST follow: docs/{category}/{subcategory}/{action}-{subject}-{scope}.md"
+    echo "   Valid categories: 00-QUICK-START, 01-DEPLOYMENT, 02-OBSERVABILITY, 03-SECURITY, 04-OPERATIONS, 05-ARCHITECTURE, 06-COMPLIANCE, 07-REFERENCE, archive"
+    ERRORS=$((ERRORS + 1))
+  fi
+done
+
+if [ $ERRORS -gt 0 ]; then
+  echo ""
+  echo "❌ COMMIT REJECTED: $ERRORS documentation file placement violation(s)"
+  exit 1
+fi
+exit 0
+```
+
+### Agent Prompt Injection
+
+**MUST be in agent initialization prompt:**
+
+```
+DOCUMENTATION PLACEMENT REQUIREMENT (P0 - BLOCKING):
+
+1. ALL .md files YOU CREATE → MUST go to docs/
+2. Only exceptions: README.md, CLAUDE.md
+3. Naming pattern: {action}-{subject}-{scope}.md
+4. Must categorize: 00-07 or archive/
+5. Before writing ANY .md file, VERIFY placement
+
+If you violate this, user will reject work.
+```
+
+### Pre-Creation Validation
+
+**MANDATORY BEFORE WRITING FILE:**
+
+```python
+def validate_doc_placement(filename: str, target_path: str) -> bool:
+    """Validate documentation file placement."""
+
+    # Exception allowlist
+    if filename in ["README.md", "CLAUDE.md"]:
+        if target_path != ".":
+            raise ValueError(f"{filename} must be in root")
+        return True
+
+    # All AI-generated docs must be in docs/
+    if not target_path.startswith("docs/"):
+        raise ValueError(
+            f"File '{filename}' must be in docs/ hierarchy\n"
+            f"Use: docs/{{category}}/{{subcategory}}/{filename}\n"
+            f"Valid categories: 00-QUICK-START, 01-DEPLOYMENT, ..., 07-REFERENCE, archive"
+        )
+
+    # Must follow naming pattern
+    if "_" in filename or not filename.endswith(".md"):
+        raise ValueError(
+            f"File '{filename}' must follow pattern: "
+            f"{{action}}-{{subject}}-{{scope}}.md\n"
+            f"Example: plan-phase4-corrective-actions.md"
+        )
+
+    return True
+```
+
+---
+
+## 🛡️ VIOLATION RESPONSE
+
+**IF agent creates file in root:**
+
+1. ❌ REJECT the entire commit
+2. 📋 List all violations with correct paths
+3. 📝 Provide corrected filenames
+4. 🔄 Request re-commit with correct placement
+5. 📊 Track violations for agent improvement
+
+---
+
+## 🔄 IMMEDIATE CLEANUP
+
+**Current state**: 58 root .md files (VIOLATION)
+
+**Action required**:
+1. Create `docs/05-ARCHITECTURE/phase-summaries/` directory
+2. Move all phase-related files (PHASE_*.md) there
+3. Create `docs/archive/session-archive/` for session summaries
+4. Create `docs/04-OPERATIONS/reference/` for operational docs
+5. Rename files to proper convention
+6. Single cleanup commit
+
+**Files to move** (examples):
+- `PHASE_4_SESSION_COMPLETE.md` → `docs/archive/phase-archive/phase-4-session-complete.md`
+- `AUDIT_PHASE_2_INTERIM_FINDINGS.md` → `docs/03-SECURITY/audit/audit-interim-findings-phase2.md`
+- `SESSION_COMPLETE_PHASE_1_READY.md` → `docs/archive/session-archive/session-complete-phase1.md`
+
+---
+
+## ⚖️ RULE HIERARCHY
+
+This rule **ENFORCES** (P0):
+- `00_MASTER_DOCUMENTATION_STANDARDS.mdc` (P0 core)
+- `FILE_ORGANIZATION_STANDARDS.mdc` (cleanup)
+
+This rule **BLOCKS** (overrides lower priority):
+- Any convenience-based root file placement
+- Any habitual pattern violations
+- Any ambiguous "it's just temporary" files
+
+**Precedence**: P0 → P1 → P2 → P3 → P4
+
+This is **P0 ENFORCEMENT** with no exceptions.
+
+---
+
+## ✅ VERIFICATION
+
+After enforcement activated:
+
+```bash
+# Should be EMPTY (except allowlist)
+find . -maxdepth 1 -name "*.md" | grep -v README.md | grep -v CLAUDE.md
+
+# Should show proper structure
+find docs -maxdepth 2 -type d | sort
+
+# All docs should follow pattern
+find docs -name "*.md" | head -5 | xargs -I {} basename {}
+# Output should show: action-subject-scope.md pattern
+```
+
+---
+
+## 📌 ENFORCEMENT START DATE
+
+**November 7, 2025** - Effective immediately.
+
+All agents MUST follow this enforcement or commits will be rejected.
+
+---
+
+**Status**: ACTIVE (P0 ENFORCEMENT)
+**Authority**: User directive to fix broken rule enforcement
+**Consequence of Violation**: Commit rejection, re-work required

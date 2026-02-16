@@ -9,53 +9,77 @@
  * - Multi-platform support
  */
 
-import { createClient, SupabaseClient, Session, User } from '@supabase/supabase-js';
+import type { Session, User } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { Platform } from 'react-native';
 
-// Supabase configuration
-const SUPABASE_URL = 'https://txlzlhcrfippujcmnief.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bHpsaGNyZmlwcHVqY21uaWVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM4NTk3MzcsImV4cCI6MjA0OTQzNTczN30.YkZV-aqBT_F86PEhxW_9s48cTn-M16FZVWZlwkIPmek';
+import { env } from '../config/env';
+
+type StorageAdapter = {
+  getItem: (key: string) => string | null | Promise<string | null>;
+  setItem: (key: string, value: string) => void | Promise<void>;
+  removeItem: (key: string) => void | Promise<void>;
+};
+
+/**
+ * Web storage MUST NOT be localStorage/sessionStorage for auth tokens.
+ * Use in-memory storage so sessions (when used at all on web) are ephemeral.
+ */
+const createWebMemoryStorage = (): StorageAdapter => {
+  const store = new Map<string, string>();
+  return {
+    getItem: (key: string) => store.get(key) ?? null,
+    setItem: (key: string, value: string) => {
+      store.set(key, value);
+    },
+    removeItem: (key: string) => {
+      store.delete(key);
+    },
+  };
+};
 
 // Storage configuration for auth tokens
-const getStorage = (): { getItem: (key: string) => string | null | Promise<string | null>; setItem: (key: string, value: string) => void | Promise<void>; removeItem: (key: string) => void | Promise<void> } => {
-  if (Platform.OS === 'web') {
-    // Use localStorage for web
-    return {
-      getItem: (key: string) => {
-        if (typeof localStorage === 'undefined') return null;
-        return localStorage.getItem(key);
-      },
-      setItem: (key: string, value: string) => {
-        if (typeof localStorage === 'undefined') return;
-        localStorage.setItem(key, value);
-      },
-      removeItem: (key: string) => {
-        if (typeof localStorage === 'undefined') return;
-        localStorage.removeItem(key);
-      },
-    };
-  } else {
-    // Use AsyncStorage for mobile
-    const AsyncStorage = require('@react-native-async-storage/async-storage').default;
-    return {
-      getItem: (key: string) => AsyncStorage.getItem(key),
-      setItem: (key: string, value: string) => AsyncStorage.setItem(key, value),
-      removeItem: (key: string) => AsyncStorage.removeItem(key),
-    };
-  }
+//
+// SECURITY PLANE v1 default: do not persist auth tokens client-side.
+// - Web: never use localStorage/sessionStorage for tokens
+// - Native: do not store refresh/access tokens in AsyncStorage
+//
+// This uses in-memory storage on all platforms by default.
+//
+// Break-glass (dev only): if SUPABASE_INSECURE_PERSIST_SESSION=true, we allow AsyncStorage-based
+// persistence on native platforms only. This MUST NOT be enabled in shared/staging/prod.
+const allowInsecurePersist =
+  Platform.OS !== 'web' &&
+  process.env.SUPABASE_INSECURE_PERSIST_SESSION === 'true';
+
+const getStorage = (): StorageAdapter => {
+  if (!allowInsecurePersist) return createWebMemoryStorage();
+
+  // Insecure storage fallback (dev only).
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const AsyncStorage =
+    require('@react-native-async-storage/async-storage').default;
+  return {
+    getItem: (key: string) => AsyncStorage.getItem(key),
+    setItem: (key: string, value: string) => AsyncStorage.setItem(key, value),
+    removeItem: (key: string) => AsyncStorage.removeItem(key),
+  };
 };
 
 // Create Supabase client
 export const supabase: SupabaseClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY,
+  env.SUPABASE_URL,
+  env.SUPABASE_ANON_KEY,
   {
     auth: {
       storage: getStorage(),
-      autoRefreshToken: true,
-      persistSession: true,
+      // Browser portals must not persist tokens; cookie auth is the platform contract.
+      autoRefreshToken: allowInsecurePersist,
+      persistSession: allowInsecurePersist,
+      // Web still needs to process auth fragments, but only in-memory.
       detectSessionInUrl: Platform.OS === 'web',
     },
-  }
+  },
 );
 
 // Authentication service
@@ -63,7 +87,14 @@ export class AuthService {
   /**
    * Sign in with email and password
    */
-  static async signIn(email: string, password: string): Promise<{ user: User | null; session: Session | null; error: Error | null }> {
+  static async signIn(
+    email: string,
+    password: string,
+  ): Promise<{
+    user: User | null;
+    session: Session | null;
+    error: Error | null;
+  }> {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -71,9 +102,7 @@ export class AuthService {
 
     if (error) {
       if (__DEV__) {
-
         console.error('Sign in error:', error);
-
       }
       return { user: null, session: null, error };
     }
@@ -84,7 +113,15 @@ export class AuthService {
   /**
    * Sign up with email and password
    */
-  static async signUp(email: string, password: string, metadata?: Record<string, unknown>): Promise<{ user: User | null; session: Session | null; error: Error | null }> {
+  static async signUp(
+    email: string,
+    password: string,
+    metadata?: Record<string, unknown>,
+  ): Promise<{
+    user: User | null;
+    session: Session | null;
+    error: Error | null;
+  }> {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -95,14 +132,35 @@ export class AuthService {
 
     if (error) {
       if (__DEV__) {
-
         console.error('Sign up error:', error);
-
       }
       return { user: null, session: null, error };
     }
 
     return { user: data.user, session: data.session, error: null };
+  }
+
+  static async signInWithSSO(options?: {
+    redirectTo?: string;
+  }): Promise<{ url?: string; error: Error | null }> {
+    const redirectTo =
+      options?.redirectTo ??
+      (Platform.OS === 'web'
+        ? `${window.location.origin}/auth/callback`
+        : 'cerebral://auth/callback');
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      // Supabase's generic OIDC slot is named "keycloak" in the API.
+      provider: 'keycloak',
+      options: { redirectTo },
+    });
+
+    if (error) {
+      if (__DEV__) console.error('SSO sign in error:', error);
+      return { error };
+    }
+
+    return { url: data.url, error: null };
   }
 
   /**
@@ -113,9 +171,7 @@ export class AuthService {
 
     if (error) {
       if (__DEV__) {
-
         console.error('Sign out error:', error);
-
       }
     }
 
@@ -125,14 +181,15 @@ export class AuthService {
   /**
    * Get current session
    */
-  static async getSession(): Promise<{ session: Session | null; error: Error | null }> {
+  static async getSession(): Promise<{
+    session: Session | null;
+    error: Error | null;
+  }> {
     const { data, error } = await supabase.auth.getSession();
 
     if (error) {
       if (__DEV__) {
-
         console.error('Get session error:', error);
-
       }
       return { session: null, error };
     }
@@ -148,9 +205,7 @@ export class AuthService {
 
     if (error) {
       if (__DEV__) {
-
         console.error('Get user error:', error);
-
       }
       return { user: null, error };
     }
@@ -161,7 +216,11 @@ export class AuthService {
   /**
    * Listen to auth state changes
    */
-  static onAuthStateChange(callback: (event: string, session: Session | null) => void): { data: { subscription: { unsubscribe: () => void } } } {
+  static onAuthStateChange(
+    callback: (event: string, session: Session | null) => void,
+  ): {
+    data: { subscription: { unsubscribe: () => void } };
+  } {
     return supabase.auth.onAuthStateChange(callback);
   }
 
@@ -170,16 +229,15 @@ export class AuthService {
    */
   static async resetPassword(email: string): Promise<{ error: Error | null }> {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: Platform.OS === 'web'
-        ? `${window.location.origin}/reset-password`
-        : 'cerebral://reset-password',
+      redirectTo:
+        Platform.OS === 'web'
+          ? `${window.location.origin}/reset-password`
+          : 'cerebral://reset-password',
     });
 
     if (error) {
       if (__DEV__) {
-
         console.error('Reset password error:', error);
-
       }
     }
 
@@ -189,16 +247,16 @@ export class AuthService {
   /**
    * Update password
    */
-  static async updatePassword(newPassword: string): Promise<{ error: Error | null }> {
+  static async updatePassword(
+    newPassword: string,
+  ): Promise<{ error: Error | null }> {
     const { error } = await supabase.auth.updateUser({
       password: newPassword,
     });
 
     if (error) {
       if (__DEV__) {
-
         console.error('Update password error:', error);
-
       }
     }
 

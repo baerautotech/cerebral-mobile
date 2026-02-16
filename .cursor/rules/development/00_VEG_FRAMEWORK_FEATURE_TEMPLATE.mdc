@@ -1,0 +1,36 @@
+---
+description: REDIRECT - See .trae/rules/veg_framework_feature_template.md for unified VEG framework standards
+globs: backend-python/**/*.py, .cerebraflow/**/*.py, frontend/**/*.ts, frontend/**/*.tsx
+alwaysApply: false
+---
+
+# ⚠️ MIGRATED TO `.trae/` SYSTEM
+
+This file has been **consolidated into the unified `.trae/` system** for better maintainability and consistency across all development tools.
+
+## 📍 Use This Instead
+
+```
+@.trae/rules/veg_framework_feature_template.md
+```
+
+## ✨ What's Now Available in `.trae/`
+
+The VEG Framework files have been migrated to provide:
+
+- **veg_framework_core.md** - Core VEG philosophy & principles
+- **veg_framework_feature_template.md** - Structured feature requests
+- **enterprise_methodology.md** - Enterprise patterns & implementations
+- **dev_workflow.md** - Workflow integration
+
+## 🔄 Migration Details
+
+**Previous Location**: `.cursor/rules/development/00_VEG_FRAMEWORK_FEATURE_TEMPLATE.mdc`
+
+**New Location**: `.trae/rules/veg_framework_feature_template.md`
+
+All content has been preserved and enhanced. No functionality lost.
+
+---
+
+**Please reference [@.trae/rules/veg_framework_feature_template.md](mdc:../../.trae/rules/veg_framework_feature_template.md) for all future VEG framework guidance.**

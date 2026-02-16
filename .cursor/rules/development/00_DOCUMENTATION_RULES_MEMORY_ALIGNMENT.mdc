@@ -1,0 +1,62 @@
+# 📚 DOCUMENTATION, RULES, AND MEMORY ALIGNMENT
+
+## **CRITICAL: Prevent Confusion Through Alignment**
+
+### **ALIGNMENT REQUIREMENTS**
+
+#### **1. Documentation Authority Hierarchy**
+```
+1. Current Codebase State (PRIMARY)
+2. .cursor/rules/*.mdc (IMPLEMENTATION GUIDANCE)
+3. docs/CEREBRAL_*.md (BUSINESS REQUIREMENTS)
+4. Memory entries (LEARNED PATTERNS)
+```
+
+#### **2. File Organization Standards**
+- **Documentation**: `docs/CEREBRAL_XXX_[CATEGORY]_[TOPIC].md` ONLY
+- **Rules**: `.cursor/rules/` with proper categorization
+- **Memory**: AI agent memories must reflect current reality
+- **Code**: Single source of truth in actual implementation
+
+#### **3. Consistency Validation**
+```bash
+# Check documentation naming
+find docs/ -name "*.md" ! -name "CEREBRAL_*" | wc -l  # Should be 0
+
+# Check rules organization
+find .cursor/rules/ -name "*.mdc" | head -5
+
+# Verify no scattered documentation
+find . -maxdepth 1 -name "*.md" ! -name "README.md" | wc -l  # Should be 0
+```
+
+#### **4. Memory Accuracy Protocol**
+- Memory entries must reflect CURRENT system state
+- Outdated memories must be updated or deleted
+- No conflicting information between docs/rules/memory
+- Regular memory validation against codebase reality
+
+### **CONFUSION PREVENTION MEASURES**
+
+#### **Single Source of Truth Rules**
+- RAG data: ChromaDB ONLY (no JSON files)
+- Documentation: docs/ directory ONLY
+- Configuration: Proper config files ONLY
+- Tests: tests/ directories ONLY
+
+#### **Alignment Verification**
+- Pre-commit hooks verify file organization
+- Regular architecture reviews check consistency
+- Memory validation against current implementation
+- Documentation sync with actual codebase state
+
+### **VIOLATION REMEDIATION**
+When misalignment is detected:
+1. Update documentation to match current reality
+2. Correct rules to reflect current practices
+3. Update memories to remove outdated information
+4. Verify single source of truth compliance
+
+---
+
+**This rule prevents the organizational chaos and confusion that results from misaligned documentation, rules, and memories.**

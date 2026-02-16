@@ -30,7 +30,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filter, onFilterChange }) 
       style={[styles.filterButton, filter === 'completed' && styles.filterButtonActive]}
       onPress={() => onFilterChange('completed')}
     >
-      <Text style={[styles.filterButtonText, filter === 'completed' && styles.filterButtonTextActive]}>
+      <Text
+        style={[styles.filterButtonText, filter === 'completed' && styles.filterButtonTextActive]}
+      >
         Completed
       </Text>
     </TouchableOpacity>

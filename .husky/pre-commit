@@ -42,7 +42,7 @@ else
     NEEDS_CHECKSTYLE=false
     NEEDS_SWIFTLINT=false
     NEEDS_KTLINT=false
-    
+
     [ -f "package.json" ] && HAS_PACKAGE_JSON=true
     [ -f "pyproject.toml" ] || [ -f "setup.py" ] || [ -d "backend-python" ] && HAS_PYPROJECT_TOML=true
     [ -f "Cargo.toml" ] && HAS_CARGO_TOML=true
@@ -68,7 +68,7 @@ EXIT_CODE=0
 if [ "$HAS_PACKAGE_JSON" = true ]; then
     echo ""
     echo "📦 Running JavaScript/Node.js validations..."
-    
+
     # ESLint
     if [ "$NEEDS_ESLINT" = true ] && command -v eslint &> /dev/null; then
         echo "  🔍 Running ESLint..."
@@ -78,18 +78,23 @@ if [ "$HAS_PACKAGE_JSON" = true ]; then
             echo "  ✅ ESLint passed"
         fi
     fi
-    
+
     # Prettier
     if command -v prettier &> /dev/null; then
         echo "  ✨ Checking Prettier formatting..."
-        if ! pnpm exec prettier --check . 2>/dev/null; then
-            echo "  ⚠️  Prettier formatting issues detected"
-            EXIT_CODE=1
+        STAGED_FORMAT_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js|jsx|ts|tsx|json|md|yml|yaml)$' | grep -v 'pnpm-lock\.yaml' || true)
+        if [ -n "$STAGED_FORMAT_FILES" ]; then
+            if ! pnpm exec prettier --check $STAGED_FORMAT_FILES 2>/dev/null; then
+                echo "  ⚠️  Prettier formatting issues detected"
+                EXIT_CODE=1
+            else
+                echo "  ✅ Prettier check passed"
+            fi
         else
-            echo "  ✅ Prettier check passed"
+            echo "  ✅ No staged files require Prettier"
         fi
     fi
-    
+
     # Jest
     if [ "$NEEDS_JEST" = true ] && command -v jest &> /dev/null; then
         echo "  🧪 Running Jest tests..."
@@ -109,7 +114,7 @@ fi
 if [ "$HAS_PYPROJECT_TOML" = true ]; then
     echo ""
     echo "🐍 Running Python validations..."
-    
+
     # Pylint
     if command -v pylint &> /dev/null; then
         echo "  🔍 Running pylint..."
@@ -122,7 +127,7 @@ if [ "$HAS_PYPROJECT_TOML" = true ]; then
             fi
         fi
     fi
-    
+
     # Black
     if command -v black &> /dev/null; then
         echo "  ⬛ Checking Black formatting..."
@@ -135,7 +140,7 @@ if [ "$HAS_PYPROJECT_TOML" = true ]; then
             fi
         fi
     fi
-    
+
     # Pytest
     if [ "$NEEDS_PYTEST" = true ] && command -v pytest &> /dev/null; then
         echo "  🧪 Running pytest..."
@@ -159,7 +164,7 @@ fi
 if [ "$HAS_CARGO_TOML" = true ]; then
     echo ""
     echo "🦀 Running Rust validations..."
-    
+
     # Cargo check
     if [ "$NEEDS_CARGO" = true ] && command -v cargo &> /dev/null; then
         echo "  🔍 Running cargo check..."
@@ -170,7 +175,7 @@ if [ "$HAS_CARGO_TOML" = true ]; then
             echo "  ✅ Cargo check passed"
         fi
     fi
-    
+
     # Clippy
     if command -v cargo &> /dev/null && cargo clippy --version &> /dev/null 2>&1; then
         echo "  🔗 Running clippy (Rust linter)..."
@@ -180,7 +185,7 @@ if [ "$HAS_CARGO_TOML" = true ]; then
             echo "  ✅ Clippy passed"
         fi
     fi
-    
+
     # Rustfmt
     if command -v rustfmt &> /dev/null; then
         echo "  📝 Checking rustfmt (Rust formatter)..."
@@ -202,7 +207,7 @@ fi
 if [ "$HAS_POM_XML" = true ]; then
     echo ""
     echo "☕ Running Java/Maven validations..."
-    
+
     # Maven compile
     if command -v mvn &> /dev/null; then
         echo "  🔍 Running maven compile..."
@@ -213,7 +218,7 @@ if [ "$HAS_POM_XML" = true ]; then
             echo "  ✅ Maven compile passed"
         fi
     fi
-    
+
     # Checkstyle
     if command -v mvn &> /dev/null; then
         echo "  ✔️  Running checkstyle (Java style checker)..."
@@ -228,7 +233,7 @@ fi
 if [ "$HAS_BUILD_GRADLE" = true ]; then
     echo ""
     echo "☕ Running Java/Gradle validations..."
-    
+
     # Gradle build
     if command -v gradle &> /dev/null || [ -f "gradlew" ]; then
         echo "  🔍 Running gradle build..."
@@ -241,7 +246,7 @@ if [ "$HAS_BUILD_GRADLE" = true ]; then
             echo "  ✅ Gradle build passed"
         fi
     fi
-    
+
     # Checkstyle
     if command -v gradle &> /dev/null || [ -f "gradlew" ]; then
         echo "  ✔️  Running checkstyle (Java style checker)..."
@@ -262,7 +267,7 @@ fi
 if [ "$HAS_SWIFT_FILES" = true ]; then
     echo ""
     echo "🍎 Running Swift validations (iOS/macOS/watchOS)..."
-    
+
     # SwiftLint
     if [ "$NEEDS_SWIFTLINT" = true ] && command -v swiftlint &> /dev/null; then
         echo "  🔍 Running swiftlint..."
@@ -275,7 +280,7 @@ if [ "$HAS_SWIFT_FILES" = true ]; then
             fi
         fi
     fi
-    
+
     # SwiftFormat
     if command -v swiftformat &> /dev/null; then
         echo "  ✨ Checking swiftformat..."
@@ -297,7 +302,7 @@ fi
 if [ "$HAS_KOTLIN_FILES" = true ]; then
     echo ""
     echo "🤖 Running Kotlin validations (Android/Kotlin Multiplatform)..."
-    
+
     # Ktlint
     if [ "$NEEDS_KTLINT" = true ] && command -v ktlint &> /dev/null; then
         echo "  🔍 Running ktlint..."
@@ -319,6 +324,17 @@ fi
 echo ""
 echo "🔍 Running universal validations..."
 
+# Guardrails (staged-change)
+if [ -f "tools/guardrails/check-staged.mjs" ]; then
+    echo "  🛡️  Running staged guardrails..."
+    if ! node tools/guardrails/check-staged.mjs; then
+        echo "  ❌ Guardrails failed"
+        EXIT_CODE=1
+    else
+        echo "  ✅ Guardrails passed"
+    fi
+fi
+
 # TypeScript check (if applicable)
 if [ -f "tsconfig.json" ] && command -v tsc &> /dev/null; then
     echo "  📘 Checking TypeScript..."
@@ -333,7 +349,7 @@ fi
 # Workspace integrity
 if [ -f "pnpm-workspace.yaml" ] || [ -f "lerna.json" ]; then
     echo "  🏗️  Validating workspace structure..."
-    if ! pnpm install --dry-run 2>/dev/null; then
+    if ! pnpm install --frozen-lockfile --ignore-scripts --prefer-offline --reporter silent >/dev/null 2>&1; then
         echo "  ❌ Workspace integrity check failed"
         EXIT_CODE=1
     else

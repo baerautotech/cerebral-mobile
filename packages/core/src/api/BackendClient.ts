@@ -1,7 +1,7 @@
 /**
  * Backend API Client
  * Cross-platform HTTP client for Cerebral Platform Backend API
- * 
+ *
  * Features:
  * - Automatic JWT token injection
  * - Error handling with custom error types
@@ -81,7 +81,9 @@ export class BackendClient {
 
   constructor(options: ApiOptions = {}) {
     const baseURL =
-      options.baseURL || process.env.REACT_APP_API_URL || 'https://api.dev.cerebral.baerautotech.com';
+      options.baseURL ||
+      process.env.REACT_APP_API_URL ||
+      'https://api.dev.cerebral.baerautotech.com';
 
     this.enableLogging = options.enableLogging ?? true;
     this.retryAttempts = options.retryAttempts || 3;
@@ -92,7 +94,7 @@ export class BackendClient {
       timeout: options.timeout || 30000,
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        Accept: 'application/json',
       },
       withCredentials: true,
     });
@@ -199,11 +201,7 @@ export class BackendClient {
 
   // ==================== PRIVATE HELPER METHODS ====================
 
-  private async request<T>(
-    method: string,
-    path: string,
-    data?: any
-  ): Promise<T> {
+  private async request<T>(method: string, path: string, data?: any): Promise<T> {
     const startTime = Date.now();
     let attempt = 0;
     let lastError: Error | null = null;
@@ -292,7 +290,3 @@ export class BackendClient {
 
 export const backendClient = new BackendClient();
 export default backendClient;
-
-
-
-

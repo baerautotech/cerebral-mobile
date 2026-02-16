@@ -1,0 +1,657 @@
+# Enterprise Git Flow - Multi-Environment Deployment Strategy
+
+**MANDATORY**: All AI agents must follow this Git branching and merging strategy for multi-environment deployments.
+
+---
+
+## 🌳 **Branch → Environment Mapping**
+
+| Branch | Environment | Auto-Deploy | Stability | Who Merges |
+|--------|-------------|-------------|-----------|------------|
+| `develop` | Development | ✅ Yes | Unstable | CodeDev (after QA) |
+| `staging` | Staging | ✅ Yes | Testing | CI/CD from develop |
+| `release/vX.Y.Z` | Pre-Production | ✅ Yes | Stable | Release Manager |
+| `main` | Production | ❌ Manual Approval | Very Stable | QA Agent + Approval |
+| `enterprise-stable` | Enterprise | ❌ Scheduled | Locked | Release Manager |
+
+---
+
+## 📋 **Task Types & Git Flow Rules**
+
+### **FEATURE** - New Features
+```yaml
+Base Branch: develop
+Branch Format: feature/{task_id}
+Example: feature/SYNC-000157.1.2.1
+Merge Target: develop
+Auto-Deploy: Development environment
+Who Merges: QA Agent (after validation)
+```
+
+### **DEV_FIX** - Development Bug Fixes
+```yaml
+Base Branch: develop
+Branch Format: fix/{task_id}
+Example: fix/DEV-123-crash
+Merge Target: develop
+Auto-Deploy: Development environment
+Who Merges: QA Agent (after validation)
+```
+
+### **PREPROD_FIX** - Pre-Production Issues
+```yaml
+Base Branch: release/vX.Y.Z (active release branch)
+Branch Format: fix/{task_id}
+Example: fix/PREPROD-456-ui-bug
+Merge Target: release/vX.Y.Z
+Propagation: CI/CD merges release → main → develop
+Auto-Deploy: Pre-Production environment
+Who Merges: QA Agent + Release Manager
+```
+
+### **PROD_HOTFIX** - Production Critical Issues
+```yaml
+Base Branch: main
+Branch Format: hotfix/{task_id}
+Example: hotfix/PROD-789-critical
+Merge Target: main AND develop
+Auto-Deploy: Production (after approval)
+Who Merges: QA Agent + Production Approval
+Priority: CRITICAL - Expedited pipeline
+```
+
+### **ENTERPRISE_MAINT** - Enterprise Maintenance
+```yaml
+Base Branch: enterprise-stable
+Branch Format: maint/{task_id}
+Example: maint/ENT-101-config
+Merge Target: enterprise-stable
+Auto-Deploy: Enterprise environment (scheduled)
+Who Merges: Release Manager only
+```
+
+---
+
+## 🔧 **CodeDev Agent Instructions**
+
+### **Step 1: Determine Base Branch**
+```python
+def get_base_branch(task_type: str, active_release: str = None) -> str:
+    """Determine base branch from task type"""
+    mapping = {
+        "FEATURE": "develop",
+        "DEV_FIX": "develop",
+        "PREPROD_FIX": active_release or "release/latest",
+        "PROD_HOTFIX": "main",
+        "ENTERPRISE_MAINT": "enterprise-stable"
+    }
+    return mapping.get(task_type, "develop")  # Default to develop
+```
+
+### **Step 2: Create Feature Branch**
+```bash
+# Get task type from database
+TASK_TYPE=$(get_task_type_from_db {task_id})
+BASE_BRANCH=$(get_base_branch $TASK_TYPE)
+
+# Sync and branch
+git checkout $BASE_BRANCH
+git pull origin $BASE_BRANCH
+git checkout -b {prefix}/{task_id}
+```
+
+### **Step 3: Implement & Commit**
+```bash
+# Make changes
+# ... implementation work ...
+
+# Commit with conventional format
+git add -A
+git commit -m "feat({task_id}): {description}
+
+- Implemented {feature}
+- Added tests
+- Verified compliance
+- QA ready
+
+Type: {task_type}
+Base: {base_branch}"
+
+# Output for QA handoff
+echo "COMMIT: $(git rev-parse HEAD)"
+echo "BRANCH: {branch_name}"
+echo "[TASK_COMPLETE]"
+```
+
+### **Step 4: Database Update**
+```python
+# Update task in database
+update_task(task_id, {
+    "status": "qa-ready",
+    "agent_context": {
+        "dev_status": "Complete",
+        "branch": branch_name,
+        "commit": commit_hash,
+        "task_type": task_type,
+        "base_branch": base_branch
+    }
+})
+```
+
+---
+
+## ✅ **QA Agent Instructions**
+
+### **Step 1: Fetch & Checkout**
+```bash
+git fetch origin
+git checkout {branch_name}
+git log -1 --oneline  # Verify commit exists
+```
+
+### **Step 2: Run Validation**
+```bash
+# 15-Gate QA Process
+bash automation/stages/qa_executor_enhanced.sh {branch_name}
+
+# Returns: PASS or FAIL with gate details
+```
+
+### **Step 3: Merge Logic (CRITICAL)**
+```python
+def execute_qa_merge(task_type: str, branch_name: str, task_id: str, active_release: str = None):
+    """Execute merge based on task type"""
+
+    if task_type in ["FEATURE", "DEV_FIX"]:
+        # Merge to develop
+        run("git checkout develop && git pull origin develop")
+        run(f"git merge {branch_name} --no-ff -m 'Merge {task_id} - QA passed'")
+        run("git push origin develop")
+        run(f"git branch -d {branch_name}")
+        return "develop"
+
+    elif task_type == "PREPROD_FIX":
+        # Merge to release branch
+        run(f"git checkout {active_release} && git pull origin {active_release}")
+        run(f"git merge {branch_name} --no-ff -m 'Merge {task_id} - QA passed'")
+        run(f"git push origin {active_release}")
+        run(f"git branch -d {branch_name}")
+        # CI/CD handles propagation to main + develop
+        return active_release
+
+    elif task_type == "PROD_HOTFIX":
+        # Merge to main
+        run("git checkout main && git pull origin main")
+        run(f"git merge {branch_name} --no-ff -m 'Hotfix {task_id} - QA passed'")
+        run("git push origin main")
+
+        # Also merge to develop
+        run("git checkout develop && git pull origin develop")
+        run(f"git merge main --no-ff -m 'Hotfix {task_id} from main'")
+        run("git push origin develop")
+
+        run(f"git branch -d {branch_name}")
+        return "main, develop"
+
+    elif task_type == "ENTERPRISE_MAINT":
+        # Merge to enterprise-stable
+        run("git checkout enterprise-stable && git pull origin enterprise-stable")
+        run(f"git merge {branch_name} --no-ff -m 'Maintenance {task_id} - QA passed'")
+        run(f"git push origin enterprise-stable")
+        run(f"git branch -d {branch_name}")
+        return "enterprise-stable"
+```
+
+### **Step 4: Update Task**
+```python
+# Mark complete in database
+update_task(task_id, {
+    "status": "done",
+    "agent_context": {
+        "qa_status": "Passed all 15 gates",
+        "merged_to": target_branches,
+        "deployment_triggered": True,
+        "completed_at": datetime.utcnow().isoformat()
+    }
+})
+```
+
+---
+
+## 🔄 **Mermaid Diagram - Enterprise Git Flow**
+
+```mermaid
+%%{init: {'flowchart': {'defaultRenderer': 'dagre'}} }%%
+gitGraph
+    commit id: "Initial"
+    branch develop
+    commit id: "Dev Setup"
+    branch enterprise-stable
+    commit id: "Enterprise Base"
+    checkout main
+    merge enterprise-stable tag: "v0.1.0"
+
+    checkout develop
+    branch feature/SYNC-157
+    commit id: "Feature A-1"
+    commit id: "Feature A-2"
+    checkout develop
+    merge feature/SYNC-157 tag: "Feature Complete"
+
+    branch release/1.0.0
+    checkout release/1.0.0
+    commit id: "Preprod Bugfix"
+
+    checkout main
+    merge release/1.0.0 tag: "v1.0.0"
+    checkout develop
+    merge release/1.0.0 tag: "Sync Release"
+
+    checkout main
+    branch hotfix/PROD-401
+    commit id: "Production Hotfix"
+    checkout main
+    merge hotfix/PROD-401 tag: "v1.0.1"
+    checkout develop
+    merge hotfix/PROD-401 tag: "Hotfix to Dev"
+
+    checkout enterprise-stable
+    merge main tag: "Enterprise v1.0.1"
+```
+
+---
+
+## 🗃️ **Database Schema Extension**
+
+### **Add task_type to cerebral_tasks:**
+```sql
+ALTER TABLE cerebral_tasks
+ADD COLUMN task_type VARCHAR(50) DEFAULT 'FEATURE'
+CHECK (task_type IN ('FEATURE', 'DEV_FIX', 'PREPROD_FIX', 'PROD_HOTFIX', 'ENTERPRISE_MAINT'));
+
+CREATE INDEX idx_task_type ON cerebral_tasks(task_type);
+```
+
+### **Add release tracking:**
+```sql
+CREATE TABLE release_branches (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    version VARCHAR(20) NOT NULL,  -- e.g., '1.0.0'
+    branch_name VARCHAR(100) NOT NULL,  -- 'release/1.0.0'
+    status VARCHAR(20) CHECK (status IN ('active', 'merged', 'abandoned')),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    merged_to_main_at TIMESTAMPTZ,
+    created_by UUID REFERENCES auth.users(id)
+);
+```
+
+---
+
+## 🚨 **Agent Validation Rules**
+
+### **Pre-Commit Checks (CodeDev):**
+- ✅ Branched from correct base for task type
+- ✅ Branch naming follows convention
+- ✅ Commit message includes task ID
+- ✅ No merge to protected branches (main, enterprise-stable)
+
+### **Pre-Merge Checks (QA):**
+- ✅ All 15 QA gates passed
+- ✅ Target branch is current (git pull succeeded)
+- ✅ No merge conflicts
+- ✅ Commit hash matches CodeDev output
+
+### **Protected Branch Rules:**
+```yaml
+# GitHub branch protection
+main:
+  require_pull_request_reviews: true
+  required_approving_review_count: 2
+  require_status_checks: true
+  required_status_checks:
+    - continuous-integration
+    - security-scan
+    - performance-test
+
+enterprise-stable:
+  require_pull_request_reviews: true
+  required_approving_review_count: 3  # Extra review
+  dismiss_stale_reviews: false
+  restrictions:
+    users: [release-manager-id]
+```
+
+---
+
+## 📊 **CI/CD Pipeline Integration**
+
+### **Argo CD Application Structure:**
+```yaml
+# Development (auto-sync from develop)
+argocd/apps/cerebral-dev.yaml:
+  targetRevision: develop
+  syncPolicy: {automated: {prune: true, selfHeal: true}}
+
+# Staging (auto-sync from staging)
+argocd/apps/cerebral-staging.yaml:
+  targetRevision: staging
+  syncPolicy: {automated: {prune: true, selfHeal: true}}
+
+# Pre-Production (auto-sync from release/*)
+argocd/apps/cerebral-preprod.yaml:
+  targetRevision: release/current
+  syncPolicy: {automated: {prune: true, selfHeal: true}}
+
+# Production (manual sync from main)
+argocd/apps/cerebral-prod.yaml:
+  targetRevision: main
+  syncPolicy: {manual: true}  # Requires approval
+
+# Enterprise (scheduled from enterprise-stable)
+argocd/apps/cerebral-enterprise.yaml:
+  targetRevision: enterprise-stable
+  syncPolicy: {manual: true, schedule: "0 2 * * 0"}  # Sunday 2am
+```
+
+### **Deployment Triggers:**
+```python
+# In QA Agent - after successful merge
+def trigger_deployment(target_branch: str, task_id: str):
+    """Trigger Argo CD sync for target branch"""
+
+    app_mapping = {
+        "develop": "cerebral-dev",
+        "staging": "cerebral-staging",
+        "release/*": "cerebral-preprod",
+        "main": "cerebral-prod",  # Requires manual approval
+        "enterprise-stable": "cerebral-enterprise"  # Scheduled
+    }
+
+    app_name = get_argocd_app(target_branch, app_mapping)
+
+    if target_branch in ["main", "enterprise-stable"]:
+        # Create deployment request for approval
+        create_deployment_request(task_id, app_name, requires_approval=True)
+    else:
+        # Auto-deploy
+        argocd_sync(app_name)
+```
+
+---
+
+## 🎯 **Agent Task Metadata Requirements**
+
+### **Required Fields in cerebral_tasks:**
+```python
+{
+    "task_id": "SYNC-000157.1.2.1",
+    "task_type": "FEATURE",  # MANDATORY
+    "target_environment": "development",  # Computed from task_type
+    "base_branch": "develop",  # Computed from task_type
+    "active_release": None,  # Set when PREPROD_FIX
+    "agent_context": {
+        "dev_status": "pending",
+        "qa_status": "pending",
+        "branch_name": None,  # Set by CodeDev
+        "commit_hash": None,  # Set by CodeDev
+        "merged_to": None,  # Set by QA
+        "deployment_triggered": False  # Set by QA
+    }
+}
+```
+
+### **Task Type Detection:**
+```python
+def determine_task_type(task_id: str, description: str) -> str:
+    """Auto-determine task type from ID and description"""
+
+    # Check task ID prefix
+    if task_id.startswith("SYNC-"):
+        return "FEATURE"  # Sync tasks are features
+    elif task_id.startswith("FIX-DEV-"):
+        return "DEV_FIX"
+    elif task_id.startswith("FIX-PREPROD-"):
+        return "PREPROD_FIX"
+    elif task_id.startswith("HOTFIX-"):
+        return "PROD_HOTFIX"
+    elif task_id.startswith("MAINT-ENT-"):
+        return "ENTERPRISE_MAINT"
+
+    # Check description keywords
+    if "hotfix" in description.lower() or "production" in description.lower():
+        return "PROD_HOTFIX"
+    elif "preprod" in description.lower() or "pre-production" in description.lower():
+        return "PREPROD_FIX"
+
+    # Default to FEATURE
+    return "FEATURE"
+```
+
+---
+
+## 🚀 **K8s Agent Pod Specifications (Future)**
+
+### **Dev Agent Deployment:**
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cerebral-dev-agent
+  namespace: cerebral-agents
+spec:
+  replicas: 2  # Min 2 idle pods
+  selector:
+    matchLabels:
+      app: dev-agent
+      task-type: FEATURE
+  template:
+    metadata:
+      labels:
+        app: dev-agent
+        task-type: FEATURE
+    spec:
+      containers:
+      - name: dev-agent
+        image: registry.cerebral.baerautotech.com/dev-agent:latest
+        env:
+        - name: TASK_TYPE_FILTER
+          value: "FEATURE,DEV_FIX"
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: llm-api-keys
+              key: anthropic-key
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: llm-api-keys
+              key: openai-key
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+        volumeMounts:
+        - name: git-credentials
+          mountPath: /root/.git-credentials
+          readOnly: true
+      volumes:
+      - name: git-credentials
+        secret:
+          secretName: cerebral-git-creds
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: dev-agent-hpa
+  namespace: cerebral-agents
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cerebral-dev-agent
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Pods
+    pods:
+      metric:
+        name: task_queue_depth
+      target:
+        type: AverageValue
+        averageValue: "3"
+```
+
+### **Hotfix Agent Deployment (Priority):**
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cerebral-hotfix-agent
+  namespace: cerebral-agents
+spec:
+  replicas: 1  # Always 1 ready for emergencies
+  selector:
+    matchLabels:
+      app: hotfix-agent
+      priority: critical
+  template:
+    spec:
+      priorityClassName: system-cluster-critical  # High priority
+      containers:
+      - name: hotfix-agent
+        image: registry.cerebral.baerautotech.com/hotfix-agent:latest
+        env:
+        - name: TASK_TYPE_FILTER
+          value: "PROD_HOTFIX"
+        - name: PRIORITY
+          value: "CRITICAL"
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1000m"  # Higher CPU for speed
+```
+
+---
+
+## 🎨 **Web Dashboard Features**
+
+### **Required UI Elements:**
+1. **Task Queue Visualization**
+   - Grouped by task_type
+   - Color-coded by priority
+   - Drag-and-drop assignment to agents
+
+2. **Agent Pod Monitoring**
+   - Pod health status
+   - Current task assignment
+   - Resource utilization
+   - Logs streaming
+
+3. **Branch Flow Visualization**
+   - Active branches by environment
+   - Merge status
+   - Deployment pipeline status
+
+4. **Approval Workflows**
+   - Production deployment approval
+   - Enterprise release approval
+   - One-click approve/reject
+
+5. **Audit Trail**
+   - All agent actions
+   - Merge history
+   - Deployment history
+   - Compliance logs
+
+---
+
+## 📝 **Manual Workflow (Current - Until K8s Built)**
+
+### **For FEATURE Tasks (Epic 1):**
+```bash
+# All Epic 1 tasks are FEATURE type
+git checkout develop && git pull origin develop
+git checkout -b feature/{task_id}
+
+# Implement
+# ... code changes ...
+
+git add -A && git commit -m "feat({task_id}): {description}"
+git checkout develop && git merge feature/{task_id} --no-ff
+git push origin develop
+git branch -d feature/{task_id}
+
+cerebral done {task_id}
+```
+
+### **For PROD_HOTFIX:**
+```bash
+git checkout main && git pull origin main
+git checkout -b hotfix/{task_id}
+
+# Fix critical issue
+# ... hotfix code ...
+
+git add -A && git commit -m "hotfix({task_id}): {description}"
+
+# Merge to main
+git checkout main && git merge hotfix/{task_id} --no-ff
+git push origin main
+
+# Also to develop
+git checkout develop && git merge main --no-ff
+git push origin develop
+
+git branch -d hotfix/{task_id}
+cerebral done {task_id}
+```
+
+---
+
+## ✅ **Validation Checklist**
+
+### **CodeDev Agent:**
+- [ ] Task type identified correctly
+- [ ] Base branch determined correctly
+- [ ] Branch naming convention followed
+- [ ] Commit includes task ID
+- [ ] Commit hash output for QA
+- [ ] No direct merge to protected branches
+
+### **QA Agent:**
+- [ ] All 15 gates passed
+- [ ] Correct merge target(s) for task type
+- [ ] Target branch(es) synced before merge
+- [ ] No merge conflicts
+- [ ] Branch cleanup completed
+- [ ] Deployment triggered appropriately
+- [ ] Task marked complete in database
+
+---
+
+## 🚨 **Critical Rules**
+
+1. **NEVER merge directly to `main` or `enterprise-stable` without QA approval**
+2. **ALWAYS sync target branch before merge** (`git pull origin {branch}`)
+3. **PROD_HOTFIX must merge to BOTH main and develop**
+4. **PREPROD_FIX merges only to release/*, CI/CD handles propagation**
+5. **Delete feature branch after successful merge**
+6. **Tag all production merges** with version number
+
+---
+
+**This Git flow ensures code stability through multi-environment gates while enabling rapid development and emergency hotfix capabilities. All AI agents must follow these rules without exception.**
+
+**See Also**:
+- `docs/DEVELOPMENT_ROADMAP_Q4_2025.md` - Complete strategy
+- Argo CD apps in `k8s/argocd/applications/`
+- Branch protection rules in GitHub repository settings

@@ -8,5 +8,5 @@ AppRegistry.registerComponent(appName, () => App);
 // Run app in web DOM
 AppRegistry.runApplication(appName, {
   initialProps: {},
-  rootTag: document.getElementById('root')
+  rootTag: document.getElementById('root'),
 });

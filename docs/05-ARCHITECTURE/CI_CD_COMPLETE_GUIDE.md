@@ -1,21 +1,21 @@
 # 🚀 Cerebral Platform - Complete CI/CD System Guide
 
-**Last Updated**: October 24, 2025  
-**Status**: ✅ Production Ready  
+**Last Updated**: October 24, 2025
+**Status**: ✅ Production Ready
 **Build System**: Tekton (ONLY) - GitHub Actions NOT used for builds
 
 ---
 
 ## 📋 Quick Reference
 
-| Component | Status | Details |
-|-----------|--------|---------|
-| **Build System** | ✅ Active | Tekton Pipelines + Kaniko in Kubernetes |
-| **Webhook Receiver** | ✅ Running | Rust service, 2 replicas (tekton-pipelines) |
-| **Ingress** | ✅ Configured | webhook.dev.cerebral.baerautotech.com:3000 |
-| **GitHub Integration** | ✅ Ready | Push webhook to https://webhook.dev.cerebral.baerautotech.com/ |
-| **Registry** | ✅ Available | 10.34.0.202:5000 (internal, HTTP) |
-| **Deployment** | ✅ Automated | Zero-downtime rollouts on image push |
+| Component              | Status        | Details                                                        |
+| ---------------------- | ------------- | -------------------------------------------------------------- |
+| **Build System**       | ✅ Active     | Tekton Pipelines + Kaniko in Kubernetes                        |
+| **Webhook Receiver**   | ✅ Running    | Rust service, 2 replicas (tekton-pipelines)                    |
+| **Ingress**            | ✅ Configured | webhook.dev.cerebral.baerautotech.com:3000                     |
+| **GitHub Integration** | ✅ Ready      | Push webhook to https://webhook.dev.cerebral.baerautotech.com/ |
+| **Registry**           | ✅ Available  | 10.34.0.202:5000 (internal, HTTP)                              |
+| **Deployment**         | ✅ Automated  | Zero-downtime rollouts on image push                           |
 
 ---
 
@@ -24,25 +24,25 @@
 ```mermaid
 graph TB
     A["👤 Developer<br/>Local Machine"] -->|1. git push| B["🐙 GitHub<br/>Repository"]
-    
+
     B -->|2. GitHub Webhook<br/>HTTPS POST| C["🌐 Ingress nginx<br/>webhook.dev.cerebral.baerautotech.com"]
-    
+
     C -->|3. Routes to port 3000| D["⚙️ github-webhook-receiver<br/>Rust Service<br/>2 Replicas"]
-    
+
     D -->|4. Validates signature<br/>Creates PipelineRun| E["🔧 Tekton PipelineRun<br/>tekton-pipelines ns"]
-    
+
     E --> F["📦 Pipeline Tasks"]
-    
+
     F -->|Task 1| F1["git-clone-task<br/>Clone repository<br/>Extract commit info"]
     F -->|Task 2| F2["kaniko-build-task<br/>Build Docker image<br/>Inside Kubernetes"]
     F -->|Task 3| F3["deploy-task<br/>Update K8s deployment<br/>Zero-downtime rollout"]
-    
+
     F1 --> G["📚 Git Repo<br/>Source code<br/>All branches"]
     F2 --> H["🐳 Internal Registry<br/>10.34.0.202:5000<br/>cerebral/service:branch"]
     F3 --> I["☸️ Kubernetes Cluster<br/>cerebral-platform ns<br/>Live services"]
-    
+
     I -->|Services available| J["👥 End Users<br/>Web/Mobile/API"]
-    
+
     style A fill:#e1f5ff
     style B fill:#fff3e0
     style C fill:#f3e5f5
@@ -59,6 +59,7 @@ graph TB
 ## 🔄 Complete Build Flow (Step-by-Step)
 
 ### 1. Developer Pushes Code
+
 ```bash
 cd ~/Development/cerebral
 git add -A
@@ -67,30 +68,33 @@ git push origin main  # ← This triggers everything
 ```
 
 ### 2. GitHub Fires Webhook
+
 - **URL**: `https://webhook.dev.cerebral.baerautotech.com/`
 - **Method**: POST
-- **Headers**: 
+- **Headers**:
   - `X-Hub-Signature-256`: HMAC validation
   - `X-GitHub-Event`: push
 - **Body**: Repository info, commit SHA, changed files
 - **Signature Secret**: Stored in `github-webhook-secret` (sealed)
 
 ### 3. Ingress Routes to Webhook Receiver
+
 ```yaml
 # k8s/ci-cd/webhook-receiver-ingress.yaml
 spec:
   rules:
-  - host: webhook.dev.cerebral.baerautotech.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: github-webhook-receiver  # Port 3000
-          port:
-            number: 3000  # ⚠️ CRITICAL
+    - host: webhook.dev.cerebral.baerautotech.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: github-webhook-receiver # Port 3000
+              port:
+                number: 3000 # ⚠️ CRITICAL
 ```
 
 ### 4. Webhook Receiver Validates & Creates PipelineRun
+
 ```bash
 # Inside Rust service:
 1. Validate GitHub signature (HMAC-SHA256)
@@ -106,6 +110,7 @@ spec:
 ### 5. Tekton Pipeline Executes
 
 #### Task 1: git-clone-task
+
 ```bash
 # Clones repository
 # Sets working directory
@@ -113,6 +118,7 @@ spec:
 ```
 
 #### Task 2: kaniko-build-task
+
 ```bash
 # Builds Docker image using Kaniko
 # Runs INSIDE Kubernetes (no Docker daemon needed)
@@ -121,6 +127,7 @@ spec:
 ```
 
 #### Task 3: deploy-task
+
 ```bash
 # Updates Kubernetes deployment
 # Uses kubectl set image
@@ -129,6 +136,7 @@ spec:
 ```
 
 ### 6. Services Update Automatically
+
 - New pods start with new image
 - Old pods gracefully terminate
 - Users experience zero downtime
@@ -146,10 +154,10 @@ Base images are pre-built Docker images with all common ML/AI dependencies pre-i
 
 ### Available Base Images
 
-| Image | Purpose | Size | Registry Location |
-|---|---|---|---|
+| Image            | Purpose                  | Size   | Registry Location                        |
+| ---------------- | ------------------------ | ------ | ---------------------------------------- |
 | **ai-base:cuda** | GPU-accelerated services | ~7.5GB | `10.34.0.202:5000/cerebral/ai-base:cuda` |
-| **ai-base:cpu** | CPU-only services | ~2.8GB | `10.34.0.202:5000/cerebral/ai-base:cpu` |
+| **ai-base:cpu**  | CPU-only services        | ~2.8GB | `10.34.0.202:5000/cerebral/ai-base:cpu`  |
 
 ### Using Base Images in Dockerfiles
 
@@ -174,6 +182,7 @@ CMD ["python", "-m", "uvicorn", "main:app"]
 ```
 
 **Example: ai-services Dockerfile**
+
 ```dockerfile
 ARG BASE=internal-registry.registry.svc.cluster.local:5000/cerebral/ai-base:cuda
 FROM ${BASE}
@@ -187,6 +196,7 @@ CMD ["python", "main.py"]
 ### Inside Kaniko Pipeline
 
 When Kaniko builds in the pipeline, it automatically:
+
 1. Pulls the base image from `10.34.0.202:5000`
 2. Adds your code on top
 3. Pushes the result to the registry
@@ -195,10 +205,10 @@ When Kaniko builds in the pipeline, it automatically:
 # In your PipelineRun
 - name: kaniko-build-task
   params:
-  - name: image-name
-    value: cerebral/ai-services
-  - name: dockerfile
-    value: microservices/ai-services/Dockerfile
+    - name: image-name
+      value: cerebral/ai-services
+    - name: dockerfile
+      value: microservices/ai-services/Dockerfile
 ```
 
 The Dockerfile references the base image → Kaniko pulls it → Build completes in minutes!
@@ -206,6 +216,7 @@ The Dockerfile references the base image → Kaniko pulls it → Build completes
 ### Services Using Base Images
 
 **All AI/ML services use one of the base images:**
+
 - `ai-services` → CUDA version
 - `bmad-services` → CUDA version
 - `data-services` → CUDA version
@@ -217,11 +228,13 @@ The Dockerfile references the base image → Kaniko pulls it → Build completes
 ### Registry Access
 
 **Inside Kubernetes (Kaniko builds):**
+
 ```
 Internal URL: http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
 ```
 
 **From your local machine:**
+
 ```bash
 # Check available base images
 curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
@@ -237,6 +250,7 @@ curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/tags/list
 ### When to Update Base Images
 
 Update when:
+
 - ✅ Adding shared dependencies needed by multiple services
 - ✅ Security patches (PyTorch, transformers, etc.)
 - ✅ Python version upgrade
@@ -248,12 +262,14 @@ Do NOT update for single-service dependencies - add those in the service's `requ
 ### Complete Update Procedure
 
 **Step 1: Update shared dependencies**
+
 ```bash
 vim ~/Development/cerebral/docker/requirements-unified.txt
 # Add/update packages needed by multiple services
 ```
 
 **Step 2: Test both images locally**
+
 ```bash
 cd ~/Development/cerebral
 
@@ -267,6 +283,7 @@ docker run --rm test-cpu python -c "import torch; print(torch.__version__)"
 ```
 
 **Step 3: If Dockerfile changes needed**
+
 ```bash
 # Edit Dockerfile if build dependencies changed
 vim ~/Development/cerebral/docker/Dockerfile.ai-base.cuda
@@ -274,11 +291,13 @@ vim ~/Development/cerebral/docker/Dockerfile.ai-base.cpu
 ```
 
 **Common Dockerfile changes:**
+
 - Add build dependencies: `gcc`, `g++`, `python3-dev`
 - Update base image: `python:3.11-slim` → `python:3.12-slim`
 - Update CUDA: `nvidia/cuda:12.4.1` → `nvidia/cuda:13.0`
 
 **Step 4: Build both images for real**
+
 ```bash
 cd ~/Development/cerebral
 
@@ -300,6 +319,7 @@ docker buildx build \
 ```
 
 **Why multi-platform?**
+
 - Mac (Apple Silicon) = ARM64 architecture
 - Kubernetes cluster = AMD64 architecture
 - Single-arch builds only work for one OS
@@ -307,6 +327,7 @@ docker buildx build \
 - Kaniko in cluster gets AMD64, Mac gets ARM64
 
 **Step 5: Verify both architectures in registry**
+
 ```bash
 # Verify CUDA image has both architectures
 curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cuda \
@@ -326,11 +347,13 @@ curl -s http://10.34.0.202:5000/v2/cerebral/ai-base/manifests/cpu \
 **Step 6: Tag and push to internal registry**
 
 ✅ **If using docker buildx with --push** (recommended above):
+
 - Images automatically pushed during build
 - Skip this step - already done!
 - Verify with curl commands above
 
 ⚠️ **If building locally without --push:**
+
 ```bash
 # Tag both images
 docker tag cerebral/ai-base:cuda 10.34.0.202:5000/cerebral/ai-base:cuda
@@ -342,6 +365,7 @@ docker push 10.34.0.202:5000/cerebral/ai-base:cpu
 ```
 
 **Step 7: Commit changes to git**
+
 ```bash
 cd ~/Development/cerebral
 git add docker/requirements-unified.txt docker/Dockerfile.ai-base.*
@@ -356,6 +380,7 @@ git push origin main
 ```
 
 **Step 8: Trigger microservice rebuilds**
+
 ```bash
 # All services using base images will rebuild on next push
 git commit --allow-empty -m "rebuild: microservices with updated base images"
@@ -383,16 +408,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ### What's Included in Base Images
 
 **ML/AI Stack:**
+
 - torch, transformers, pandas, numpy, scikit-learn, scipy
 - sentence-transformers, spacy, nltk, chromadb, onnxruntime
 
 **Data & API:**
+
 - FastAPI, uvicorn, Pydantic, SQLAlchemy, Redis, Supabase
 
 **Observability:**
+
 - Prometheus, OpenTelemetry, structlog
 
 **See Full List:**
+
 ```bash
 cat ~/Development/cerebral/docker/requirements-unified.txt
 ```
@@ -402,24 +431,29 @@ cat ~/Development/cerebral/docker/requirements-unified.txt
 ## 📁 Critical Files (Source of Truth)
 
 ### 1. Ingress Configuration
+
 ```
 k8s/ci-cd/webhook-receiver-ingress.yaml
 ```
-**What**: Routes webhook.dev.cerebral.baerautotech.com → github-webhook-receiver:3000  
-**Port**: 3000 (NOT 80!)  
-**Edit**: Edit this file, then apply with `kubectl apply -f`  
+
+**What**: Routes webhook.dev.cerebral.baerautotech.com → github-webhook-receiver:3000
+**Port**: 3000 (NOT 80!)
+**Edit**: Edit this file, then apply with `kubectl apply -f`
 **Never**: Don't manually patch the ingress
 
 ### 2. Webhook Receiver Deployment
+
 ```
 tekton-pipelines/github-webhook-receiver
 ```
-**Image**: 10.34.0.202:5000/webhook-receiver:latest  
-**Replicas**: 2  
-**Port**: 3000  
+
+**Image**: 10.34.0.202:5000/webhook-receiver:latest
+**Replicas**: 2
+**Port**: 3000
 **Secret**: github-webhook-secret (HMAC validation)
 
 ### 3. Tekton Components
+
 ```
 tekton-pipelines/
 ├── cerebral-microservice-pipeline  (Main pipeline)
@@ -429,11 +463,13 @@ tekton-pipelines/
 ```
 
 ### 4. Validation Script
+
 ```
 scripts/validate-webhook-receiver.sh
 ```
-**Run**: `./scripts/validate-webhook-receiver.sh`  
-**Checks**: Port 3000, deployment health, secret exists  
+
+**Run**: `./scripts/validate-webhook-receiver.sh`
+**Checks**: Port 3000, deployment health, secret exists
 **Exit Code**: 0 = OK, 1 = ERROR
 
 ---
@@ -494,38 +530,40 @@ curl http://10.34.0.202:5000/v2/_catalog
 
 ### Environment Variables
 
-| Name | Value | Location |
-|------|-------|----------|
-| `PORT` | 3000 | github-webhook-receiver deployment |
-| `GITHUB_WEBHOOK_SECRET` | (from secret) | github-webhook-secret |
-| `KUBE_NAMESPACE` | tekton-pipelines | github-webhook-receiver |
+| Name                    | Value            | Location                           |
+| ----------------------- | ---------------- | ---------------------------------- |
+| `PORT`                  | 3000             | github-webhook-receiver deployment |
+| `GITHUB_WEBHOOK_SECRET` | (from secret)    | github-webhook-secret              |
+| `KUBE_NAMESPACE`        | tekton-pipelines | github-webhook-receiver            |
 
 ### Secrets
 
-| Name | Location | Contains |
-|------|----------|----------|
+| Name                    | Location         | Contains              |
+| ----------------------- | ---------------- | --------------------- |
 | `github-webhook-secret` | tekton-pipelines | HMAC validation token |
-| `docker-config` | build-system | Registry auth |
+| `docker-config`         | build-system     | Registry auth         |
 
 ### Registry URLs
 
-| Purpose | URL | Access |
-|---------|-----|--------|
-| Inside cluster | `http://10.34.0.202:5000` | HTTP (internal) |
+| Purpose         | URL                                      | Access              |
+| --------------- | ---------------------------------------- | ------------------- |
+| Inside cluster  | `http://10.34.0.202:5000`                | HTTP (internal)     |
 | Outside cluster | `registry.dev.cerebral.baerautotech.com` | HTTPS (via ingress) |
-| Kube imagespec | `10.34.0.202:5000/cerebral/SERVICE:TAG` | Direct IP |
+| Kube imagespec  | `10.34.0.202:5000/cerebral/SERVICE:TAG`  | Direct IP           |
 
 ---
 
 ## ⚙️ Configuration Checklist
 
 ### GitHub Configuration
+
 - [ ] Repository has webhook pointing to `https://webhook.dev.cerebral.baerautotech.com/`
 - [ ] Webhook is sending "Push events"
 - [ ] Webhook is "Active"
 - [ ] Secret matches `github-webhook-secret` in cluster
 
 ### Kubernetes Configuration
+
 - [ ] Ingress exists and routes to port 3000
 - [ ] Webhook receiver pod is running (2 replicas)
 - [ ] `github-webhook-secret` exists
@@ -533,6 +571,7 @@ curl http://10.34.0.202:5000/v2/_catalog
 - [ ] Registry is accessible
 
 ### Testing Configuration
+
 ```bash
 # Test webhook endpoint
 curl -X POST https://webhook.dev.cerebral.baerautotech.com/ \
@@ -549,19 +588,19 @@ curl -X POST https://webhook.dev.cerebral.baerautotech.com/ \
 ### Issue: "Connection refused" when accessing webhook.dev.cerebral.baerautotech.com
 
 **Solution**:
+
 ```bash
 # Check ingress port
 kubectl get ingress cerebral-github-listener -n cerebral-development -o yaml | grep "number:"
 
 # Should show: number: 3000
-# If showing: number: 80, regenerate ingress
-
-kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml
+# If showing: number: 80, fix the canonical ingress in cerebral-deployment (do not apply from this repo)
 ```
 
 ### Issue: Webhook not being received
 
 **Solution**:
+
 ```bash
 # Check webhook logs
 kubectl logs -n tekton-pipelines -l app.kubernetes.io/name=github-webhook-receiver -f
@@ -576,6 +615,7 @@ kubectl get secret github-webhook-secret -n tekton-pipelines -o yaml | grep secr
 ### Issue: Build stuck or failed
 
 **Solution**:
+
 ```bash
 # List builds
 kubectl get pipelineruns -n tekton-pipelines
@@ -590,6 +630,7 @@ kubectl logs -n tekton-pipelines <pipelinerun-name> -f
 ### Issue: Image not in registry
 
 **Solution**:
+
 ```bash
 # Check registry
 curl http://10.34.0.202:5000/v2/_catalog
@@ -605,24 +646,28 @@ kubectl logs -n tekton-pipelines <pipelinerun-name> -f
 ## 🚫 What NOT to Do
 
 ### ❌ Never manually patch ingress
+
 ```bash
 kubectl patch ingress cerebral-github-listener -n cerebral-development ...
 # WRONG! This reverts next `kubectl apply`
 ```
 
 ### ❌ Never edit ingress directly
+
 ```bash
 kubectl edit ingress cerebral-github-listener -n cerebral-development
 # WRONG! Manual edits aren't in git
 ```
 
 ### ❌ Never run old kubectl apply
+
 ```bash
 kubectl apply -f old-config-with-port-80.yaml
 # WRONG! This reverts our fixes
 ```
 
 ### ❌ Never bypass the webhook receiver
+
 ```bash
 # Manual kubectl apply to create PipelineRun
 # WRONG! Breaks the automation system
@@ -633,17 +678,23 @@ kubectl apply -f old-config-with-port-80.yaml
 ## ✅ What TO Do
 
 ### ✅ Edit source file and apply
+
 ```bash
-vim k8s/ci-cd/webhook-receiver-ingress.yaml
-kubectl apply -f k8s/ci-cd/webhook-receiver-ingress.yaml
+cd ../cerebral-deployment
+# edit appropriate file(s) under:
+# - k8s/webhook-receiver/
+# - k8s/ingress/
+# then commit + push from cerebral-deployment (automation reconciles the cluster)
 ```
 
 ### ✅ Validate after changes
+
 ```bash
 ./scripts/validate-webhook-receiver.sh
 ```
 
 ### ✅ Commit everything to git
+
 ```bash
 git add -A
 git commit -m "fix: Update ingress configuration"
@@ -651,6 +702,7 @@ git push origin main
 ```
 
 ### ✅ Let the system work automatically
+
 ```bash
 # Push code → Webhook fires → Tekton builds → Deployment updates
 # No manual intervention needed!
@@ -660,35 +712,37 @@ git push origin main
 
 ## 📊 Performance Metrics
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| Webhook latency | < 100ms | From GitHub to receiver |
-| Build time | 2-5 min | Depends on image size |
-| Deployment time | 30-60 sec | Rolling update |
-| Total pipeline | 3-7 min | From push to live |
-| Pod startup | 10-30 sec | Container pull + health checks |
+| Metric          | Value     | Notes                          |
+| --------------- | --------- | ------------------------------ |
+| Webhook latency | < 100ms   | From GitHub to receiver        |
+| Build time      | 2-5 min   | Depends on image size          |
+| Deployment time | 30-60 sec | Rolling update                 |
+| Total pipeline  | 3-7 min   | From push to live              |
+| Pod startup     | 10-30 sec | Container pull + health checks |
 
 ---
 
 ## 🔗 Related Documentation
 
-| Document | Purpose |
-|----------|---------|
-| `WEBHOOK_RECEIVER_CONFIGURATION.md` | Detailed webhook receiver config |
-| `SESSION_COMPLETE_OCTOBER_24.md` | Session summary + what was fixed |
-| `scripts/validate-webhook-receiver.sh` | Validation script |
-| `.github/workflows/` | GitHub Actions (metadata only, NOT for builds) |
+| Document                               | Purpose                                        |
+| -------------------------------------- | ---------------------------------------------- |
+| `WEBHOOK_RECEIVER_CONFIGURATION.md`    | Detailed webhook receiver config               |
+| `SESSION_COMPLETE_OCTOBER_24.md`       | Session summary + what was fixed               |
+| `scripts/validate-webhook-receiver.sh` | Validation script                              |
+| `.github/workflows/`                   | GitHub Actions (metadata only, NOT for builds) |
 
 ---
 
 ## 📞 Support
 
 ### Quick Fixes
+
 1. Run validation: `./scripts/validate-webhook-receiver.sh`
 2. Read: `WEBHOOK_RECEIVER_CONFIGURATION.md`
 3. Check logs: `kubectl logs -n tekton-pipelines ...`
 
 ### Common Issues
+
 - **Port 80 instead of 3000**: Apply ingress config
 - **Webhook not received**: Check secret and ingress
 - **Build failed**: Check pipeline logs
@@ -699,17 +753,20 @@ git push origin main
 ## 🎯 Summary
 
 **The System**:
+
 - GitHub push → Webhook → Tekton → Build → Deploy
 - Completely automated
 - Zero manual intervention
 - Configuration in git (won't revert)
 
 **How to Use**:
+
 - Push code: `git push`
 - Watch build: `kubectl get pipelineruns -w`
 - Monitor deployment: `kubectl get pods`
 
 **Prevention**:
+
 - Edit config files (not kubectl patch)
 - Run validation script
 - Commit everything to git

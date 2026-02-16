@@ -20,6 +20,8 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   ScrollView,
+  Platform,
+  Linking,
 } from 'react-native';
 
 import { AuthService } from '../../services/supabase';
@@ -35,7 +37,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 }) => {
   const { width } = useWindowDimensions();
   const isWeb = Platform.OS === 'web';
-  const _isMobile = width < 768;
+  const isMobile = width < 768;
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -45,7 +47,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   const handleLogin = async (): Promise<void> => {
     setError(null);
 
-    if (!email ?? !password) {
+    if (!email || !password) {
       setError('Please enter email and password');
       return;
     }
@@ -53,7 +55,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
     _setLoading(true);
 
     try {
-      const { user, session, error: signInError } = await AuthService.signIn(email, password);
+      const {
+        user,
+        session,
+        error: signInError,
+      } = await AuthService.signIn(email, password);
 
       if (signInError) {
         setError(signInError.message ?? 'Login failed');
@@ -66,12 +72,52 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
     } catch (err) {
       setError('An unexpected error occurred');
       if (__DEV__) {
-
         console.error('Login error:', err);
-
       }
     } finally {
       _setLoading(false);
+    }
+  };
+
+  const handleSSOLogin = async (): Promise<void> => {
+    setError(null);
+    _setLoading(true);
+    try {
+      const { url, error: ssoErr } = await AuthService.signInWithSSO();
+      if (ssoErr) {
+        setError(ssoErr.message ?? 'SSO login failed');
+        return;
+      }
+      if (!url) {
+        setError('SSO login failed (no redirect URL returned)');
+        return;
+      }
+      // Native: open browser for OIDC; deep link should return to the app.
+      await Linking.openURL(url);
+    } catch (err) {
+      setError('SSO login failed');
+      if (__DEV__) console.error('SSO login error:', err);
+    } finally {
+      _setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async (): Promise<void> => {
+    setError(null);
+    if (!email) {
+      setError('Enter your email to reset your password');
+      return;
+    }
+    try {
+      const { error } = await AuthService.resetPassword(email);
+      if (error) {
+        setError(error.message ?? 'Password reset failed');
+        return;
+      }
+      setError('Password reset email sent');
+    } catch (err) {
+      setError('Password reset failed');
+      if (__DEV__) console.error('Password reset error:', err);
     }
   };
 
@@ -80,10 +126,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
     isWeb && !isMobile && styles.containerDesktop,
   ];
 
-  const formStyle = [
-    styles.form,
-    isWeb && !isMobile && styles.formDesktop,
-  ];
+  const formStyle = [styles.form, isWeb && !isMobile && styles.formDesktop];
 
   return (
     <KeyboardAvoidingView
@@ -146,9 +189,19 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               )}
             </TouchableOpacity>
 
+            {!isWeb && (
+              <TouchableOpacity
+                style={[styles.button, loading && styles.buttonDisabled]}
+                onPress={handleSSOLogin}
+                disabled={loading}
+              >
+                <Text style={styles.buttonText}>Login with SSO (Zitadel)</Text>
+              </TouchableOpacity>
+            )}
+
             {/* Footer Links */}
             <View style={styles.footer}>
-              <TouchableOpacity onPress={() => {/* TODO: Reset password */}}>
+              <TouchableOpacity onPress={handleForgotPassword}>
                 <Text style={styles.linkText}>Forgot password?</Text>
               </TouchableOpacity>
 

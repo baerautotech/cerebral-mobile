@@ -32,11 +32,12 @@ alwaysApply: true
     - Implementation details have changed
 
 - **Example Pattern Recognition:**
+
   ```typescript
   // If you see repeated patterns like:
   const data = await prisma.user.findMany({
     select: { id: true, email: true },
-    where: { status: 'ACTIVE' }
+    where: { status: 'ACTIVE' },
   });
 
   // Consider adding to [prisma.md](.trae/rules/prisma.md):
@@ -69,7 +70,7 @@ alwaysApply: true
   - Update references to external docs
   - Maintain links between related rules
   - Document breaking changes
-Follow [trae_rules.md](.trae/rules/trae_rules.md) for proper rule formatting and structure.
+    Follow [trae_rules.md](.trae/rules/trae_rules.md) for proper rule formatting and structure.
 
 ---
 
@@ -84,6 +85,7 @@ When creating or updating rules, **ensure alignment with enterprise standards**:
 - Add validation references from `.enterprise/scripts/`
 
 **Example**: If a new service pattern emerges, create a rule that:
+
 1. Shows the SRP-compliant version (following enterprise_methodology.md)
 2. Shows the anti-pattern (what NOT to do)
 3. References the appropriate validator script

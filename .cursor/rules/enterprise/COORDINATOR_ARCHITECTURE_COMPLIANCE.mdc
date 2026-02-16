@@ -1,0 +1,234 @@
+---
+description: MANDATORY Coordinator Architecture Compliance - Built Coordinator Only
+globs: backend-python/services/**/*.py, scripts/**/*.py, .cerebraflow/**/*.py
+alwaysApply: false
+---
+
+# 🚨 MANDATORY: Enterprise Async/Sync Coordinator Architecture Compliance
+
+**CRITICAL**: This rule prevents the catastrophic package conflict that occurred when external `cerebral-async-sync-coordinator` package conflicted with the built coordinator. **ZERO TOLERANCE** for violations.
+
+## **REQUIRED USAGE PATTERNS**
+
+### ✅ **Built Coordinator (MANDATORY)**
+```python
+# ✅ CORRECT: Always use the built coordinator
+from services.core.enterprise_async_sync_coordinator import EnterpriseAsyncSyncCoordinator
+
+# ✅ CORRECT: Proper initialization with all parameters
+coordinator = EnterpriseAsyncSyncCoordinator(
+    max_workers=20,
+    tenant_id="00000000-0000-0000-0000-000000000100",
+    enable_monitoring=True  # Required parameter
+)
+```
+
+### ✅ **Standard Import Locations**
+```python
+# ✅ CORRECT: Primary built coordinator
+from services.core.enterprise_async_sync_coordinator import EnterpriseAsyncSyncCoordinator
+
+# ✅ CORRECT: Helper functions from built coordinator
+from services.core.enterprise_async_sync_coordinator import (
+    get_enterprise_coordinator,
+    configure_enterprise_coordinator,
+    enterprise_async_to_sync,
+    enterprise_sync_to_async
+)
+```
+
+### ✅ **Service Integration Pattern**
+```python
+# ✅ CORRECT: Service-level coordinator integration
+class YourEnterpriseService(BaseEnterpriseService):
+    def __init__(self, tenant_id: str = "00000000-0000-0000-0000-000000000100", enable_monitoring: bool = True):
+        super().__init__()
+
+        # Import and use built coordinator
+        try:
+            from services.core.enterprise_async_sync_coordinator import EnterpriseAsyncSyncCoordinator
+            self.coordinator = EnterpriseAsyncSyncCoordinator(
+                tenant_id=tenant_id,
+                max_workers=20,
+                enable_monitoring=enable_monitoring  # Always pass this parameter
+            )
+            logger.info("✅ Enterprise coordinator initialized successfully")
+        except ImportError as e:
+            logger.error(f"Failed to initialize coordinator: {e}")
+            self.coordinator = None
+```
+
+## **FORBIDDEN PATTERNS** ❌
+
+### ❌ **External Package Import**
+```python
+# ❌ FORBIDDEN: External package coordinator
+from cerebral_async_sync_coordinator.coordinator import EnterpriseAsyncSyncCoordinator  # VIOLATION
+
+# ❌ FORBIDDEN: Package-based imports
+import cerebral_async_sync_coordinator  # VIOLATION
+
+# ❌ FORBIDDEN: Any external coordinator package
+from packages.async_sync_coordinator import EnterpriseAsyncSyncCoordinator  # VIOLATION
+```
+
+### ❌ **Missing enable_monitoring Parameter**
+```python
+# ❌ FORBIDDEN: Missing enable_monitoring parameter
+coordinator = EnterpriseAsyncSyncCoordinator(
+    tenant_id=tenant_id,
+    max_workers=20
+    # Missing: enable_monitoring=True
+)  # VIOLATION - Will cause parameter mismatch errors
+```
+
+### ❌ **Package Installation**
+```bash
+# ❌ FORBIDDEN: Installing conflicting packages
+uv add cerebral-async-sync-coordinator  # VIOLATION
+pip install cerebral-async-sync-coordinator  # VIOLATION
+```
+
+## **VALIDATION REQUIREMENTS**
+
+### **Pre-Commit Validation**
+```bash
+# Run coordinator integrity validation before commits
+python scripts/validate-coordinator-integrity.py
+```
+
+### **CI/CD Pipeline Enforcement**
+- **Build Failure**: Automatic build failure if external coordinator packages detected
+- **Import Validation**: Verify all coordinator imports use built coordinator
+- **Parameter Validation**: Ensure enable_monitoring parameter is always used
+
+### **Development Environment Checks**
+```python
+# Automatic validation in development
+import sys
+if 'cerebral_async_sync_coordinator' in sys.modules:
+    raise ImportError("VIOLATION: External coordinator package detected - use built coordinator only")
+```
+
+## **BUILT COORDINATOR FEATURES**
+
+### **Production-Ready Architecture**
+- ✅ **1,197+ lines** of enterprise-grade code
+- ✅ **Virtual thread-inspired** structured concurrency
+- ✅ **Enterprise methodology** Level 5 Gate compliance
+- ✅ **SRP compliance** with dependency injection
+- ✅ **Real database operations** with Supabase integration
+- ✅ **Performance monitoring** and circuit breakers
+- ✅ **enable_monitoring parameter** support
+
+### **Full API Compatibility**
+```python
+# All standard coordinator operations supported
+async def example_usage():
+    coordinator = EnterpriseAsyncSyncCoordinator(enable_monitoring=True)
+
+    # Async to sync transformation
+    result = await coordinator.async_to_sync_transform(some_async_func, *args)
+
+    # Sync to async transformation
+    async_result = await coordinator.sync_to_async_transform(some_sync_func, *args)
+
+    # Virtual thread coordination
+    coordinated_result = await coordinator.coordinate_virtual_threads(tasks)
+
+    # Performance monitoring (when enable_monitoring=True)
+    metrics = coordinator.get_coordination_metrics()
+```
+
+## **CONFLICT PREVENTION**
+
+### **Package Conflicts Detection**
+```python
+# Automatic conflict detection
+def validate_no_package_conflicts():
+    import pkg_resources
+    installed = [pkg.project_name for pkg in pkg_resources.working_set]
+    if 'cerebral-async-sync-coordinator' in installed:
+        raise RuntimeError("COORDINATOR CONFLICT: Remove cerebral-async-sync-coordinator package")
+```
+
+### **Environment Variables**
+```bash
+# Set in .env to enforce built coordinator usage
+COORDINATOR_ENABLED=true
+USE_BUILT_COORDINATOR_ONLY=true
+VALIDATE_COORDINATOR_INTEGRITY=true
+```
+
+## **MIGRATION FROM PACKAGE COORDINATOR**
+
+### **Step 1: Remove Conflicting Package**
+```bash
+uv remove cerebral-async-sync-coordinator
+```
+
+### **Step 2: Update Imports**
+```python
+# Before (WRONG)
+from cerebral_async_sync_coordinator.coordinator import EnterpriseAsyncSyncCoordinator
+
+# After (CORRECT)
+from services.core.enterprise_async_sync_coordinator import EnterpriseAsyncSyncCoordinator
+```
+
+### **Step 3: Add enable_monitoring Parameter**
+```python
+# Before (INCOMPLETE)
+coordinator = EnterpriseAsyncSyncCoordinator(tenant_id=tenant_id, max_workers=20)
+
+# After (CORRECT)
+coordinator = EnterpriseAsyncSyncCoordinator(
+    tenant_id=tenant_id,
+    max_workers=20,
+    enable_monitoring=True
+)
+```
+
+### **Step 4: Validate Integration**
+```bash
+python scripts/validate-coordinator-integrity.py
+```
+
+## **ENFORCEMENT**
+
+### **Zero Tolerance Policy**
+- **Immediate Build Failure** for any external coordinator package usage
+- **Code Review Rejection** for incorrect coordinator imports
+- **Deployment Prevention** if validation fails
+
+### **Monitoring**
+- **Runtime Detection** of package conflicts
+- **Performance Monitoring** when enable_monitoring=True
+- **Audit Logging** of coordinator usage patterns
+
+## **DEVELOPER QUICK REFERENCE**
+
+### **Correct Import**
+```python
+from services.core.enterprise_async_sync_coordinator import EnterpriseAsyncSyncCoordinator
+```
+
+### **Correct Initialization**
+```python
+coordinator = EnterpriseAsyncSyncCoordinator(
+    max_workers=20,
+    tenant_id="00000000-0000-0000-0000-000000000100",
+    enable_monitoring=True
+)
+```
+
+### **Validation Command**
+```bash
+python scripts/validate-coordinator-integrity.py
+```
+
+---
+
+**This rule is MANDATORY and prevents the coordinator architecture violations that cause "AC sink coordinator not available" alerts and legacy mode fallbacks. The built coordinator is superior to external packages and must be used exclusively.**
+
+**Reference**: Built coordinator at `backend-python/services/core/enterprise_async_sync_coordinator.py`

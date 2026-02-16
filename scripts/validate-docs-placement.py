@@ -3,8 +3,8 @@
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
+import sys
 
 ROOT_ALLOWLIST = {
     "README.md",
@@ -56,7 +56,9 @@ def validate_markdown_files(files: list[str]) -> list[tuple[str, str, str]]:
         if path.parent.name == "cerebral" or str(path.parent) == ".":
             if path.name in ROOT_ALLOWLIST:
                 continue
-            should_be_in_docs = any(path.name.lower().startswith(p) for p in MUST_BE_IN_DOCS)
+            should_be_in_docs = any(
+                path.name.lower().startswith(p) for p in MUST_BE_IN_DOCS
+            )
             if should_be_in_docs or path.name[0].isupper():
                 msg = (
                     "Move to docs/{category}/{subcategory}/ "

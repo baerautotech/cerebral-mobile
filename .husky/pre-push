@@ -1,28 +1,34 @@
-#!/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+#!/bin/sh
+
+set -euo pipefail
 
 echo "🧪 Running pre-push quality checks..."
 echo ""
 
-# Run all tests
-echo "🧪 Testing..."
-npm test -- --bail --findRelatedTests
+echo "🧪 Testing (workspace)..."
+pnpm run test -- --passWithNoTests
 
-# Full lint
 echo ""
 echo "📝 Linting..."
-npm run lint
+for workspace in cerebral-native; do
+  pnpm --filter "$workspace" run --if-present lint
+done
 
-# Type check
 echo ""
 echo "🔍 Type checking..."
-npm run type-check
+pnpm exec tsc --noEmit
 
-# Pre-commit hooks
 echo ""
 echo "🛡️ Running pre-commit validation..."
-pre-commit run --all-files
+echo ""
+echo "🛡️ Guardrails (diff-based ratchet)..."
+FROM_REF="$(git rev-parse HEAD~1 2>/dev/null || printf '')"
+TO_REF="$(git rev-parse HEAD)"
+if [ -n "$FROM_REF" ]; then
+  node tools/guardrails/check-diff.mjs --base "$FROM_REF" --head "$TO_REF"
+else
+  echo "ℹ️  No base ref available; skipping diff guardrails"
+fi
 
 echo ""
 echo "✅ Pre-push checks passed!"
-

@@ -1,0 +1,95 @@
+---
+description: VEG framework integration with BMAD automation orchestrator - mandatory compliance for generated implementations
+globs: backend_python/services/bmad/**, scripts/**/bmad_*, vendor/bmad/**
+alwaysApply: false
+---
+
+# 🧬 VEG–BMAD AUTOMATION INTEGRATION
+
+## 🎯 Requirement
+The BMAD automation orchestrator (dispatcher, background agents, or CLI workflows) **must** enforce VEG principles for any generated implementation. This rule replaces all legacy CAEF/CerebraFlow references.
+
+---
+
+## 1. VEG Prompt Construction (Mandatory)
+- Every generated task must inject the VEG template into prompts, referencing:
+  - `@VEG_FRAMEWORK_CORE_PHILOSOPHY.mdc`
+  - `@VEG_FRAMEWORK_FEATURE_TEMPLATE.mdc`
+  - `@VEG_BMAD_CURSOR_INTEGRATION.mdc`
+- Prompts must include: goal, interfaces with type hints, acceptance tests, constraints, integration points, and validation checklist.
+- Prompts must explicitly forbid placeholders, mocks, TODOs, and theater patterns.
+
+Example helper (pseudo-code):
+```python
+def build_veg_prompt(task: TaskContext) -> str:
+    return f"""
+@VEG_FRAMEWORK_CORE_PHILOSOPHY.mdc
+@VEG_FRAMEWORK_FEATURE_TEMPLATE.mdc
+
+**VEG Feature Request: {task.title}**
+
+1. Goal: {task.description}
+2. Interfaces: {task.interface_block}
+3. Acceptance Tests: {task.tests_block}
+4. Constraints: {task.constraints_block}
+5. Integration: {task.integration_points}
+6. Validation: {task.validation_checks}
+
+AI: Deliver production-ready code. Zero tolerance for placeholder/mocks.
+"""
+```
+
+---
+
+## 2. VEG Validation Pipeline (Mandatory)
+- Orchestrator must run generated code through:
+  1. Syntax + import validation.
+  2. VEG template compliance check (all sections present).
+  3. Constraint enforcement (SRP, tenant isolation, observability, performance).
+  4. Test synthesis/check (ensure acceptance tests compile/execute locally).
+- Validation failures must block task completion and surface actionable errors to the user.
+
+```python
+def validate_veg(candidate: str, context: TaskContext) -> None:
+    checks = [syntax_check, template_check, constraint_check, test_check]
+    violations = [check(candidate, context) for check in checks if not check.pass_]
+    if violations:
+        raise VEGComplianceViolation(violations)
+```
+
+---
+
+## 3. Anti-Theater Enforcement
+- Maintain a penalty matrix for forbidden patterns (`pass`, `TODO`, `NotImplemented`, `mock`, `fake`, `time.sleep`, etc.).
+- Log every violation with severity and block the run immediately.
+- Auto-suggest remediation (e.g., “Implement execute_task_implementation with real business logic”).
+
+```python
+def enforce_no_theater(code: str) -> None:
+    patterns = {"pass": "Empty implementation", "# TODO": "Placeholder"}
+    hits = {p: msg for p, msg in patterns.items() if p in code}
+    if hits:
+        for pattern, msg in hits.items():
+            logger.error("🚨 VEG violation: %s", msg)
+        raise VEGComplianceViolation("Theater patterns detected")
+```
+
+---
+
+## 4. Workflow Checkpoints
+1. **Pre-Generation** – VEG prompt template assembled.
+2. **Generation** – Real-time monitoring for violations.
+3. **Post-Generation** – Validation pipeline executed.
+4. **Story Advancement** – Only after tests + lint + documentation verified.
+
+---
+
+## 5. Success Metrics
+- 0% placeholder content in generated artifacts.
+- 100% acceptance-test compatibility.
+- <30 seconds end-to-end generation/validation (no artificial waits).
+- 0 production deployments with VEG violations.
+
+---
+
+**Result:** BMAD automation consistently outputs VEG-compliant, production-ready code while eliminating all residual CerebraFlow/CAEF behavior.

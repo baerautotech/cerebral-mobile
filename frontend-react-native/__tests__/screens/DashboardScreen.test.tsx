@@ -97,9 +97,9 @@ describe('DashboardScreen', () => {
 
       await waitFor(() => {
         expect(getByText('142')).toBeTruthy(); // Total tasks
-        expect(getByText('28')).toBeTruthy();  // Active
-        expect(getByText('98')).toBeTruthy();  // Completed
-        expect(getByText('16')).toBeTruthy();  // Pending
+        expect(getByText('28')).toBeTruthy(); // Active
+        expect(getByText('98')).toBeTruthy(); // Completed
+        expect(getByText('16')).toBeTruthy(); // Pending
       });
     });
 

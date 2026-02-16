@@ -4,17 +4,14 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  FlatList,
-} from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList } from 'react-native';
 
 import { FilterBar } from './components/FilterBar';
 import { TaskCard } from './components/TaskCard';
 import { ApiClient } from '../../services/api';
+import { FeatureFlagGuard } from '../../components/FeatureFlagGuard';
+import { TierGuard } from '../../components/TierGuard';
+import { appColors } from '../../config/colors';
 
 interface Task {
   id: string;
@@ -47,7 +44,8 @@ export const TasksScreen: React.FC = () => {
       const queryString = new URLSearchParams(params).toString();
       const endpoint = `/v1/tasks${queryString ? `?${queryString}` : ''}`;
 
-      const { data: tasksData, error: tasksError } = await ApiClient.get<Task[]>(endpoint);
+      const { data: tasksData, error: tasksError } =
+        await ApiClient.get<Task[]>(endpoint);
 
       if (tasksError) {
         if (__DEV__) {
@@ -74,18 +72,25 @@ export const TasksScreen: React.FC = () => {
 
   const getStatusColor = (status: Task['status']): string => {
     switch (status) {
-      case 'completed': return '#4CD964';
-      case 'in_progress': return '#007AFF';
-      case 'blocked': return '#FF3B30';
-      default: return '#FF9500';
+      case 'completed':
+        return appColors.success as string;
+      case 'in_progress':
+        return appColors.brand as string;
+      case 'blocked':
+        return appColors.danger as string;
+      default:
+        return appColors.warning as string;
     }
   };
 
   const getPriorityColor = (priority: Task['priority']): string => {
     switch (priority) {
-      case 'high': return '#FF3B30';
-      case 'medium': return '#FF9500';
-      default: return '#999';
+      case 'high':
+        return appColors.danger as string;
+      case 'medium':
+        return appColors.warning as string;
+      default:
+        return appColors.textTertiary as string;
     }
   };
 
@@ -103,12 +108,56 @@ export const TasksScreen: React.FC = () => {
         <TextInput
           style={styles.searchInput}
           placeholder="Search tasks..."
-          placeholderTextColor="#666"
+          placeholderTextColor={appColors.textSecondary as string}
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
 
         <FilterBar filter={filter} onFilterChange={setFilter} />
+
+        {/* Beta: Advanced Filtering */}
+        <FeatureFlagGuard flag="advanced_filtering">
+          <View
+            style={{
+              padding: 8,
+              backgroundColor: 'rgb(31, 95, 63)',
+              borderRadius: 4,
+              marginTop: 8,
+            }}
+          >
+            <Text
+              style={{
+                color: appColors.surface,
+                fontSize: 12,
+                fontWeight: '600',
+              }}
+            >
+              ✨ Advanced Filters Available
+            </Text>
+          </View>
+        </FeatureFlagGuard>
+
+        {/* Beta: Bulk Actions */}
+        <FeatureFlagGuard flag="advanced_actions">
+          <View
+            style={{
+              padding: 8,
+              backgroundColor: 'rgb(63, 95, 31)',
+              borderRadius: 4,
+              marginTop: 8,
+            }}
+          >
+            <Text
+              style={{
+                color: appColors.surface,
+                fontSize: 12,
+                fontWeight: '600',
+              }}
+            >
+              ⚡ Bulk Actions Enabled
+            </Text>
+          </View>
+        </FeatureFlagGuard>
       </View>
 
       <FlatList
@@ -121,12 +170,42 @@ export const TasksScreen: React.FC = () => {
             getPriorityColor={getPriorityColor}
           />
         )}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         contentContainerStyle={styles.listContainer}
         ListEmptyComponent={
           <View style={styles.emptyState}>
             <Text style={styles.emptyText}>No tasks found</Text>
           </View>
+        }
+        ListFooterComponent={
+          <FeatureFlagGuard flag="ai_suggestions">
+            <TierGuard tier="enterprise">
+              <View
+                style={{
+                  padding: 16,
+                  backgroundColor: appColors.aiSurface,
+                  borderRadius: 8,
+                  marginTop: 16,
+                  marginHorizontal: 16,
+                  marginBottom: 16,
+                }}
+              >
+                <Text
+                  style={{
+                    color: appColors.surface,
+                    fontSize: 14,
+                    fontWeight: '600',
+                    marginBottom: 8,
+                  }}
+                >
+                  🤖 AI Task Suggestions
+                </Text>
+                <Text style={{ color: appColors.mutedOnDark, fontSize: 12 }}>
+                  Get AI-powered suggestions to optimize your task workflow
+                </Text>
+              </View>
+            </TierGuard>
+          </FeatureFlagGuard>
         }
       />
     </View>
@@ -136,33 +215,33 @@ export const TasksScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: appColors.canvas,
   },
   header: {
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#333',
+    borderBottomColor: appColors.borderDark,
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
+    color: appColors.surface,
   },
   controls: {
     padding: 16,
     gap: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#333',
+    borderBottomColor: appColors.borderDark,
   },
   searchInput: {
     height: 44,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: appColors.surfaceDark,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: appColors.borderDark,
     borderRadius: 8,
     paddingHorizontal: 16,
     fontSize: 16,
-    color: '#fff',
+    color: appColors.surface,
   },
   listContainer: {
     padding: 16,
@@ -174,7 +253,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
+    color: appColors.textSecondary,
   },
 });
 

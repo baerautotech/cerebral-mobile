@@ -1,0 +1,339 @@
+# 🚨 MANDATORY DATABASE SECURITY ENFORCEMENT
+
+**Rule Type**: CRITICAL SECURITY ENFORCEMENT
+**Violation Level**: IMMEDIATE CORRECTION REQUIRED
+**Scope**: ALL Database Operations, Supabase Access, SQL Queries
+
+## 🔒 MANDATORY SECURITY REQUIREMENTS
+
+**All database operations in this enterprise platform MUST implement defense-in-depth security strategies. No exceptions.**
+
+### **CRITICAL: Use Secure Database Utilities ONLY**
+
+#### **✅ REQUIRED: Import Secure Database Manager**
+```python
+# ✅ MANDATORY: Use secure database utilities
+from shared.secure_database import secure_db, SecureSupabaseManager
+from shared.database_security import SecurityContext, SecurityLevel
+
+# ✅ REQUIRED: Create security context for all operations
+async def get_user_data(user_id: str, tenant_id: str):
+    context = SecurityContext(
+        user_id=user_id,
+        tenant_id=tenant_id,
+        operation=QueryOperation.SELECT
+    )
+
+    return await secure_db.query_with_tenant_isolation(
+        table="users",
+        tenant_id=tenant_id,
+        user_id=user_id,
+        columns="id, email, name",  # Never SELECT *
+        limit=100,
+        use_readonly=True
+    )
+```
+
+#### **❌ FORBIDDEN: Direct Supabase Client Usage**
+```python
+# ❌ FORBIDDEN: Direct client usage bypasses security
+from supabase import create_client
+client = create_client(url, key)
+result = client.table("users").select("*").execute()  # NO SECURITY
+
+# ❌ FORBIDDEN: Raw SQL without validation
+result = client.rpc("execute_sql", {"query": "SELECT * FROM users"})
+
+# ❌ FORBIDDEN: No tenant isolation
+result = client.table("users").select("*").execute()  # Cross-tenant leak risk
+```
+
+### **MANDATORY: Query Security Patterns**
+
+#### **1. Tenant Isolation (CRITICAL)**
+```python
+# ✅ REQUIRED: Always include tenant isolation
+async def secure_query_pattern(tenant_id: str, user_id: str):
+    """All database queries MUST include tenant isolation."""
+
+    # Automatic tenant isolation
+    result = await secure_db.query_with_tenant_isolation(
+        table="organizations",
+        tenant_id=tenant_id,
+        user_id=user_id,
+        filters={"status": "active"},
+        limit=500
+    )
+
+    # For raw queries (use sparingly)
+    query = """
+        SELECT id, name, status
+        FROM organizations
+        WHERE tenant_id = %s AND status = %s
+        LIMIT 500
+    """
+    context = SecurityContext(user_id=user_id, tenant_id=tenant_id)
+    result = await secure_db.execute_secure_query(
+        query,
+        params={"tenant_id": tenant_id, "status": "active"},
+        context=context,
+        use_readonly=True
+    )
+```
+
+#### **2. Column Access Control (MANDATORY)**
+```python
+# ✅ REQUIRED: Explicit column selection with access control
+async def get_user_profile(user_id: str, tenant_id: str):
+    """Select only necessary columns, never SELECT *."""
+
+    # Safe columns only
+    safe_columns = "id, email, name, role, created_at"
+
+    return await secure_db.query_with_tenant_isolation(
+        table="users",
+        tenant_id=tenant_id,
+        user_id=user_id,
+        columns=safe_columns,  # No passwords, tokens, secrets
+        filters={"id": user_id},
+        limit=1,
+        use_readonly=True
+    )
+
+# ❌ FORBIDDEN: Selecting sensitive columns
+forbidden_columns = [
+    "password_hash", "api_secret", "private_key",
+    "payment_method", "ssn", "credit_card"
+]
+```
+
+#### **3. Row Limits (MANDATORY)**
+```python
+# ✅ REQUIRED: Always specify reasonable limits
+async def list_organizations(tenant_id: str, user_id: str):
+    """All SELECT queries MUST include appropriate limits."""
+
+    return await secure_db.query_with_tenant_isolation(
+        table="organizations",
+        tenant_id=tenant_id,
+        user_id=user_id,
+        columns="id, name, subscription_tier",
+        limit=100,  # Reasonable limit based on UI needs
+        order_by="created_at desc",
+        use_readonly=True
+    )
+```
+
+#### **4. Audit Trail (MANDATORY)**
+```python
+# ✅ REQUIRED: Audit all data modifications
+from shared.secure_database import audit_database_operation
+
+@audit_database_operation("USER_UPDATE")
+async def update_user_profile(user_id: str, tenant_id: str, data: dict):
+    """All modifications MUST be audited."""
+
+    # Automatic audit fields added
+    result = await secure_db.update_with_security(
+        table="users",
+        data=data,
+        filters={"id": user_id},
+        tenant_id=tenant_id,
+        user_id=user_id
+    )
+
+    return result
+```
+
+### **MANDATORY: Transaction Security**
+
+#### **✅ REQUIRED: Secure Transaction Pattern**
+```python
+async def create_organization_with_settings(
+    tenant_id: str,
+    user_id: str,
+    org_data: dict,
+    settings_data: dict
+):
+    """Use secure transactions for multi-table operations."""
+
+    async with secure_db.secure_transaction(tenant_id, user_id) as tx:
+        # All operations automatically include tenant isolation and audit
+        org = await tx.insert("organizations", org_data)
+
+        settings_data["organization_id"] = org["id"]
+        settings = await tx.insert("organization_settings", settings_data)
+
+        return {"organization": org, "settings": settings}
+```
+
+### **MANDATORY: Security Context Creation**
+
+#### **✅ REQUIRED: Security Context for All Operations**
+```python
+from shared.database_security import SecurityContext, QueryOperation
+
+async def database_operation_with_context(
+    user_id: str,
+    tenant_id: str,
+    request_ip: str,
+    user_agent: str
+):
+    """Always create comprehensive security context."""
+
+    context = SecurityContext(
+        user_id=user_id,
+        tenant_id=tenant_id,
+        ip_address=request_ip,
+        user_agent=user_agent,
+        operation=QueryOperation.SELECT,
+        session_id=get_session_id()
+    )
+
+    # Context is automatically validated against security rules
+    return await secure_db.execute_secure_query(query, context=context)
+```
+
+### **FORBIDDEN PATTERNS (IMMEDIATE CORRECTION REQUIRED)**
+
+#### **❌ NEVER Do These:**
+```python
+# ❌ FORBIDDEN: Raw database access
+import psycopg2
+conn = psycopg2.connect(DATABASE_URL)  # Bypasses all security
+
+# ❌ FORBIDDEN: SELECT * queries
+query = "SELECT * FROM users"  # Exposes sensitive columns
+
+# ❌ FORBIDDEN: Queries without tenant isolation
+query = "SELECT email FROM users WHERE active = true"  # Cross-tenant leak
+
+# ❌ FORBIDDEN: Queries without limits
+query = "SELECT id, name FROM organizations"  # Could return millions
+
+# ❌ FORBIDDEN: Hardcoded credentials
+client = create_client("url", "hardcoded_key")
+
+# ❌ FORBIDDEN: No audit trail for modifications
+await client.table("users").update(data).execute()  # No audit
+
+# ❌ FORBIDDEN: Direct service role usage without validation
+service_client = create_client(url, service_role_key)  # Too powerful
+```
+
+## 🔍 MANDATORY VALIDATION CHECKLIST
+
+**Before any database code goes to production:**
+
+### **Query Security Validation**
+- [ ] ✅ Uses `secure_db` utilities only
+- [ ] ✅ Includes tenant isolation for multi-tenant tables
+- [ ] ✅ Specifies explicit columns (no SELECT *)
+- [ ] ✅ Includes appropriate row limits
+- [ ] ✅ Creates security context with user/tenant info
+- [ ] ✅ Uses read-only client when possible
+
+### **Data Modification Security**
+- [ ] ✅ Uses secure insert/update/delete methods
+- [ ] ✅ Includes automatic audit fields
+- [ ] ✅ Validates permissions before modification
+- [ ] ✅ Uses secure transactions for multi-table operations
+- [ ] ✅ Logs all security violations
+
+### **Access Control Validation**
+- [ ] ✅ No access to forbidden columns (passwords, secrets, etc.)
+- [ ] ✅ Appropriate security level for data sensitivity
+- [ ] ✅ User permissions validated
+- [ ] ✅ Cross-tenant access prevented
+
+## 🚨 SECURITY VIOLATION RESPONSES
+
+### **Automatic Blocking**
+- **Query Validation Failure**: Operation blocked, violation logged
+- **Tenant Isolation Breach**: Operation blocked, critical alert triggered
+- **Forbidden Column Access**: Operation blocked, security team notified
+- **Excessive Row Requests**: Operation blocked, rate limiting applied
+
+### **Monitoring & Alerting**
+```python
+# ✅ REQUIRED: Get security metrics regularly
+async def check_security_status():
+    """Monitor security violations and system health."""
+    metrics = await secure_db.get_security_metrics()
+
+    if metrics["violations_last_1h"]["total_violations"] > 10:
+        # Alert security team
+        await send_security_alert(metrics)
+
+    return metrics
+```
+
+## 🔧 IMPLEMENTATION REQUIREMENTS
+
+### **Environment Setup**
+```python
+# ✅ REQUIRED: Environment variables for security
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-key  # Use sparingly
+REDIS_URL=redis://localhost:6379  # For security caching
+```
+
+### **Dependency Requirements**
+```python
+# ✅ REQUIRED: Add to requirements.txt
+supabase>=2.0.0
+redis>=5.0.0
+aioredis>=2.0.0
+```
+
+### **FastAPI Integration**
+```python
+# ✅ REQUIRED: FastAPI security middleware
+from fastapi import Depends, HTTPException
+from shared.secure_database import require_tenant_isolation
+
+@app.get("/api/organizations")
+@require_tenant_isolation
+async def get_organizations(
+    tenant_id: str = Depends(get_tenant_id),
+    user_id: str = Depends(get_current_user)
+):
+    """All endpoints MUST include tenant isolation."""
+    return await secure_db.query_with_tenant_isolation(
+        table="organizations",
+        tenant_id=tenant_id,
+        user_id=user_id,
+        columns="id, name, subscription_tier",
+        limit=100,
+        use_readonly=True
+    )
+```
+
+## 📊 SECURITY METRICS & MONITORING
+
+### **Required Monitoring**
+- Query validation success/failure rates
+- Tenant isolation breach attempts
+- Forbidden column access attempts
+- Security rule violations by type
+- Performance impact of security checks
+
+### **Security Dashboard Integration**
+```python
+# ✅ REQUIRED: Security metrics endpoint
+@app.get("/api/security/metrics")
+async def get_security_metrics():
+    """Expose security metrics for monitoring dashboard."""
+    return await secure_db.get_security_metrics()
+```
+
+---
+
+**CRITICAL REMINDER**: These security measures are MANDATORY for enterprise production standards. Violations compromise customer data, regulatory compliance, and system integrity. NO EXCEPTIONS are permitted.
+
+**Any database operation that bypasses these security measures is a CRITICAL SECURITY VIOLATION and must be corrected immediately.**
+description:
+globs:
+alwaysApply: false
+---

@@ -216,11 +216,9 @@ export const RootNavigatorLazy = (): React.JSX.Element => {
   useEffect(() => {
     checkAuthState();
 
-    const { data: authListener } = AuthService.onAuthStateChange(
-      (_event, session) => {
-        setIsAuthenticated(session !== null);
-      }
-    );
+    const { data: authListener } = AuthService.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(session !== null);
+    });
 
     return () => {
       authListener?.subscription.unsubscribe();
@@ -233,9 +231,7 @@ export const RootNavigatorLazy = (): React.JSX.Element => {
       setIsAuthenticated(authenticated);
     } catch (error) {
       if (__DEV__) {
-
         console.error('Failed to check auth state:', error);
-
       }
       setIsAuthenticated(false);
     } finally {

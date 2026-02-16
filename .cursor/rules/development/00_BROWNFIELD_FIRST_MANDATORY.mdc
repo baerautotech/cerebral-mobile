@@ -1,0 +1,327 @@
+---
+description: "Brownfield-first development - ALL planning requires full platform context analysis before execution"
+globs: "**/*.md, **/*.py, **/*.ts, planning/*, docs/*, backend_python/**, microservices/**"
+alwaysApply: true
+priority: 1
+---
+
+# 🌍 BROWNFIELD-FIRST MANDATORY ENFORCEMENT
+
+## ⚠️ ZERO TOLERANCE: No Planning Without Phase 0 Analysis
+
+**RULE**: Before ANY planning, implementation, feature work, or architectural decision begins, Phase 0 brownfield analysis MUST be completed.
+
+**Scope**: ALL tasks, ALL agents, ALL repositories (no exceptions, no shortcuts)
+
+---
+
+## 📋 MANDATORY PHASE 0: PLATFORM CONTEXT ANALYSIS
+
+### STEP 1: Full Platform Inventory (Required First)
+
+**Use BMAD-Cloud MCP tools - this is their primary purpose:**
+
+```bash
+# Query 1: Existing Implementations
+mcp_bmad-cloud_bmad_analyst \
+  task="Find ALL existing implementations, services, or patterns related to: [feature name]"
+
+# Query 2: Architecture Context
+mcp_bmad-cloud_bmad_architect \
+  task="What is the current architecture for: [component/system]"
+
+# Query 3: Decision History
+Use GRAPHRAG search: "existing [feature] implementation decisions and patterns"
+```
+
+**Then manually verify:**
+- [ ] Search `backend_python/` for related code
+- [ ] Search `microservices/` for related services
+- [ ] Check `supabase/migrations/` for related database schemas
+- [ ] Scan `k8s/` for related deployments
+- [ ] Review git history for recent related changes
+
+### STEP 2: Cross-Repository Dependency Mapping
+
+**Cerebral spans THREE repositories:**
+
+```
+REPO 1: cerebral/ (application code)
+  └─ backend_python/        (core services: 14+ microservices)
+  └─ microservices/         (independent services: auth, cache, AI, etc.)
+  └─ supabase/              (database schemas: migrations + functions)
+  └─ k8s/                   (Kubernetes manifests)
+
+REPO 2: cerebral-deployment/ (infrastructure-as-code)
+  └─ kubernetes/            (cluster resources)
+  └─ tekton/                (CI/CD pipelines)
+  └─ helm/                  (Helm charts)
+  └─ networking/            (ingress, policies)
+
+REPO 3: Knowledge Systems (embedded in Cerebral)
+  └─ KG: kg_entities + kg_relationships (120K+ entities)
+  └─ RAG: cerebral_rag table (41K+ embeddings, architecture docs)
+  └─ Both queryable via BMAD-Cloud MCP
+```
+
+**MANDATORY verification:**
+- [ ] Checked `cerebral/` for existing implementations
+- [ ] Checked `cerebral-deployment/` for infrastructure dependencies
+- [ ] Checked Supabase for related tables/functions
+- [ ] Identified ALL cross-repository integration points
+- [ ] Confirmed no architecture conflicts
+
+### STEP 3: Compliance & Brownfield Context
+
+- [ ] Identified ALL applicable compliance requirements (SOC2, HIPAA, GDPR, ISO27001, PCI)
+- [ ] Mapped to existing tenant isolation implementation
+- [ ] Confirmed audit logging architecture
+- [ ] Verified security boundaries
+- [ ] Ensured no data protection violations
+
+### STEP 4: Build vs. Integrate Decision
+
+**MANDATORY decision with justification:**
+
+```
+Option A: INTEGRATE existing implementation
+  ├─ Why: [specific technical reasons]
+  ├─ Integration effort: [hours]
+  ├─ Leverage percentage: [%]
+  └─ Risk level: [low/medium/high]
+
+Option B: BUILD new implementation
+  ├─ Why: [specific reasons existing won't work]
+  ├─ Build effort: [hours]
+  ├─ New code %: [%]
+  └─ Risk level: [low/medium/high]
+
+Option C: HYBRID approach
+  ├─ Build these components: [list]
+  ├─ Integrate these components: [list]
+  ├─ Total effort: [hours]
+  └─ Rationale: [explanation]
+
+CHOSEN: [A/B/C with justification]
+```
+
+---
+
+## 🔍 PHASE 0 DOCUMENTATION TEMPLATE
+
+Every planning task MUST include this checklist:
+
+```markdown
+# Phase 0 Brownfield Analysis - [Feature Name]
+
+## KG/RAG Queries Performed
+
+- [ ] Query 1: [describe query]
+  Result: [what was found]
+
+- [ ] Query 2: [describe query]
+  Result: [what was found]
+
+- [ ] Query 3: [describe query]
+  Result: [what was found]
+
+## Existing Implementations Found
+
+- [ ] Implementation 1: [path/service name]
+  Status: [active/deprecated/partial]
+  Integration complexity: [low/med/high]
+  Reasoning: [why integrate or not]
+
+- [ ] Implementation 2: [path/service name]
+  Status: [active/deprecated/partial]
+  Integration complexity: [low/med/high]
+  Reasoning: [why integrate or not]
+
+- Total existing solutions found: [X]
+
+## Cross-Repository Dependencies
+
+- [ ] Dependency 1: [repo/component]
+  Impact: [description]
+  Required: [yes/no]
+
+- [ ] Dependency 2: [repo/component]
+  Impact: [description]
+  Required: [yes/no]
+
+## Compliance & Architecture Context
+
+- [ ] Compliance requirements: [list SOC2/HIPAA/GDPR/ISO27001/PCI relevance]
+- [ ] Tenant isolation: [how existing implementation handles it]
+- [ ] Audit logging: [what logging exists]
+- [ ] Security: [any security implications]
+
+## Build vs. Integrate Decision
+
+**Chosen approach**: [Build New / Integrate Existing / Hybrid]
+
+**Justification**: [detailed reasoning]
+
+**Effort estimate**:
+  - Integration paths: [hours]
+  - New code: [hours]
+  - Testing: [hours]
+
+**Risk level**: [low/medium/high] because [reasons]
+
+## Architecture Alignment
+
+- [ ] Aligns with existing microservices architecture
+- [ ] Follows enterprise patterns (SRP, DI, monitoring, circuit breaker)
+- [ ] Integrates with multi-tenant isolation
+- [ ] Supports compliance requirements
+- [ ] Fits deployment pipeline (Tekton → Kubernetes)
+
+---
+
+## BLOCKERS: This analysis MUST be complete before proceeding to planning
+```
+
+---
+
+## ✅ ENFORCEMENT MECHANISM
+
+### Pre-Commit Validation
+
+```bash
+# Before ANY planning can proceed:
+python .enterprise/scripts/comprehensive_validation.py \
+  --check phase0-completion \
+  --check brownfield-context \
+  --check cross-repo-mapping
+```
+
+### Violations: Automatic Rejection
+
+Any planning without Phase 0 completion:
+
+- ❌ Rejected by git pre-commit hooks
+- ❌ Marked incomplete by planning validators
+- ❌ Cannot create tasks or PRs
+- ❌ Blocks all downstream work
+- ❌ **NO EXCEPTIONS** - This is non-negotiable
+
+### Success Indicators
+
+Phase 0 is COMPLETE when:
+
+✅ All KG/RAG queries executed and documented
+✅ All existing implementations identified and catalogued
+✅ Cross-repository dependencies mapped
+✅ Build vs. integrate decision made with justification
+✅ Compliance requirements confirmed
+✅ Integration paths documented
+✅ Effort estimates realistic
+✅ Risk assessment complete
+
+---
+
+## 🎯 WHY THIS MATTERS
+
+### The Problem It Solves
+
+| Before | After | Impact |
+|--------|-------|--------|
+| 60% context understanding | 100% context guaranteed | Zero missing implementations |
+| 2-3 gap-fix sessions/week | 1-2 validation checks/week | 60% time savings in validation |
+| 40-50% code reuse | 60-80% code reuse | 30% faster development |
+| Multiple redundant implementations | Single consolidated implementations | Technical debt reduction |
+| Manual cross-repo discovery | Automated via BMAD-Cloud MCP | Consistent, repeatable discovery |
+
+### BMAD-Cloud MCP Tools Enable This
+
+These tools MUST be used for Phase 0:
+
+- **mcp_bmad-cloud_bmad_analyst**: Finds existing implementations and business context
+- **mcp_bmad-cloud_bmad_architect**: Provides architecture decisions and patterns
+- **mcp_bmad-cloud_bmad_***: Full suite for comprehensive platform understanding
+
+The KG/RAG system (120K+ entities, 41K+ embeddings) exists EXACTLY for this purpose.
+
+---
+
+## 📌 INTEGRATION WITH OTHER RULES
+
+This rule works WITH (not against):
+
+- ✅ VEG_FRAMEWORK - Phase 0 provides context for real implementation
+- ✅ PRODUCTION_STANDARDS - Brownfield ensures no duplicate "work"
+- ✅ MANDATORY_ARCHITECTURE - Context understanding prevents arch violations
+- ✅ SUPABASE_OPERATIONS - Know what exists before querying
+- ✅ TENANT_FIRST - Understand current tenant implementation
+
+---
+
+## 🚨 COMMON VIOLATIONS & CORRECTIONS
+
+### Violation 1: Planning Without Phase 0
+
+❌ **WRONG**:
+"Let me create a new auth service..."
+
+✅ **CORRECT**:
+"Let me query KG for existing auth implementations, then decide build vs. integrate"
+
+### Violation 2: Ignoring Existing Code
+
+❌ **WRONG**:
+"I'll build this feature from scratch"
+
+✅ **CORRECT**:
+"Phase 0 found 3 related implementations; here's how I'll integrate them..."
+
+### Violation 3: Missing Cross-Repo Context
+
+❌ **WRONG**:
+"Updated the service, didn't check if infrastructure needs changes"
+
+✅ **CORRECT**:
+"Phase 0 showed infrastructure dependency in cerebral-deployment/, verified Tekton pipeline updates"
+
+### Violation 4: Skipping Compliance Mapping
+
+❌ **WRONG**:
+"Added multi-tenant support without reviewing existing isolation"
+
+✅ **CORRECT**:
+"Phase 0 mapped current tenant isolation; new feature integrates at [specific layer]"
+
+---
+
+## 📋 CHECKLIST FOR AGENTS
+
+Before starting ANY work on ANY feature:
+
+```bash
+□ Phase 0 brownfield analysis STARTED
+  ├─ BMAD queries executing
+  ├─ Repository scanning in progress
+  └─ Compliance context gathering
+
+□ Phase 0 brownfield analysis COMPLETE
+  ├─ All existing implementations documented
+  ├─ Integration paths identified
+  ├─ Cross-repo dependencies mapped
+  └─ Build vs. integrate decision made
+
+□ Documentation CREATED
+  ├─ Phase 0 template filled out
+  ├─ Effort estimates realistic
+  ├─ Risk assessment documented
+  └─ Next steps clear
+
+□ READY TO PROCEED
+  ├─ To planning phase
+  ├─ With full context
+  ├─ Maximum efficiency
+  └─ Zero duplicate work
+```
+
+---
+
+**RESULT: Every feature begins with comprehensive platform understanding, eliminating the "constant gap-fill" problem through mandatory Phase 0 brownfield analysis before any planning begins.**

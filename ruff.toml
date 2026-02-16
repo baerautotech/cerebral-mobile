@@ -1,0 +1,152 @@
+# Ruff Configuration - Enterprise Python Linting
+# Ruff is a fast Python linter (replaces flake8, isort, and more)
+# Date: October 10, 2025
+
+# Target Python 3.11+
+target-version = "py311"
+
+# Line length (match black)
+line-length = 100
+
+# Enable auto-fixing
+fix = true
+
+[lint]
+# Enable comprehensive rule sets
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # Pyflakes
+    "I",      # isort (import sorting)
+    "N",      # pep8-naming
+    "D",      # pydocstyle (docstrings)
+    "UP",     # pyupgrade (modern Python)
+    "YTT",    # flake8-2020
+    "ANN",    # flake8-annotations (type hints)
+    "ASYNC",  # flake8-async
+    "S",      # flake8-bandit (security)
+    "BLE",    # flake8-blind-except
+    "B",      # flake8-bugbear
+    "A",      # flake8-builtins
+    "COM",    # flake8-commas
+    "C4",     # flake8-comprehensions
+    "DTZ",    # flake8-datetimez
+    "T10",    # flake8-debugger
+    "EM",     # flake8-errmsg
+    "EXE",    # flake8-executable
+    "ISC",    # flake8-implicit-str-concat
+    "ICN",    # flake8-import-conventions
+    "G",      # flake8-logging-format
+    "INP",    # flake8-no-pep420
+    "PIE",    # flake8-pie
+    "T20",    # flake8-print
+    "PYI",    # flake8-pyi
+    "PT",     # flake8-pytest-style
+    "Q",      # flake8-quotes
+    "RSE",    # flake8-raise
+    "RET",    # flake8-return
+    "SLF",    # flake8-self
+    "SLOT",   # flake8-slots
+    "SIM",    # flake8-simplify
+    "TID",    # flake8-tidy-imports
+    "TCH",    # flake8-type-checking
+    "INT",    # flake8-gettext
+    "ARG",    # flake8-unused-arguments
+    "PTH",    # flake8-use-pathlib
+    "TD",     # flake8-todos
+    "FIX",    # flake8-fixme
+    "ERA",    # eradicate (commented code)
+    "PD",     # pandas-vet
+    "PGH",    # pygrep-hooks
+    "PL",     # Pylint
+    "TRY",    # tryceratops
+    "FLY",    # flynt
+    "NPY",    # NumPy-specific
+    "PERF",   # Perflint (performance)
+    "FURB",   # refurb (modernization)
+    "LOG",    # flake8-logging
+    "RUF",    # Ruff-specific
+]
+
+# Ignore specific rules that are too strict or not applicable
+ignore = [
+    "D100",    # Missing docstring in public module (too strict)
+    "D104",    # Missing docstring in public package
+    "ANN101",  # Missing type annotation for self
+    "ANN102",  # Missing type annotation for cls
+    "COM812",  # Trailing comma (conflicts with black)
+    "ISC001",  # Implicit string concatenation (conflicts with formatter)
+]
+
+# Allow unused variables when underscore-prefixed
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Exclude paths
+exclude = [
+    ".git",
+    ".venv",
+    ".pytest_cache",
+    "__pycache__",
+    "node_modules",
+    "venv",
+    "env",
+    "build",
+    "dist",
+    "*.egg-info",
+    ".archive",
+    "vendor",
+    "automation/bmad",
+]
+
+[lint.per-file-ignores]
+# Tests can have more flexibility
+"**/test_*.py" = ["S101", "ANN", "D"]  # Allow assert, no type hints required, no docstrings
+"**/__tests__/**" = ["S101", "ANN", "D"]
+"**/tests/**" = ["S101", "ANN", "D"]
+
+# Scripts can be less strict
+"scripts/**" = ["T20", "S", "D"]  # Allow print, less security checks, no docstrings
+
+# Migration files
+"supabase/migrations/**" = ["D", "ANN"]
+
+# Lyra optimization services (pre-existing issues, will fix in separate cleanup task)
+"backend-python/services/ai/optimization/*.py" = [
+    "D205", "D415",  # Docstring formatting (pre-existing)
+    "G004",          # Logging f-strings (pre-existing)
+    "BLE001",        # Blind except (pre-existing)
+    "RUF012",        # Class var annotation (pre-existing)
+    "ANN204", "ANN201", "ANN001",  # Type annotations (pre-existing)
+    "ARG002", "ARG003",  # Unused arguments (pre-existing)
+    "PLR2004",       # Magic numbers (pre-existing)
+    "C414",          # Unnecessary list() calls (pre-existing)
+    "SIM103", "SIM102",  # Simplify logic (pre-existing)
+    "RET504",        # Unnecessary assignment (pre-existing)
+    "PLR0912",       # Too many branches (pre-existing)
+    "PLR0915",       # Too many statements (pre-existing)
+    "TRY300", "TRY003",  # Exception handling (pre-existing)
+    "EM101", "EM102",  # Exception messages (pre-existing)
+    "E501",          # Line too long (role descriptions, will fix separately)
+]
+
+[lint.pydocstyle]
+# Use Google-style docstrings
+convention = "google"
+
+[lint.isort]
+# Import organization
+force-single-line = false
+force-sort-within-sections = true
+known-first-party = ["backend-python", "services", "api", "shared", "models"]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+
+[lint.mccabe]
+# Maximum cyclomatic complexity
+max-complexity = 10
+
+[lint.pylint]
+# Pylint-specific settings
+max-args = 5
+max-branches = 12
+max-returns = 6
+max-statements = 50

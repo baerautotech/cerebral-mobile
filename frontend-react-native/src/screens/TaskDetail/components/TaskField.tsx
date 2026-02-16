@@ -73,17 +73,11 @@ export const StatusSelector: React.FC<StatusSelectorProps> = ({
           {statuses.map((status) => (
             <TouchableOpacity
               key={status}
-              style={[
-                styles.optionButton,
-                value === status && styles.optionButtonActive,
-              ]}
+              style={[styles.optionButton, value === status && styles.optionButtonActive]}
               onPress={() => onChange(status)}
             >
               <Text
-                style={[
-                  styles.optionButtonText,
-                  value === status && styles.optionButtonTextActive,
-                ]}
+                style={[styles.optionButtonText, value === status && styles.optionButtonTextActive]}
               >
                 {status.replace('_', ' ')}
               </Text>
@@ -124,10 +118,7 @@ export const PrioritySelector: React.FC<PrioritySelectorProps> = ({
           {priorities.map((priority) => (
             <TouchableOpacity
               key={priority}
-              style={[
-                styles.optionButton,
-                value === priority && styles.optionButtonActive,
-              ]}
+              style={[styles.optionButton, value === priority && styles.optionButtonActive]}
               onPress={() => onChange(priority)}
             >
               <Text
