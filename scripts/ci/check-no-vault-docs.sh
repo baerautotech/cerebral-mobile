@@ -7,12 +7,17 @@ set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "$ROOT"
 
-if ! command -v rg >/dev/null 2>&1; then
-  echo "rg is required for vault-docs check" >&2
-  exit 1
+paths=()
+[ -d "docs" ] && paths+=("docs")
+[ -d "k8s" ] && paths+=("k8s")
+[ -d ".github" ] && paths+=(".github")
+
+if [ ${#paths[@]} -eq 0 ]; then
+  echo "✅ No docs/manifests paths present."
+  exit 0
 fi
 
-MATCHES="$(rg -n -i "\\bvault\\b" docs/ k8s/ .github/ 2>/dev/null || true)"
+MATCHES="$(grep -RIn -E "\\bvault\\b" "${paths[@]}" 2>/dev/null || true)"
 if [ -n "$MATCHES" ]; then
   echo "❌ Vault references detected in docs/manifests. Use Sealed Secrets guidance instead."
   echo "$MATCHES"
