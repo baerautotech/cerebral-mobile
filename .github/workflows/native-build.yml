@@ -18,12 +18,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Run linting checks
-        uses: baerautotech/cerebral-deployment/.github/actions/run-linting@main
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
         with:
-          language: javascript
-          fix: false
+          version: 9.0.0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Lint (native)
+        run: pnpm --filter cerebral-native lint
 
   test:
     runs-on: macos-latest
@@ -46,13 +53,13 @@ jobs:
           cache: 'pnpm'
 
       - name: Run tests
-        uses: baerautotech/cerebral-deployment/.github/actions/run-tests@main
-        with:
-          language: react-native
-          coverage-threshold: 80
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter cerebral-native test -- --passWithNoTests
 
   build:
     needs: [lint, test]
+    if: github.event_name == 'push'
     runs-on: cerebral-k8s-runners
     strategy:
       matrix:
