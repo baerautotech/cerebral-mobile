@@ -1,22 +1,41 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 
+const ROOT = process.cwd();
 const POLICY_ORG = process.env.POLICY_ORG ?? 'baerautotech';
 const POLICY_PACK_REPO = process.env.POLICY_PACK_REPO ?? `${POLICY_ORG}/policy-pack`;
 const BASE_BRANCH = process.env.POLICY_BASE_BRANCH ?? 'main';
-const TOKEN = process.env.POLICY_BOT_TOKEN ?? process.env.GH_TOKEN ?? process.env.GITHUB_TOKEN;
+const TOKEN = process.env.POLICY_BOT_TOKEN ?? process.env.GH_TOKEN;
+const CURRENT_REPO = process.env.GITHUB_REPOSITORY ?? '';
 
-const ROOT = process.cwd();
 const manifestPath = path.join(ROOT, 'policy-files.json');
-if (!existsSync(manifestPath)) process.exit(0);
-
-if (!TOKEN) {
-  // Keep `main` mergeable even if org secrets are not configured yet.
-  console.log('POLICY_BOT_TOKEN not configured; skipping policy file validation.');
+if (!existsSync(manifestPath)) {
+  console.log('policy-files.json not found; skipping policy check.');
   process.exit(0);
 }
 
-const policyFiles = JSON.parse(readFileSync(manifestPath, 'utf8')).files ?? [];
+if (CURRENT_REPO === POLICY_PACK_REPO) {
+  // In the policy pack repo itself, the "remote is source of truth" comparison
+  // is not meaningful for pull requests (it would always differ from `main`).
+  // Instead, validate that the manifest is internally consistent and that all
+  // referenced files exist in the repo at the checked-out revision.
+  const files = JSON.parse(readFileSync(manifestPath, 'utf8')).files;
+  const missing = files.filter((file) => !existsSync(path.join(ROOT, file)));
+  if (missing.length > 0) {
+    console.error('Policy pack manifest references missing files:');
+    for (const file of missing) console.error(`- ${file}`);
+    process.exit(1);
+  }
+  console.log('Policy pack repo detected; manifest is internally consistent.');
+  process.exit(0);
+}
+
+if (!TOKEN) {
+  console.error('POLICY_BOT_TOKEN is required to validate policy files.');
+  process.exit(1);
+}
+
+const policyFiles = JSON.parse(readFileSync(manifestPath, 'utf8')).files;
 
 async function fetchPolicyFile(filePath) {
   const url = `https://api.github.com/repos/${POLICY_PACK_REPO}/contents/${filePath}?ref=${BASE_BRANCH}`;
@@ -31,6 +50,7 @@ async function fetchPolicyFile(filePath) {
   if (response.status === 404) {
     return null;
   }
+
   if (!response.ok) {
     const text = await response.text();
     throw new Error(`Failed to fetch ${filePath}: ${response.status} ${text}`);
